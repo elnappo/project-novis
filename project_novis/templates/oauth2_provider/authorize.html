@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static i18n account bootstrap3 %}
+
+{% block title %}{% trans "Authorize" %}{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/skins/square/blue.css" integrity="sha256-RXWCsVDAOYwIrt1dupoFaLu8gwi9lEC2bIc+g1MDvMY=" crossorigin="anonymous" />
+{% endblock %}
+{% block body_class %}hold-transition login-page{% endblock %}
+
+{% block body %}
+<div class="login-box">
+  <div class="login-logo">
+    <a href="../../index2.html">project <b>novis</b></a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="login-box-body">
+  {% if not error %}
+    <form id="authorizationForm" method="post">
+    <h3 class="block-center-heading">{% trans "Authorize" %} {{ application.name }}?</h3>
+    {% csrf_token %}
+    {% for field in form %}
+        {% if field.is_hidden %}
+            {{ field }}
+        {% endif %}
+    {% endfor %}
+
+    <p>{% trans "Application requires following permissions" %}</p>
+    <ul>
+        {% for scope in scopes_descriptions %}
+            <li>{{ scope }}</li>
+        {% endfor %}
+    </ul>
+
+    {{ form.errors }}
+    {{ form.non_field_errors }}
+
+    {% buttons %}
+        <input type="submit" class="btn btn-large" value="Cancel"/>
+        <input type="submit" class="btn btn-large btn-primary" name="allow" value="Authorize"/>
+    {% endbuttons %}
+    </form>
+  {% else %}
+    <h2>Error: {{ error.error }}</h2>
+    <p>{{ error.description }}</p>
+  {% endif %}
+ </div>
+  <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->
+{% endblock %}
+
+{% block extra_foot %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/icheck.min.js" integrity="sha256-8HGN1EdmKWVH4hU3Zr3FbTHoqsUcfteLZJnVmqD/rC8=" crossorigin="anonymous"></script>
+<script>
+  $(function () {
+    $('input').iCheck({
+      checkboxClass: 'icheckbox_square-blue',
+      radioClass: 'iradio_square-blue',
+      increaseArea: '20%' /* optional */
+    });
+  });
+</script>
+{% endblock %}

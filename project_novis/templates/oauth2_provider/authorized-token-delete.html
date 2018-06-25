@@ -1,0 +1,28 @@
+{% extends 'settings_base.html' %}
+{% load static i18n account bootstrap3 %}
+
+{% block title %}{% trans "Delete Token" %}{% endblock %}
+
+{% block settings_content %}
+<div class="box-header with-border">
+  <h3 class="box-title">{% trans "Delete Token" %} {{ object.application }}</h3>
+</div>
+<div class="box-body">
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>{% trans "Are you sure you want to delete this token?" %}</p>
+
+        <li>
+            {{ object.application }}
+        </li>
+        <ul>
+            {% for scope_name, scope_description in object.scopes.items %}
+                <li>{{ scope_name }}: {{ scope_description }}</li>
+            {% endfor %}
+        </ul>
+
+        <input type="submit" class="btn btn-danger" value="{% trans "Delete" %}" />
+    </form>
+</div>
+<!-- /.box-body -->
+{% endblock %}

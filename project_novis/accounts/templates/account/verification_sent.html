@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Verify Your E-mail Address" %}{% endblock %}
+
+{% block content_header %}
+<section class="content-header">
+    <h1>{% trans "Verify Your E-mail Address" %}</h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Account</a></li>
+        <li class="active">{% trans "Verify Your E-mail Address" %}</li>
+    </ol>
+</section>
+{% endblock %}
+
+{% block content %}
+<section class="content container-fluid">
+    <p>{% blocktrans %}We have sent an e-mail to you for verification. Follow the
+        link provided tofinalize the signup process. Please contact us if you do not
+        receive it within a few minutes.{% endblocktrans %}</p>
+</section>
+{% endblock %}

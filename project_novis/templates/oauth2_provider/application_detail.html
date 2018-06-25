@@ -1,0 +1,31 @@
+{% extends 'settings_base.html' %}
+{% load static i18n account %}
+
+{% block title %}{{ application.name }}{% endblock %}
+
+{% block settings_content %}
+<div class="box-header with-border">
+  <h3 class="box-title">{{ application.name }}</h3>
+</div>
+<div class="box-body">
+    <label>{% trans "Client id" %}</label>
+    <input type="text" class="form-control" value="{{ application.client_id }}" disabled="">
+    <label>{% trans "Client secret" %}</label>
+    <input type="text" class="form-control" value="{{ application.client_secret }}" disabled="">
+    <dl>
+        <dt><p><b>{% trans "Client type" %}</b></p></dt>
+        <dd><p>{{ application.client_type }}</p></dd>
+        <dt><p><b>{% trans "Authorization Grant Type" %}</b></p></dt>
+        <dd><p>{{ application.authorization_grant_type }}</p></dd>
+    </dl>
+    <label>{% trans "Redirect Uris" %}</label>
+    <input type="text" class="form-control" value="{{ application.redirect_uris }}" disabled="">
+    <br>
+    <div class="btn-toolbar">
+            <a class="btn" href="{% url "oauth2_provider:list" %}">{% trans "Go Back" %}</a>
+            <a class="btn btn-primary" href="{% url "oauth2_provider:update" application.id %}">{% trans "Edit" %}</a>
+            <a class="btn btn-danger" href="{% url "oauth2_provider:delete" application.id %}">{% trans "Delete" %}</a>
+    </div>
+ </div>
+<!-- /.box-body -->
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'settings_base.html' %}
+{% load static i18n account bootstrap3 %}
+
+{% block title %}{% trans "Profile" %}{% endblock %}
+
+{% block settings_content %}
+<div class="box-header with-border">
+  <h3 class="box-title">{% trans "Profile" %}</h3>
+</div>
+<div class="box-body">
+    <form class="form" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">{% trans "Update" %}</button>
+        {% endbuttons %}
+    </form>
+</div>
+<!-- /.box-body -->
+{% endblock %}

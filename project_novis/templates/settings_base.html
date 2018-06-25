@@ -1,0 +1,58 @@
+{% extends 'index.html' %}
+{% load static i18n account %}
+
+{% block content_header %}
+<section class="content-header">
+    <h1>
+        {% trans "Settings" %}
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Account</a></li>
+        <li class="active">{% trans "Settings" %}</li>
+    </ol>
+</section>
+{% endblock %}
+
+{% block content %}
+<section class="content container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Settings</h3>
+                </div>
+                <div class="box-body no-padding">
+                  <ul class="nav nav-pills nav-stacked">
+                    <li><a href="{% url "profile_change" %}">Profile</a></li>
+                    <li><a href="{% url 'account_email' %}">Emails</a></li>
+                    <li><a href="{% url 'account_change_password' %}">Change Password</a></li>
+                    <li><a href="{% url "oauth2_provider:authorized-token-list" %}">Applications</a></li>
+                    <li><a href="{% url "oauth2_provider:list" %}">OAuth Apps</a></li>
+                  </ul>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>
+        <div class="col-md-9">
+                <div class="box box-solid">
+                    {% block settings_content %}
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Applications</h3>
+                    </div>
+                    <div class="box-body no-padding">
+                            <table class="table table-condensed">
+                                <tbody>
+                                {% for application in applications %}
+                                    <tr>
+                                        <td><a href="{{ application.get_absolute_url }}">{{ application.name }}</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody></table>
+                          </div>
+                    <!-- /.box-body -->
+                    {% endblock %}
+                </div>
+            </div>
+    </div>
+</section>
+{% endblock %}
