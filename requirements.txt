@@ -4,6 +4,7 @@ coverage
 dj-database-url
 Django
 django-allauth
+django-bootstrap3
 django-cors-headers
 django-debug-toolbar
 django-oauth-toolkit
