@@ -4,17 +4,14 @@
 {% block title %}{% trans "Sign out" %}{% endblock %}
 
 {% block content_header %}
-<section class="content-header">
     <h1>{% trans "Sign Out" %}</h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Account</a></li>
         <li class="active">{% trans "Sign Out" %}</li>
     </ol>
-</section>
 {% endblock %}
 
 {% block content %}
-<section class="content container-fluid">
     <p>{% trans 'Are you sure you want to sign out?' %}</p>
 
     <form method="post" action="{% url 'account_logout' %}">
@@ -24,5 +21,4 @@
         {% endif %}
         <button class="btn btn-primary" type="submit">{% trans 'Sign Out' %}</button>
     </form>
-</section>
 {% endblock %}

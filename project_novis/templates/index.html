@@ -80,9 +80,10 @@
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        {% block content_header %}
-        <!-- Content Header (Page header) -->
+        {% block raw_content %}
         <section class="content-header">
+
+        {% block content_header %}
             <h1>
                 Page Header
                 <small>Optional description</small>
@@ -91,19 +92,28 @@
                 <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
                 <li class="active">Here</li>
             </ol>
-        </section>
         {% endblock %}
 
-        {% block content %}
-        <!-- Main content -->
+        </section>
+
         <section class="content container-fluid">
 
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
         <!--------------------------
             | Your Page Content Here |
             -------------------------->
+        {% endblock %}
 
         </section>
-        <!-- /.content -->
         {% endblock %}
     </div>
     <!-- /.content-wrapper -->

@@ -2,19 +2,16 @@
 {% load static i18n account %}
 
 {% block content_header %}
-<section class="content-header">
-    <h1>
-        {% trans "Settings" %}
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Account</a></li>
-        <li class="active">{% trans "Settings" %}</li>
-    </ol>
-</section>
+<h1>
+    {% trans "Settings" %}
+</h1>
+<ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Account</a></li>
+    <li class="active">{% trans "Settings" %}</li>
+</ol>
 {% endblock %}
 
 {% block content %}
-<section class="content container-fluid">
     <div class="row">
         <div class="col-md-3">
             <div class="box box-solid">
@@ -54,5 +51,4 @@
                 </div>
             </div>
     </div>
-</section>
 {% endblock %}
