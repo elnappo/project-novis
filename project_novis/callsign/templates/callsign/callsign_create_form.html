@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+{% load static i18n account bootstrap3 %}
+
+{% block title %}Add new call sign{% endblock %}
+
+{% block content_header %}
+<h1>
+    {{ object.name }}
+</h1>
+<ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Callsign</a></li>
+    <li class="active">Add</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">Add new call sign</h3>
+            </div>
+            <div class="box-body">
+                <form class="form" method="post" action="">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% buttons %}
+                    <button class="btn btn-primary" type="submit" name="action">{% trans "Add" %}</button>
+                {% endbuttons %}
+                </form>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -7,7 +7,7 @@ urlpatterns = [
     path('', include('main.urls')),
     path('accounts/', include('accounts.urls')),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    path('callsign/', include('callsign.urls')),
+    path('', include('callsign.urls')),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
