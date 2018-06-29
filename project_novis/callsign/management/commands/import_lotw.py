@@ -3,6 +3,8 @@ import re
 from dateutil.parser import parse
 
 from django.core.management.base import BaseCommand
+from django.contrib.auth import get_user_model
+
 import requests
 
 from ...models import CallSign, LOTWUser
@@ -26,7 +28,8 @@ class Command(BaseCommand):
                 if valid:
                     counter += 1
 
-                    call_sign_instance, new_call_sign = CallSign.objects.get_or_create(name=row[0])
+                    call_sign_instance, new_call_sign = CallSign.objects.get_or_create(name=row[0], defaults={"name": row[0],
+                                                                                                              "created_by": get_user_model().objects.get(id=1)})
                     if new_call_sign:
                         call_sign_instance.set_default_meta_data()
                         call_sign_instance.save()
