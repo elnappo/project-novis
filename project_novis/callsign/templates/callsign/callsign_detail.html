@@ -3,36 +3,31 @@
 
 {% block title %}{{ object.name }}{% endblock %}
 
-{% block extra_head %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
-      integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
-      crossorigin=""/>
-    <!-- Make sure you put this AFTER Leaflet's CSS -->
-<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
-        integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
-        crossorigin=""></script>
-{% endblock %}
-
-
 {% block content_header %}
-<section class="content-header">
-    <h1>
-        {{ object.name }}
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Callsign</a></li>
-        <li class="active">{{ object.name }}</li>
-    </ol>
-</section>
+<h1>
+    {{ object.name }}
+</h1>
+<ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Callsign</a></li>
+    <li class="active">{{ object.name }}</li>
+</ol>
 {% endblock %}
 
 {% block content %}
-<section class="content container-fluid">
     <div class="row">
             <div class="col-md-8">
             <div class="box box-info">
                 <div class="box-header with-border">
                   <h3 class="box-title">Information</h3>
+                  {% if user == object.owner %}
+                  <div class="box-tools pull-right">
+                    <a href="#" class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Edit</a>
+                  </div>
+                  {% elif user.is_authenticated %}
+                  <div class="box-tools pull-right">
+                    <a href="#" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Claim</a>
+                  </div>
+                  {% endif %}
                 </div>
                 <div class="box-body no-padding">
                   <table class="table table-hover">
@@ -59,26 +54,76 @@
                 <!-- /.box-body -->
             </div>
         </div>
+        {% if object.latitude and object.longitude %}
         <div class="col-md-4">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Location</h3>
+                </div>
+                <div class="box-body no-padding">
+                    <div id="map" style="width: auto; height: 300px;"></div>
+                    <script>
+                      function initMap() {
+                        var location = {lat: {{ object.latitude}}, lng: {{ object.longitude}} };
+                        var map = new google.maps.Map(document.getElementById('map'), {zoom: 7, center: location});
+                        var marker = new google.maps.Marker({position: location, map: map});
+                      }
+                    </script>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-md-4 pull-right">
         <div class="box box-info">
-            {% block settings_content %}
             <div class="box-header with-border">
-              <h3 class="box-title">Location</h3>
+              <h3 class="box-title">Links</h3>
             </div>
             <div class="box-body no-padding">
-                <div id="mapid" style="width: auto; height: 300px;"></div>
-                <script>
-                    var mymap = L.map('mapid');
-                </script>
+              <table class="table table-hover">
+               <tbody>
+               {% if object.lotwuser %}
+               <tr>
+                  <td>LOTW </td>
+                </tr>
+               {% endif %}
+               {% if object.eqsluser %}
+                <tr>
+                  <td><a href="https://www.eqsl.cc/Member.cfm?{{ object.name }}">eQSL</a></td>
+                </tr>
+               {% endif %}
+               {% if object.clubloguser %}
+                <tr>
+                  <td><a href="https://secure.clublog.org/logsearch/{{ object.name }}">Clublog</a></td>
+                </tr>
+               {% endif %}
+               <tr>
+                  <td><a href="https://dxheat.com/db/{{ object.name }}">DXHeat</a></td>
+                </tr>
+                <tr>
+                  <td><a href="https://aprs.fi/info/?call={{ object.name }}">APRS</a></td>
+                </tr>
+                <tr>
+                  <td><a href="http://www.pskreporter.de/table?call={{ object.name }}">PSKreporter</a></td>
+                </tr>
+                <tr>
+                  <td><a href="https://www.qrz.com/db/{{ object.name }}">QRZ.com</a></td>
+                </tr>
+               <tr>
+                  <td><a href="https://www.hamqth.com/{{ object.name }}">HamQTH</a></td>
+                </tr>
+               <tr>
+                  <td><a href="https://hamcall.net/call?callsign={{ object.name }}">HamCall</a></td>
+                </tr>
+              </tbody>
+            </table>
             </div>
             <!-- /.box-body -->
-            {% endblock %}
         </div>
     </div>
     </div>
-</section>
 {% endblock %}
 
 {% block extra_foot %}
-
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcml_vhlyb_QC1tyvMwdIXI1xU6UWKvwo&callback=initMap" async defer></script>
 {% endblock %}
