@@ -3,9 +3,19 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 
 
-def extract_callsign(callsign: str) -> str:
-    parts = callsign.split("/")
-    return callsign
+class CallSignField(models.CharField):
+    default_validators = [RegexValidator(regex=r"^(\w*)$")]
+    description = _("Ham radio call sign field")
+
+    def __init__(self, *args, **kwargs):
+        kwargs['max_length'] = 16
+        super().__init__(*args, **kwargs)
+
+    def get_db_prep_value(self, value, connection, prepared=False):
+        value = super().get_db_prep_value(value, connection, prepared)
+        if value is not None:
+            return value.upper()
+        return value
 
 
 class CQZoneField(models.PositiveSmallIntegerField):
@@ -45,9 +55,9 @@ class QTHLocatorField(models.CharField):
     default_validators = [RegexValidator(regex=r"^([A-R]{2})(\d{2})?([a-x]{2})?(\d{2})?$")]
     description = _("QTH locator field")
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 8
-        super().__init__(**kwargs)
+        super().__init__(*args, **kwargs)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
