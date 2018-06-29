@@ -37,13 +37,17 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     username = None
+    first_name = None
+    last_login = None
+
     email = models.EmailField(_('Email address'), unique=True, db_index=True)
+    name = models.CharField(_('Name'), max_length=200, blank=True)
 
     created = models.DateTimeField(_("Created"), auto_now_add=True)
     modified = models.DateTimeField(_("Modified"), auto_now=True)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = list()
+    REQUIRED_FIELDS = []
     objects = UserManager()
 
 

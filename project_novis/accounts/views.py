@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 
 class UserUpdate(UpdateView):
     model = get_user_model()
-    fields = ['first_name', 'last_name']
+    fields = ['name']
     template_name = 'profile_change.html'
     success_url = reverse_lazy('profile_change')
 
