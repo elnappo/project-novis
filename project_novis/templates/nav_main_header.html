@@ -5,8 +5,10 @@
       <ul class="dropdown-menu" role="menu">
       {% for call_sign in user.callsign_set.all %}
         <li><a href="{% url 'callsign:callsign-html-detail' call_sign.name %}">{{ call_sign.name }}</a></li>
+          {% if forloop.last %}
+              <li class="divider"></li>
+          {% endif %}
       {% endfor %}
-        <li class="divider"></li>
         <li><a href="{% url 'callsign:callsign-html-create' %}">Add Call Sign</a></li>
       </ul>
     </li>
