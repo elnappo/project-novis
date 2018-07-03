@@ -2,6 +2,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
+from django.utils.translation import gettext as _
 from rest_framework import viewsets
 from rest_framework.pagination import LimitOffsetPagination
 
@@ -52,6 +54,17 @@ class DXCCEntryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CallSignViewSet(viewsets.ReadOnlyModelViewSet):
+    lookup_field = 'name'
     queryset = CallSign.objects.all()
     serializer_class = CallsignSerializer
     pagination_class = DefaultPagination
+
+
+class UserCallSignViewSet(viewsets.ReadOnlyModelViewSet):
+    lookup_field = 'name'
+    queryset = CallSign.objects.all()
+    serializer_class = CallsignSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return user.callsign_set.all()
