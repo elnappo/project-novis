@@ -21,3 +21,4 @@ setuptools-scm
 swagger-spec-validator
 whitenoise
 yapf
+wheel
