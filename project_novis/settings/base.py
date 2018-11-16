@@ -66,7 +66,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'project_novis.wsgi.application'
+WSGI_APPLICATION = 'wsgi.application'
 
 SITE_ID = 1
 
