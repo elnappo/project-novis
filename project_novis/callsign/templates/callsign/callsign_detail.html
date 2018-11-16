@@ -1,5 +1,5 @@
 {% extends 'index.html' %}
-{% load static i18n account %}
+{% load static i18n account bootstrap3%}
 
 {% block title %}{{ object.name }}{% endblock %}
 
@@ -25,8 +25,28 @@
                   </div>
                   {% elif user.is_authenticated %}
                   <div class="box-tools pull-right">
-                    <a href="#" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Claim</a>
+                  <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#callSignClaimModal"><i class="fa fa-plus"></i> Claim</button>
                   </div>
+                  <div class="modal fade" id="callSignClaimModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Confirm call sign claim</h4>
+                      </div>
+                      <div class="modal-body">
+                         Are you sure to claim <mark>{{ object.name }}</mark> to your account?
+                         <form class="form" method="post" action={% url "callsign:callsign-html-claim" object.name %}>
+                        {% csrf_token %}
+                       <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit" name="action">Claim {{ object.name }}</button>
+                      </div>
+                        </form>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
                   {% endif %}
                 </div>
                 <div class="box-body no-padding">

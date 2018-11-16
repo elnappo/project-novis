@@ -28,3 +28,9 @@ class CallsignSerializer(serializers.ModelSerializer):
         model = CallSign
         fields = ("name", "country", "dxcc", "cq_zone", "itu_zone",
                   "itu_region", "latitude", "longitude")
+
+
+class MinimalCallsignSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CallSign
+        fields = ("name",)

@@ -3,6 +3,7 @@ from django.contrib.auth.models import BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
 
 
 class UserManager(BaseUserManager):
@@ -49,6 +50,14 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
     objects = UserManager()
+
+    # TODO(elnappo) Move to app?
+    def claim_call_sign(self, callsign):
+        if not callsign.owner:
+            callsign.owner = self
+            callsign.save()
+        else:
+            raise PermissionDenied("Another user already owns this call sign!")
 
 
 class UserValidation(models.Model):

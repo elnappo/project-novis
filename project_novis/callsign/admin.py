@@ -54,10 +54,10 @@ class CallSignAdmin(BaseModelAdmin):
         }),
         ('Advanced options', {
             'classes': ('collapse',),
-            'fields': ('created', 'modified')
+            'fields': ('created', 'modified', "created_by")
         }),
     )
-    raw_id_fields = ("owner", "prefix")
+    raw_id_fields = ("owner", "prefix", "created_by")
     inlines = [LOTWUserInline, ClublogUserInline, ESQLUserInline]
 
 

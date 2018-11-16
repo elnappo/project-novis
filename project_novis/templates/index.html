@@ -18,9 +18,10 @@
             {% block nav_header %}
                 {% include 'nav_main_header.html' %}
             {% endblock %}
-            <form class="navbar-form navbar-left" role="search">
+            <form class="navbar-form navbar-left" role="search" method="post" action={% url "callsign:callsign-html-search" %}>
+                {% csrf_token %}
                 <div class="form-group">
-                <input type="text" class="form-control" id="navbar-search-input" placeholder="Callsign Search">
+                <input type="text" class="form-control" id="navbar-search-input" name="name" placeholder="Callsign Search">
                 </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
