@@ -9,7 +9,7 @@ class RadiusAuthSerializer(serializers.Serializer):
         style={'input_type': 'password'},
         trim_whitespace=False
     )
-    nas_ip_address = serializers.IPAddressField()
+    nas_ip_address = serializers.IPAddressField(allow_blank=True)
     nas_identifier = serializers.CharField(allow_blank=True)
 
     def validate(self, attrs):
@@ -28,7 +28,7 @@ class RadiusAuthSerializer(serializers.Serializer):
                 msg = _('Unable to log in with provided credentials.')
                 raise serializers.ValidationError(msg, code='authorization')
 
-            if not user.approved:
+            if not user.is_active:
                 msg = _('Your user is not approved to use this service.')
                 raise serializers.ValidationError(msg, code='authorization')
         else:

@@ -4,5 +4,5 @@ from .views import *
 
 
 urlpatterns = [
-    path('auth', RadiusAuthView.as_view()),
+    path('api/radius/auth', RadiusAuthView.as_view()),
 ]
