@@ -28,7 +28,9 @@ This site is in early beta stage, use with caution and without warranty. Databas
   <div class="jumbotron">
     <h1>Marketing stuff!</h1>
     <p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet.</p>
+    {% if not user.is_authenticated %}
     <p><a class="btn btn-lg btn-success" href="{% url 'account_signup' %}" role="button">Get started today</a></p>
+    {% endif %}
   </div>
 
   <div class="row">
