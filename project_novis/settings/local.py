@@ -1,3 +1,7 @@
+import socket
+
+from setuptools_scm import get_version
+
 from .base import *
 
 
