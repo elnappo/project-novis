@@ -99,6 +99,7 @@ class CallSign(BaseModel):
     owner = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(default=True)
     issued = models.DateField(null=True, blank=True)
+    dstar = models.BooleanField(default=False)
 
     created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="created_by")
     comment = models.TextField(blank=True)
