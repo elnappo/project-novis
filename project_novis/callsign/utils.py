@@ -1,9 +1,11 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
+from rest_framework.compat import unicode_to_repr
 
 
 class CallSignField(models.CharField):
+    # TODO(elnappo) enhance regex validation
     default_validators = [RegexValidator(regex=r"^(\w*)$")]
     description = _("Ham radio call sign field")
 
@@ -63,3 +65,17 @@ class QTHLocatorField(models.CharField):
         name, path, args, kwargs = super().deconstruct()
         del kwargs['max_length']
         return name, path, args, kwargs
+
+
+class CurrentUserDefault(object):
+    def __init__(self):
+        self._user = None
+
+    def set_context(self, serializer_field):
+        self._user = serializer_field.context['request'].user
+
+    def __call__(self):
+        return self._user
+
+    def __repr__(self):
+        return unicode_to_repr('%s()' % self.__class__.__name__)
