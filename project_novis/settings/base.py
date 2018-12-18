@@ -75,7 +75,7 @@ WSGI_APPLICATION = 'wsgi.application'
 
 SITE_ID = 1
 
-VERSION = "0.0.1" # get_version()
+VERSION = get_version(root='../..', relative_to=__file__)
 
 HOSTNAME = socket.gethostname()
 
