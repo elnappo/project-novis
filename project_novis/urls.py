@@ -2,10 +2,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import RedirectView
+
 
 urlpatterns = [
     path('', include('main.urls')),
     path('accounts/', include('accounts.urls')),
+    path('.well-known/change-password', RedirectView.as_view(pattern_name='account_change_password', permanent=False)),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('', include('callsign.urls')),
     path('', include('radius.urls')),

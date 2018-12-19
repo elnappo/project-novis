@@ -82,6 +82,7 @@ class CallSignSearchView(SingleObjectMixin, View):
 class CountryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
+    lookup_field = "id"
 
 
 class DXCCEntryViewSet(viewsets.ReadOnlyModelViewSet):

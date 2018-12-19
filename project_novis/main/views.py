@@ -21,7 +21,7 @@ class VersionView(APIView):
         return Response({
             "hostname": settings.HOSTNAME,
             "version": settings.VERSION
-        })
+        }, content_type="application/json")
 
 
 class HomePageView(TemplateView):

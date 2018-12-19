@@ -36,30 +36,30 @@ This site is in early beta stage, use with caution and without warranty. Databas
   <div class="row">
     <div class="col-lg-4">
       <h2>OAuth Provider</h2>
-      <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+      <p>Use project novis as a <a href="https://en.wikipedia.org/wiki/OAuth">OAuth</a> provider to authenticate users to your ham radio related service. As we are validating the ownership of call sings you can make sure that a user owns a specific call sign. No more call sign validations required on different sites!</p>
       <p><a class="btn btn-primary" href="#" role="button">View details »</a></p>
     </div>
     <div class="col-lg-4">
       <h2>API</h2>
-      <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-      <p><a class="btn btn-primary" href="{% url "callsign:schema-swagger-ui" %}" role="button">View details »</a></p>
+      <p>We provide an open and modern REST API for all kinds of ham radio applications. As our APIs are based on Swagger/Open-API it can easily be integrated in your application with the help of auto-generated code.</p>
+      <p><a class="btn btn-primary" href="{% url "api:schema-swagger-ui" %}" role="button">View details »</a></p>
    </div>
     <div class="col-lg-4">
-      <h2>Hamnet RADIUS Authentication</h2>
-      <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa.</p>
+      <h2>Hamnet Authentication</h2>
+      <p>At the moment authentification to Hamnet access points is a mess. We try to solve is problem and make the hamnet more secure by restricted the access to access points to our users which validated their call sign. Therefore we provide a <a href="https://en.wikipedia.org/wiki/RADIUS">RADIUS</a> Server which can be used by your access point with WPA2 Enterprise.</p>
       <p><a class="btn btn-primary" href="#" role="button">View details »</a></p>
     </div>
   </div>
   <div class="row">
     <div class="col-lg-4">
       <h2>Open-Source</h2>
-      <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+      <p>project novis is free (as beer) and open-source software. We believe in the open ham radio spirit and want to provide an open platform for various tech related ham radio services.</p>
       <p><a class="btn btn-primary" href="https://github.com/elnappo/project-novis" role="button">View details »</a></p>
     </div>
     <div class="col-lg-4">
       <h2>Ham Radio Database</h2>
-      <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-      <p><a class="btn btn-primary" href="https://github.com/elnappo/project-novis" role="button">View details »</a></p>
+      <p>Currently limited to call sings but project novis should include many more ham radio related data in the future e.g. Repeaters, DMR IDs, and more. All available from a simple and modern API.</p>
+      <p><a class="btn btn-primary" href="#" role="button">View details »</a></p>
     </div>
   </div>
 </section>
