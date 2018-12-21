@@ -15,6 +15,7 @@ class EmptyView(View):
 
 
 class VersionView(APIView):
+    swagger_schema = None
     permission_classes = (AllowAny,)
 
     def get(self, request) -> Response:

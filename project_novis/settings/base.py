@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
     'drf_yasg',
     'oauth2_provider',
     'bootstrap3',

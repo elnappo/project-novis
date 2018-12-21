@@ -9,6 +9,7 @@ django-cors-headers
 django-debug-toolbar
 django-oauth-toolkit
 djangorestframework
+django-filter
 drf-yasg
 flex
 gunicorn

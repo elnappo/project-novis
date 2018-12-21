@@ -69,6 +69,14 @@
                           <td>{{ object.type }}</td>
                         </tr>
                         <tr>
+                          <td>DMR-ID</td>
+                          <td>{% for entry in object.dmrid_set.all %}<a href="https://brandmeister.network/index.php?page=profile&call={{ object.name }}">{{entry.name}} </a>{% endfor %}</td>
+                        </tr>
+                        <tr>
+                          <td>D-STAR</td>
+                          <td>{{ object.dstar|yesno }}</td>
+                        </tr>
+                        <tr>
                           <td>Owner</td>
                           <td>{{ object.owner }}</td>
                         </tr>
