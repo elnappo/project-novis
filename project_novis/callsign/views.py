@@ -10,7 +10,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework import viewsets, generics
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
 from project_novis.callsign.models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix
 from project_novis.callsign.serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer, \
@@ -84,8 +84,11 @@ class CountryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     lookup_field = "id"
+
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     search_fields = ('name',)
+
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class DMRIDFilter(rest_framework.FilterSet):
@@ -101,45 +104,58 @@ class DMRIDFilter(rest_framework.FilterSet):
 class DMRIDViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = DMRID.objects.all()
     serializer_class = DMRIDSerializer
-    pagination_class = DefaultPagination
     lookup_field = "name"
+    pagination_class = DefaultPagination
+
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filter_class = DMRIDFilter
     search_fields = ('name',)
+
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class DXCCEntryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = DXCCEntry.objects.all()
     serializer_class = DXCCEntrySerializer
     pagination_class = DefaultPagination
+
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_fields = ('deleted',)
     search_fields = ('name',)
+
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class CallSignPrefixViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CallSignPrefix.objects.all()
     serializer_class = CallSignPrefixSerializer
-    pagination_class = DefaultPagination
     lookup_field = "name"
+    pagination_class = DefaultPagination
+
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_fields = ('country', 'cq_zone', 'itu_zone', 'itu_region', 'continent', 'type')
     search_fields = ('name',)
 
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
 
 class CallSignViewSet(viewsets.ReadOnlyModelViewSet):
-    lookup_field = 'name'
     queryset = CallSign.objects.all()
     serializer_class = CallsignSerializer
+    lookup_field = 'name'
     pagination_class = DefaultPagination
+
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_fields = ('active', 'issued')
     search_fields = ('name',)
 
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
 
 class CallSignCreateAPIView(generics.CreateAPIView):
     queryset = CallSign.objects.all()
-    serializer_class = MinimalCallsignSerializer
+    serializer_class = CallsignSerializer
+
     permission_classes = (IsAuthenticated,)
 
 
@@ -147,6 +163,8 @@ class UserCallSignViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'name'
     queryset = CallSign.objects.all()
     serializer_class = CallsignSerializer
+
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         user = self.request.user
