@@ -19,15 +19,15 @@
 {% endblock %}
 
 {% block content %}
-<div class="alert alert-danger alert-dismissible">
+<div class="alert alert-warning alert-dismissible">
 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 <h4><i class="icon fa fa-warning"></i> Beta</h4>
 This site is in early beta stage, use with caution and without warranty. Database could be dropped without further notice!
 </div>
 
   <div class="jumbotron">
-    <h1>Marketing stuff!</h1>
-    <p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet.</p>
+    <h1>Free & open ham radio web services</h1>
+    <p class="lead">We want to establish a open platform for ham radio related web services everyone can participate.</p>
     {% if not user.is_authenticated %}
     <p><a class="btn btn-lg btn-success" href="{% url 'account_signup' %}" role="button">Get started today</a></p>
     {% endif %}
@@ -37,7 +37,7 @@ This site is in early beta stage, use with caution and without warranty. Databas
     <div class="col-lg-4">
       <h2>OAuth Provider</h2>
       <p>Use project novis as a <a href="https://en.wikipedia.org/wiki/OAuth">OAuth</a> provider to authenticate users to your ham radio related service. As we are validating the ownership of call sings you can make sure that a user owns a specific call sign. No more call sign validations required on different sites!</p>
-      <p><a class="btn btn-primary" href="#" role="button">View details »</a></p>
+      <p><a class="btn btn-primary" href="{% url "oauth2_provider:list" %}" role="button">View details »</a></p>
     </div>
     <div class="col-lg-4">
       <h2>API</h2>
@@ -53,13 +53,13 @@ This site is in early beta stage, use with caution and without warranty. Databas
   <div class="row">
     <div class="col-lg-4">
       <h2>Open-Source</h2>
-      <p>project novis is free (as beer) and open-source software. We believe in the open ham radio spirit and want to provide an open platform for various tech related ham radio services.</p>
+      <p>project novis is free and open-source software. We believe in the open ham radio spirit and want to provide an open platform for various tech related ham radio services.</p>
       <p><a class="btn btn-primary" href="https://github.com/elnappo/project-novis" role="button">View details »</a></p>
     </div>
     <div class="col-lg-4">
       <h2>Ham Radio Database</h2>
       <p>Currently limited to call sings but project novis should include many more ham radio related data in the future e.g. Repeaters, DMR IDs, and more. All available from a simple and modern API.</p>
-      <p><a class="btn btn-primary" href="#" role="button">View details »</a></p>
+      <p><a class="btn btn-primary" href="{% url "api:schema-swagger-ui" %}" role="button">View details »</a></p>
     </div>
   </div>
 </section>
