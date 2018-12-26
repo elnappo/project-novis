@@ -12,8 +12,8 @@ from rest_framework import viewsets, generics
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
-from project_novis.callsign.models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix
-from project_novis.callsign.serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer,\
+from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix
+from .serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer,\
     DMRIDSerializer, CallSignPrefixSerializer
 
 

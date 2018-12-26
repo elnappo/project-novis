@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from project_novis.callsign.utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, QTHLocatorField
+from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, QTHLocatorField
 
 CALL_SIGN_TYPE_CHOICES = (
     ("personal", _("Personal")),
@@ -58,6 +58,45 @@ class DXCCEntry(BaseModel):
         verbose_name = "DXCC Entry"
         verbose_name_plural = "DXCC Entries"
         unique_together = ("name", "deleted")
+
+
+class Location(BaseModel):
+    # Use a custom field for this?
+    latitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
+    space = models.BooleanField(default=False)
+
+    @property
+    def cq_zone(self) -> int:
+        return 1
+
+    @property
+    def itu_zone(self) -> int:
+        return 1
+
+    @property
+    def itu_region(self) -> int:
+        return 1
+
+    @property
+    def grid(self) -> str:
+        return "JN"
+
+    @property
+    def continent(self) -> str:
+        return "Europe"
+
+    @property
+    def dxcc(self) -> int:
+        return 1
+
+    @property
+    def country(self) -> str:
+        return "Germany"
+
+    @property
+    def utc_offset(self) -> int:
+        return 1
 
 
 class CallSignPrefix(BaseModel):
@@ -222,3 +261,10 @@ class EQSLUser(BaseModel):
 
     def __str__(self) -> str:
         return self.callsign.name
+
+
+class Repeater(BaseModel):
+    callsign = models.ForeignKey(CallSign, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
+    website = models.URLField()
+    altitude = models.FloatField()

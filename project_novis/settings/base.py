@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'bootstrap3',
 
     'main.apps.MainConfig',
-    'project_novis.callsign.apps.CallsignConfig',
+    'callsign.apps.CallsignConfig',
     'radius.apps.RadiusConfig',
 ]
 
