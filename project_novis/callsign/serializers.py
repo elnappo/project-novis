@@ -33,25 +33,8 @@ class DMRIDSerializer(serializers.ModelSerializer):
 class CallsignSerializer(serializers.ModelSerializer):
     country = serializers.StringRelatedField()
     dxcc = serializers.StringRelatedField()
-    dmr_ids = serializers.StringRelatedField(many=True)
+    dmr_ids = serializers.StringRelatedField(many=True, required=False, read_only=True)
     prefix = serializers.StringRelatedField(read_only=True)
-
-    class Meta:
-        model = CallSign
-        fields = ("name", "prefix", "country", "dxcc", "cq_zone", "itu_zone",
-                  "itu_region", "latitude", "longitude", "type", "dstar", "dmr_ids")
-
-
-class CallSignPrefixSerializer(serializers.ModelSerializer):
-    country = serializers.StringRelatedField()
-
-    class Meta:
-        model = CallSignPrefix
-        fields = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "latitude", "longitude", "utc_offset", "type")
-        read_only = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "latitude", "longitude", "utc_offset", "type")
-
-
-class MinimalCallsignSerializer(serializers.ModelSerializer):
     created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     def create(self, validated_data):
@@ -62,4 +45,14 @@ class MinimalCallsignSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CallSign
-        fields = ("name", "created_by")
+        fields = ("name", "prefix", "country", "dxcc", "cq_zone", "itu_zone",
+                  "itu_region", "latitude", "longitude", "type", "dstar", "dmr_ids", "created_by")
+
+
+class CallSignPrefixSerializer(serializers.ModelSerializer):
+    country = serializers.StringRelatedField()
+
+    class Meta:
+        model = CallSignPrefix
+        fields = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "latitude", "longitude", "utc_offset", "type")
+        read_only = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "latitude", "longitude", "utc_offset", "type")
