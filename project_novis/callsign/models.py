@@ -99,12 +99,14 @@ class CallSign(BaseModel):
     owner = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(default=True)
     issued = models.DateField(null=True, blank=True)
-    dstar = models.BooleanField(default=False)
+    dstar = models.BooleanField("D-STAR", default=False)
 
     created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="created_by")
     comment = models.TextField(blank=True)
 
     objects = CallSignManager()
+
+    # TODO(elnappo) make sure a user can not change his name after validation
 
     def set_default_meta_data(self):
         call_sign = self.name
@@ -124,15 +126,51 @@ class CallSign(BaseModel):
     def get_absolute_url(self):
         return reverse('callsign:callsign-html-detail', args=[self.name])
 
+    @property
+    def eqsl_profile_url(self) -> str:
+        return f"https://www.eqsl.cc/Member.cfm?{ self.name }"
+
+    @property
+    def clublog_profile_url(self) -> str:
+        return f"https://secure.clublog.org/logsearch/{ self.name }"
+
+    @property
+    def dxheat_profile_url(self) -> str:
+        return f"https://dxheat.com/db/{ self.name }"
+
+    @property
+    def aprsfi_profile_url(self) -> str:
+        return f"https://aprs.fi/info/?call={ self.name }"
+
+    @property
+    def pskreporter_profile_url(self) -> str:
+        return f"http://www.pskreporter.de/table?call={ self.name }"
+
+    @property
+    def qrz_profile_url(self) -> str:
+        return f"https://www.qrz.com/db/{ self.name }"
+
+    @property
+    def hamqth_profile_url(self) -> str:
+        return f"https://www.hamqth.com/{ self.name }"
+
+    @property
+    def hamcall_profile_url(self) -> str:
+        return f"https://hamcall.net/call?callsign={ self.name }"
+
     def __str__(self) -> str:
         return self.name
 
 
 class DMRID(BaseModel):
     name = models.PositiveSmallIntegerField()
-    callsign = models.ForeignKey(CallSign, on_delete=models.SET_NULL, null=True, blank=True)
+    callsign = models.ForeignKey(CallSign, related_name='dmr_ids', on_delete=models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(default=True)
     issued = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def brandmeister_profile_url(self) -> str:
+        return f"https://brandmeister.network/index.php?page=profile&call={ self.callsign.name }"
 
     def __str__(self) -> str:
         return str(self.name)
@@ -167,12 +205,20 @@ class ClublogUser(BaseModel):
     clublog_last_upload = models.DateTimeField()
     clublog_oqrs = models.BooleanField()
 
+    @property
+    def profile_url(self) -> str:
+        return self.callsign.clublog_profile_url
+
     def __str__(self) -> str:
         return self.callsign.name
 
 
 class EQSLUser(BaseModel):
     callsign = models.OneToOneField(CallSign, on_delete=models.CASCADE)
+
+    @property
+    def profile_url(self) -> str:
+        return self.callsign.eqsl_profile_url
 
     def __str__(self) -> str:
         return self.callsign.name

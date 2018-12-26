@@ -27,6 +27,12 @@ class ESQLUserInline(admin.TabularInline):
     verbose_name_plural = "ESQL"
 
 
+class DMRIDInline(admin.TabularInline):
+    model = DMRID
+    verbose_name = "DMR ID"
+    verbose_name_plural = "DMR IDs"
+
+
 def set_call_sign_metadata(modeladmin, request, queryset):
     for callsign in queryset:
         callsign.set_default_meta_data()
@@ -58,7 +64,7 @@ class CallSignAdmin(BaseModelAdmin):
         }),
     )
     raw_id_fields = ("owner", "prefix", "created_by")
-    inlines = [LOTWUserInline, ClublogUserInline, ESQLUserInline]
+    inlines = [DMRIDInline, LOTWUserInline, ClublogUserInline, ESQLUserInline]
 
 
 @admin.register(DMRID)
@@ -66,6 +72,9 @@ class DMRIDAdmin(BaseModelAdmin):
     list_display = ("name", "callsign")
     list_display_links = ("name",)
     list_filter = ("active", "issued", "created", "modified")
+    search_fields = ("name", "callsign__name")
+    raw_id_fields = ("callsign",)
+    readonly_fields = ('brandmeister_profile_url', 'created', 'modified')
 
 
 @admin.register(Club)

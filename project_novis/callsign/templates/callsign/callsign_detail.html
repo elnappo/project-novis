@@ -69,8 +69,8 @@
                           <td>{{ object.type }}</td>
                         </tr>
                         <tr>
-                          <td>DMR-ID</td>
-                          <td>{% for entry in object.dmrid_set.all %}<a href="https://brandmeister.network/index.php?page=profile&call={{ object.name }}">{{entry.name}} </a>{% endfor %}</td>
+                          <td>DMR ID</td>
+                          <td>{% for entry in object.dmr_ids.all %}<a href="{{ entry.brandmeister_url }}" target="_blank" rel="noopener">{{entry.name}} </a>{% endfor %}</td>
                         </tr>
                         <tr>
                           <td>D-STAR</td>
@@ -121,31 +121,31 @@
                {% endif %}
                {% if object.eqsluser %}
                 <tr>
-                  <td><a href="https://www.eqsl.cc/Member.cfm?{{ object.name }}">eQSL</a></td>
+                  <td><a href="{{ entry.eqsl_profile_url }}" target="_blank" rel="noopener">eQSL</a></td>
                 </tr>
                {% endif %}
                {% if object.clubloguser %}
                 <tr>
-                  <td><a href="https://secure.clublog.org/logsearch/{{ object.name }}">Clublog</a></td>
+                  <td><a href="{{ entry.clublog_profile_url }}" target="_blank" rel="noopener">Clublog</a></td>
                 </tr>
                {% endif %}
                <tr>
-                  <td><a href="https://dxheat.com/db/{{ object.name }}">DXHeat</a></td>
+                  <td><a href="{{ entry.dxheat_profile_url }}" target="_blank" rel="noopener">DXHeat</a></td>
                 </tr>
                 <tr>
-                  <td><a href="https://aprs.fi/info/?call={{ object.name }}">APRS</a></td>
+                  <td><a href="{{ entry.aprsfi_profile_url }}" target="_blank" rel="noopener">APRS</a></td>
                 </tr>
                 <tr>
-                  <td><a href="http://www.pskreporter.de/table?call={{ object.name }}">PSKreporter</a></td>
+                  <td><a href="{{ entry.pskreporter_profile_url }}" target="_blank" rel="noopener">PSKreporter</a></td>
                 </tr>
                 <tr>
-                  <td><a href="https://www.qrz.com/db/{{ object.name }}">QRZ.com</a></td>
+                  <td><a href="{{ entry.qrz_profile_url }}" target="_blank" rel="noopener">QRZ.com</a></td>
                 </tr>
                <tr>
-                  <td><a href="https://www.hamqth.com/{{ object.name }}">HamQTH</a></td>
+                  <td><a href="{{ entry.hamqth_profile_url }}" target="_blank" rel="noopener">HamQTH</a></td>
                 </tr>
                <tr>
-                  <td><a href="https://hamcall.net/call?callsign={{ object.name }}">HamCall</a></td>
+                  <td><a href="{{ entry.hamcall_profile_url }}" target="_blank" rel="noopener">HamCall</a></td>
                 </tr>
               </tbody>
             </table>
