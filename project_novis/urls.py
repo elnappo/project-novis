@@ -10,7 +10,8 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('.well-known/change-password', RedirectView.as_view(pattern_name='account_change_password', permanent=False)),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    path('', include('callsign.urls')),
+    path('c/', include('callsign.urls')),
+    path("api/v1/", include("api.urls", namespace='v1')),
     path('', include('radius.urls')),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
