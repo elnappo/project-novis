@@ -202,7 +202,7 @@ class CallSign(BaseModel):
 
 
 class DMRID(BaseModel):
-    name = models.PositiveSmallIntegerField()
+    name = models.PositiveIntegerField()
     callsign = models.ForeignKey(CallSign, related_name='dmr_ids', on_delete=models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(default=True)
     issued = models.DateTimeField(null=True, blank=True)
