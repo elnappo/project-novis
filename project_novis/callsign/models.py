@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, QTHLocatorField
+from project_novis.callsign.utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, QTHLocatorField
 
 CALL_SIGN_TYPE_CHOICES = (
     ("personal", _("Personal")),

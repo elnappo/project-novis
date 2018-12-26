@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class CallsignConfig(AppConfig):
-    name = 'callsign'
+    name = 'project_novis.callsign'

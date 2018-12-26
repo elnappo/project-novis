@@ -13,8 +13,8 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
 from project_novis.callsign.models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix
-from project_novis.callsign.serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer, \
-    MinimalCallsignSerializer, DMRIDSerializer, CallSignPrefixSerializer
+from project_novis.callsign.serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer,\
+    DMRIDSerializer, CallSignPrefixSerializer
 
 
 class DefaultPagination(LimitOffsetPagination):
