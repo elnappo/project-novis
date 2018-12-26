@@ -119,6 +119,21 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
 LOGIN_REDIRECT_URL = "/"
 
+OAUTH2_PROVIDER = {
+    'SCOPES': {'user': 'Grants read/write access to user data',
+               'user:read': 'Grants access to read user data',
+               'user:email': 'Grants read access to a users email addresses'}
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    )
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
