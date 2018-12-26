@@ -53,7 +53,7 @@ class CallSignAdmin(BaseModelAdmin):
             'fields': (('name', 'prefix'), 'country')
         }),
         ('Details', {
-            'fields': ('type', 'owner', 'active', "issued", "comment")
+            'fields': ('type', 'owner', 'active', "issued", "dstar", "comment")
         }),
         ('Location', {
             'fields': ('cq_zone', 'itu_zone', 'itu_region', 'grid', 'latitude', 'longitude')
