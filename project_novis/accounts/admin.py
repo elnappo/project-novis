@@ -60,10 +60,10 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     search_fields = ('name', 'email')
 
-    readonly_fields = ('created', 'modified',)
+    readonly_fields = ('created', 'modified', 'validated')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal info'), {'fields': ('name',)}),
+        (_('Personal info'), {'fields': ('name', 'validated')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined', 'created', 'modified')}),
     )
@@ -82,7 +82,7 @@ class UserAdmin(BaseUserAdmin):
 class UserValidationAdmin(admin.ModelAdmin):
     list_display = ("user", "approved")
     list_display_links = ("user",)
-    list_filter = ("approved", "approved_at", "approved_from")
+    list_filter = ("approved", "approved_at", "approved_by")
 
     readonly_fields = ('created', 'modified')
-    raw_id_fields = ("user", "approved_from")
+    raw_id_fields = ("user", "approved_by")

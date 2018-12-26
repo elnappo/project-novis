@@ -44,12 +44,23 @@ class User(AbstractUser):
     email = models.EmailField(_('Email address'), unique=True, db_index=True)
     name = models.CharField(_('Name'), max_length=200, blank=True)
 
+    # bio?
+    # location?
+    # default callsign?
+
     created = models.DateTimeField(_("Created"), auto_now_add=True)
     modified = models.DateTimeField(_("Modified"), auto_now=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
     objects = UserManager()
+
+    @property
+    def validated(self) -> bool:
+        if hasattr(self, "uservalidation"):
+            return self.uservalidation.approved
+        else:
+            return False
 
     # TODO(elnappo) Move to app?
     def claim_call_sign(self, callsign):
@@ -64,7 +75,7 @@ class UserValidation(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
     approved_at = models.DateTimeField(null=True, blank=True)
-    approved_from = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="approved_from")
+    approved_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="approved_from")
     validation_comment = models.TextField(blank=True)
 
     created = models.DateTimeField(_("Created"), auto_now_add=True)
