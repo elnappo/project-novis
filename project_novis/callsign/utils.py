@@ -65,17 +65,3 @@ class QTHLocatorField(models.CharField):
         name, path, args, kwargs = super().deconstruct()
         del kwargs['max_length']
         return name, path, args, kwargs
-
-
-class CurrentUserDefault(object):
-    def __init__(self):
-        self._user = None
-
-    def set_context(self, serializer_field):
-        self._user = serializer_field.context['request'].user
-
-    def __call__(self):
-        return self._user
-
-    def __repr__(self):
-        return unicode_to_repr('%s()' % self.__class__.__name__)

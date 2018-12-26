@@ -1,19 +1,20 @@
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, UpdateView
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
-from django.http import Http404, HttpResponseForbidden, HttpResponseBadRequest
-from django.views.generic.detail import SingleObjectMixin
-from django.utils.translation import gettext as _
 from django.views import View
+from django.views.generic.detail import DetailView
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import CreateView, UpdateView
+from django_filters import rest_framework
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from rest_framework import viewsets, generics
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Country, DXCCEntry, CallSign
-from .serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer, MinimalCallsignSerializer
+from project_novis.callsign.models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix
+from project_novis.callsign.serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer, \
+    MinimalCallsignSerializer, DMRIDSerializer, CallSignPrefixSerializer
 
 
 class DefaultPagination(LimitOffsetPagination):
@@ -41,7 +42,7 @@ class CallSignCreate(LoginRequiredMixin, CreateView):
 class CallSignUpdate(LoginRequiredMixin, UpdateView):
     model = CallSign
     slug_field = "name"
-    fields = ["type", 'cq_zone', "itu_zone", "grid", "latitude", "longitude", "issued", "active"]
+    fields = ["type", 'cq_zone', "itu_zone", "grid", "latitude", "longitude", "issued", "active", "dstar"]
     template_name_suffix = '_update_form'
 
     #TODO(elnappo) Replace permission check with django-guardian?
@@ -83,12 +84,47 @@ class CountryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     lookup_field = "id"
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    search_fields = ('name',)
+
+
+class DMRIDFilter(rest_framework.FilterSet):
+    class Meta:
+        model = DMRID
+        fields = {
+            'active': ['exact'],
+            'callsign__name': ['exact'],
+            'issued': ['year', 'month', 'week', 'range', 'lt', 'gt'],
+        }
+
+
+class DMRIDViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = DMRID.objects.all()
+    serializer_class = DMRIDSerializer
+    pagination_class = DefaultPagination
+    lookup_field = "name"
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_class = DMRIDFilter
+    search_fields = ('name',)
 
 
 class DXCCEntryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = DXCCEntry.objects.all()
     serializer_class = DXCCEntrySerializer
     pagination_class = DefaultPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_fields = ('deleted',)
+    search_fields = ('name',)
+
+
+class CallSignPrefixViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = CallSignPrefix.objects.all()
+    serializer_class = CallSignPrefixSerializer
+    pagination_class = DefaultPagination
+    lookup_field = "name"
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_fields = ('country', 'cq_zone', 'itu_zone', 'itu_region', 'continent', 'type')
+    search_fields = ('name',)
 
 
 class CallSignViewSet(viewsets.ReadOnlyModelViewSet):
@@ -96,6 +132,9 @@ class CallSignViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CallSign.objects.all()
     serializer_class = CallsignSerializer
     pagination_class = DefaultPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_fields = ('active', 'issued')
+    search_fields = ('name',)
 
 
 class CallSignCreateAPIView(generics.CreateAPIView):
