@@ -22,10 +22,13 @@ ALLOWED_HOSTS = [
 INTERNAL_IPS = ['127.0.0.1']
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'localhost'
+        }
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
