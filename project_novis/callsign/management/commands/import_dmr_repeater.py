@@ -24,6 +24,7 @@ class Command(BaseCommand):
         if r.ok:
             repeaters = r.json()
             for repeater in repeaters:
+                # TODO validate name/call sign
                 counter += 1
                 call_sign_instance, new_call_sign = CallSign.objects.get_or_create(name=repeater["callsign"],
                                                                                    defaults={"name": repeater["callsign"],

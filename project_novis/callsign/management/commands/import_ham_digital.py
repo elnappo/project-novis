@@ -59,5 +59,5 @@ class Command(BaseCommand):
                     call_sign_instance.dstar = True
                 call_sign_instance.save()
 
-        self.stdout.write(self.style.SUCCESS('call sings: %d new call sings: %d errors: %d source: %s' % (
-            counter, new_counter, error, options['url'])))
+        self.stdout.write(self.style.SUCCESS('call sings: %d new call sings: %d errors: %d' % (
+            counter, new_counter, error)))
