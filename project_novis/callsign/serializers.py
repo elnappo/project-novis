@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 
-from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix
+from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix, Repeater, Transmitter
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -56,3 +56,22 @@ class CallSignPrefixSerializer(serializers.ModelSerializer):
         model = CallSignPrefix
         fields = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "latitude", "longitude", "utc_offset", "type")
         read_only = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "latitude", "longitude", "utc_offset", "type")
+
+
+class TransmitterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transmitter
+        fields = ("transmit_frequency", "offset", "receive_frequency", "colorcode", "ctcss", "mode", "pep", "echolink",
+                  "description")
+        read_only = ("transmit_frequency", "offset", "receive_frequency", "colorcode", "ctcss", "mode", "pep", "echolink",
+                     "description")
+
+
+class RepeaterSerializer(serializers.ModelSerializer):
+    callsign = serializers.StringRelatedField()
+    transmitters = TransmitterSerializer(many=True)
+
+    class Meta:
+        model = Repeater
+        fields = ("callsign", "active", "website", "altitude", "transmitters")
+        read_only = ("callsign", "active", "website", "altitude", "transmitters")

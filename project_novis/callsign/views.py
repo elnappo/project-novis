@@ -12,9 +12,9 @@ from rest_framework import viewsets, generics
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
-from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix
+from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix, Repeater
 from .serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer,\
-    DMRIDSerializer, CallSignPrefixSerializer
+    DMRIDSerializer, CallSignPrefixSerializer, RepeaterSerializer, TransmitterSerializer
 
 
 class DefaultPagination(LimitOffsetPagination):
@@ -148,6 +148,19 @@ class CallSignViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_fields = ('active', 'issued')
     search_fields = ('name',)
+
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class RepeaterViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Repeater.objects.all()
+    serializer_class = RepeaterSerializer
+    lookup_field = 'callsign__name'
+    pagination_class = DefaultPagination
+
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_fields = ('active',)
+    search_fields = ('callsign__name',)
 
     permission_classes = (IsAuthenticatedOrReadOnly,)
 

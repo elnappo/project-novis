@@ -332,5 +332,25 @@ class EQSLUser(BaseModel):
 class Repeater(BaseModel):
     callsign = models.ForeignKey(CallSign, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
-    website = models.URLField()
-    altitude = models.FloatField()
+    website = models.URLField(blank=True)
+    altitude = models.FloatField(blank=True, null=True)
+
+    def __str__(self) -> str:
+        return self.callsign.name
+
+
+class Transmitter(BaseModel):
+    repeater = models.ForeignKey(Repeater, on_delete=models.CASCADE, related_name='transmitters')
+    active = models.BooleanField(default=True)
+    transmit_frequency = models.FloatField()
+    offset = models.FloatField()
+    colorcode = models.SmallIntegerField(blank=True, null=True)
+    ctcss = models.FloatField("CTCSS", choices=CTCSS_CHOICES, blank=True, null=True, help_text="Continuous Tone Coded Squelch System")
+    mode = models.CharField(max_length=16, choices=MODE_CHOICES)
+    pep = models.FloatField(null=True, blank=True)
+    description = models.TextField(blank=True)
+    echolink = models.IntegerField(blank=True, null=True)
+
+    @property
+    def receive_frequency(self) -> float:
+        return self.transmit_frequency + self.offset

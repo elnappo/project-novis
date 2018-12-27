@@ -33,6 +33,16 @@ class DMRIDInline(admin.TabularInline):
     verbose_name_plural = "DMR IDs"
 
 
+class TransmitterInline(admin.TabularInline):
+    model = Transmitter
+    show_change_link = True
+    fields = ("transmit_frequency", "offset", "mode")
+    readonly_fields = ("transmit_frequency", "offset", "mode")
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
 def set_call_sign_metadata(modeladmin, request, queryset):
     for callsign in queryset:
         callsign.set_default_meta_data()
@@ -107,3 +117,25 @@ class CallsignPrefixAdmin(BaseModelAdmin):
     list_filter = ("country", "cq_zone", "itu_zone")
     ordering = ('name',)
     search_fields = ("name",)
+
+
+@admin.register(Repeater)
+class RepeaterAdmin(BaseModelAdmin):
+    list_display = ("callsign", "active")
+    list_display_links = ("callsign",)
+    list_filter = ("active",)
+    ordering = ('callsign',)
+    search_fields = ("callsign",)
+
+    raw_id_fields = ("callsign",)
+    inlines = [TransmitterInline,]
+
+
+@admin.register(Transmitter)
+class TransmitterAdmin(BaseModelAdmin):
+    list_display = ("repeater", "transmit_frequency", "offset")
+    list_display_links = ("repeater",)
+    list_filter = ("mode",)
+    ordering = ('repeater',)
+
+    raw_id_fields = ("repeater",)

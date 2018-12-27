@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * Call Sign
     * DMR ID
     * LOTW, Clublog, and EQSL User
+    * Repeater
 * DXCC to country mapping
 * Ham radio prefix mapping
 * Management commands to import data from various ham radio web services
@@ -26,5 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * Prefixes 
     * Call Signs
     * DMR IDs
+    * Repeaters
 * Swagger/OpenAPI 2.0 schemas
 * API endpoint for RADIUS authentication

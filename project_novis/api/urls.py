@@ -4,7 +4,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import routers
 from rest_framework.permissions import AllowAny
 
-from callsign.views import CountryViewSet, DXCCEntryViewSet, CallSignViewSet, UserCallSignViewSet, CallSignCreateAPIView, DMRIDViewSet, CallSignPrefixViewSet
+from callsign.views import CountryViewSet, DXCCEntryViewSet, CallSignViewSet, UserCallSignViewSet, CallSignCreateAPIView, DMRIDViewSet, CallSignPrefixViewSet, RepeaterViewSet
 from api.apps import ApiConfig
 from accounts.views import CurrentUserAPIView
 
@@ -30,6 +30,7 @@ router.register(r'dxcc', DXCCEntryViewSet)
 router.register(r'callsign', CallSignViewSet)
 router.register(r'dmr', DMRIDViewSet)
 router.register(r'prefix', CallSignPrefixViewSet)
+router.register(r'repeater', RepeaterViewSet)
 router.register(r'user/callsign', UserCallSignViewSet)
 
 urlpatterns = [
