@@ -9,6 +9,8 @@ django-cors-headers
 django-debug-toolbar
 django-oauth-toolkit
 djangorestframework
+djangorestframework-csv
+djangorestframework-gis
 django-filter
 drf-yasg
 flex

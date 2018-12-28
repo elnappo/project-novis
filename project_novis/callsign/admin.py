@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django import forms
 
 from .models import *
 
@@ -66,7 +65,7 @@ class CallSignAdmin(BaseModelAdmin):
             'fields': ('type', 'owner', 'active', "issued", "dstar", "comment")
         }),
         ('Location', {
-            'fields': ('cq_zone', 'itu_zone', 'itu_region', 'grid', 'latitude', 'longitude')
+            'fields': ('cq_zone', 'itu_zone', 'itu_region', 'grid', 'location')
         }),
         ('Advanced options', {
             'classes': ('collapse',),

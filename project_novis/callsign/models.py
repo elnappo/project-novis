@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.gis.db import models as gis_models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -93,6 +94,7 @@ MODE_CHOICES = (
     ("ssb", _("SSB")),
 )
 
+
 class BaseModel(models.Model):
     created = models.DateTimeField(_("Created"), auto_now_add=True)
     modified = models.DateTimeField(_("Modified"), auto_now=True)
@@ -126,43 +128,43 @@ class DXCCEntry(BaseModel):
         unique_together = ("name", "deleted")
 
 
-class Location(BaseModel):
-    # Use a custom field for this?
-    latitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
-    space = models.BooleanField(default=False)
-
-    @property
-    def cq_zone(self) -> int:
-        return 1
-
-    @property
-    def itu_zone(self) -> int:
-        return 1
-
-    @property
-    def itu_region(self) -> int:
-        return 1
-
-    @property
-    def grid(self) -> str:
-        return "JN"
-
-    @property
-    def continent(self) -> str:
-        return "Europe"
-
-    @property
-    def dxcc(self) -> int:
-        return 1
-
-    @property
-    def country(self) -> str:
-        return "Germany"
-
-    @property
-    def utc_offset(self) -> int:
-        return 1
+# class Location(BaseModel):
+#     # Use a custom field for this?
+#     latitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
+#     longitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
+#     space = models.BooleanField(default=False)
+#
+#     @property
+#     def cq_zone(self) -> int:
+#         return 1
+#
+#     @property
+#     def itu_zone(self) -> int:
+#         return 1
+#
+#     @property
+#     def itu_region(self) -> int:
+#         return 1
+#
+#     @property
+#     def grid(self) -> str:
+#         return "JN"
+#
+#     @property
+#     def continent(self) -> str:
+#         return "Europe"
+#
+#     @property
+#     def dxcc(self) -> int:
+#         return 1
+#
+#     @property
+#     def country(self) -> str:
+#         return "Germany"
+#
+#     @property
+#     def utc_offset(self) -> int:
+#         return 1
 
 
 class CallSignPrefix(BaseModel):
@@ -173,8 +175,7 @@ class CallSignPrefix(BaseModel):
     itu_zone = ITUZoneField(null=True, blank=True)
     itu_region = ITURegionField(null=True, blank=True)
     continent = models.CharField(choices=CONTINENT_CHOICES, max_length=2, blank=True)
-    latitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
+    location = gis_models.PointField(null=True, blank=True)
     utc_offset = models.FloatField(null=True, blank=True)
     type = models.CharField(choices=CALL_SIGN_TYPE_CHOICES, max_length=32, blank=True)
 
@@ -198,8 +199,7 @@ class CallSign(BaseModel):
     itu_zone = ITUZoneField("ITU zone", null=True, blank=True)
     itu_region = ITURegionField("ITU region", null=True, blank=True)
     grid = QTHLocatorField(blank=True)
-    latitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
+    location = gis_models.PointField(null=True, blank=True)
     type = models.CharField(choices=CALL_SIGN_TYPE_CHOICES, max_length=32, blank=True)
     owner = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(default=True)
@@ -222,8 +222,7 @@ class CallSign(BaseModel):
                 self.country = prefix.country
                 self.cq_zone = prefix.cq_zone
                 self.itu_zone = prefix.itu_zone
-                self.latitude = prefix.latitude
-                self.longitude = prefix.longitude
+                self.location = prefix.location
                 break
             else:
                 call_sign = call_sign[:-1]
@@ -332,8 +331,9 @@ class EQSLUser(BaseModel):
 class Repeater(BaseModel):
     callsign = models.ForeignKey(CallSign, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
-    website = models.URLField(blank=True)
+    website = models.URLField(max_length=400, blank=True)
     altitude = models.FloatField(blank=True, null=True)
+    location = gis_models.PointField(blank=True, null=True)
 
     def __str__(self) -> str:
         return self.callsign.name

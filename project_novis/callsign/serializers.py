@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_gis.serializers import GeoModelSerializer
 
 
 from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix, Repeater, Transmitter
@@ -67,11 +68,11 @@ class TransmitterSerializer(serializers.ModelSerializer):
                      "description")
 
 
-class RepeaterSerializer(serializers.ModelSerializer):
+class RepeaterSerializer(GeoModelSerializer):
     callsign = serializers.StringRelatedField()
     transmitters = TransmitterSerializer(many=True)
 
     class Meta:
         model = Repeater
-        fields = ("callsign", "active", "website", "altitude", "transmitters")
-        read_only = ("callsign", "active", "website", "altitude", "transmitters")
+        fields = ("callsign", "active", "website", "location", "altitude", "transmitters")
+        read_only = ("callsign", "active", "website", "location", "altitude", "transmitters")

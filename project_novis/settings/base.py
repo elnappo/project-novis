@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
 
     'accounts.apps.AccountsConfig',
     'allauth',
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_gis',
     'django_filters',
     'drf_yasg',
     'oauth2_provider',

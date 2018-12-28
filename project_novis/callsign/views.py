@@ -8,6 +8,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django_filters import rest_framework
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework_gis.filters import DistanceToPointFilter
 from rest_framework import viewsets, generics
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -158,9 +159,10 @@ class RepeaterViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'callsign__name'
     pagination_class = DefaultPagination
 
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, DistanceToPointFilter)
     filterset_fields = ('active',)
     search_fields = ('callsign__name',)
+    distance_filter_field = 'location'
 
     permission_classes = (IsAuthenticatedOrReadOnly,)
 

@@ -18,12 +18,13 @@ CORS_ORIGIN_ALLOW_ALL = False
 
 DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'ENGINE': 'django.contrib.gis.db.backends.postgis',
             'NAME': 'postgres',
             'USER': 'postgres',
             'PASSWORD': '',
         }
 }
+
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True

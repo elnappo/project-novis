@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
-from rest_framework.compat import unicode_to_repr
 
 
 class CallSignField(models.CharField):
