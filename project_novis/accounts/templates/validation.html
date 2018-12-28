@@ -1,0 +1,48 @@
+{% extends 'settings_base.html' %}
+{% load static i18n account bootstrap3 %}
+
+{% block title %}{% trans "Profile Validation" %}{% endblock %}
+
+{% block content_box %}
+    <div class="box box-solid">
+        <div class="box-header with-border">
+            {% if user_validation %}
+            <h3 class="box-title">{% trans "Name Validation Status" %}</h3>
+            {% else %}
+                <h3 class="box-title">{% trans "Request Name Validation" %}</h3>
+            {% endif %}
+        </div>
+        <div class="box-body">
+            {% if user_validation and not user_validation.approved %}
+                <p><b>Your name validation request is currently under review.</b></p>
+                <hr>
+                <p><b>Name to validate:</b> {{ user_validation.user.name }}</p>
+                <p><b>Submitted at:</b> {{ user_validation.created }} ({{ user_validation.created|timesince }} ago)</p>
+                <p><b>Your comment:</b><br>
+                    {{ user_validation.validation_comment }}
+                </p>
+            {% elif user_validation and user_validation.approved %}
+                <p><b>Validation complete!</b></p>
+                <p><b>Validated name:</b> {{ user_validation.user.name }}</p>
+            {% else %}
+                <form class="form" method="post">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    {% buttons %}
+                    <button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
+                    {% endbuttons %}
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="box box-solid">
+        <div class="box-header with-border">
+            <h3 class="box-title">{% trans "Call Sign Validation" %}</h3>
+        </div>
+        <div class="box-body">
+            <p>Coming soon!</p>
+        </div>
+    </div>
+    <!-- /.box-body -->
+{% endblock %}
