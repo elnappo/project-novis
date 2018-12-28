@@ -23,6 +23,7 @@
                     <li><a href="{% url "profile_change" %}">Profile</a></li>
                     <li><a href="{% url 'account_email' %}">Emails</a></li>
                     <li><a href="{% url 'account_change_password' %}">Change Password</a></li>
+                    <li><a href="{% url 'profile_validation' %}">Validation</a></li>
                     <li><a href="{% url "oauth2_provider:authorized-token-list" %}">Applications</a></li>
                     <li><a href="{% url "oauth2_provider:list" %}">OAuth Apps</a></li>
                   </ul>
@@ -31,24 +32,12 @@
             </div>
         </div>
         <div class="col-md-9">
+                {% block content_box %}
                 <div class="box box-solid">
                     {% block settings_content %}
-                    <div class="box-header with-border">
-                      <h3 class="box-title">Applications</h3>
-                    </div>
-                    <div class="box-body no-padding">
-                            <table class="table table-condensed">
-                                <tbody>
-                                {% for application in applications %}
-                                    <tr>
-                                        <td><a href="{{ application.get_absolute_url }}">{{ application.name }}</a></td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody></table>
-                          </div>
-                    <!-- /.box-body -->
                     {% endblock %}
                 </div>
+                {% endblock %}
             </div>
     </div>
 {% endblock %}

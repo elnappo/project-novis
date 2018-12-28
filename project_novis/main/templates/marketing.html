@@ -26,8 +26,8 @@ This site is in early beta stage, use with caution and without warranty. Databas
 </div>
 
   <div class="jumbotron">
-    <h1>Free & open ham radio web services</h1>
-    <p class="lead">We want to establish a open platform for ham radio related web services everyone can participate.</p>
+    <h1>Free & open amateur radio web services</h1>
+    <p class="lead">We want to establish a open platform for amateur radio related web services everyone can participate.</p>
     {% if not user.is_authenticated %}
     <p><a class="btn btn-lg btn-success" href="{% url 'account_signup' %}" role="button">Get started today</a></p>
     {% endif %}
@@ -36,12 +36,12 @@ This site is in early beta stage, use with caution and without warranty. Databas
   <div class="row">
     <div class="col-lg-4">
       <h2>OAuth Provider</h2>
-      <p>Use project novis as a <a href="https://en.wikipedia.org/wiki/OAuth">OAuth</a> provider to authenticate users to your ham radio related service. As we are validating the ownership of call sings you can make sure that a user owns a specific call sign. No more call sign validations required on different sites!</p>
+      <p>Use project novis as a <a href="https://en.wikipedia.org/wiki/OAuth">OAuth</a> provider to authenticate users to your amateur radio related service. As we are validating the ownership of call sings you can make sure that a user owns a specific call sign. No more call sign validations required on different sites!</p>
       <p><a class="btn btn-primary" href="{% url "oauth2_provider:list" %}" role="button">View details »</a></p>
     </div>
     <div class="col-lg-4">
       <h2>API</h2>
-      <p>We provide an open and modern REST API for all kinds of ham radio applications. As our APIs are based on Swagger/OpenAPI it can easily be integrated in your application with the help of auto-generated code. GraphQL support is planed for the near future.</p>
+      <p>We provide an open and modern REST API for all kinds of amateur radio applications. As our APIs are based on Swagger/OpenAPI it can easily be integrated in your application with the help of auto-generated code. GraphQL support is planed for the near future.</p>
       <p><a class="btn btn-primary" href="{% url "api:schema-swagger-ui" %}" role="button">View details »</a></p>
    </div>
     <div class="col-lg-4">
@@ -53,14 +53,13 @@ This site is in early beta stage, use with caution and without warranty. Databas
   <div class="row">
     <div class="col-lg-4">
       <h2>Open-Source</h2>
-      <p>project novis is free and open-source software. We believe in the open ham radio spirit and want to provide an open platform for various tech related ham radio services.</p>
+      <p>project novis is free and open-source software. We believe in the open amateur radio spirit and want to provide an open platform for various tech related ham radio services.</p>
       <p><a class="btn btn-primary" href="https://github.com/elnappo/project-novis" role="button">View details »</a></p>
     </div>
     <div class="col-lg-4">
-      <h2>Ham Radio Database</h2>
-      <p>Currently limited to call sings but project novis should include many more ham radio related data in the future e.g. Repeaters, DMR IDs, and more. All available from a simple and modern API.</p>
+      <h2>Amateur Radio Database</h2>
+      <p>Currently limited to call sings but project novis should include many more amateur radio related data in the future e.g. Repeaters, DMR IDs, and more. All available from a simple and modern API.</p>
       <p><a class="btn btn-primary" href="{% url "api:schema-swagger-ui" %}" role="button">View details »</a></p>
     </div>
   </div>
-</section>
 {% endblock %}

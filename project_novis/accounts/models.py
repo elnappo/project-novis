@@ -75,7 +75,7 @@ class UserValidation(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
     approved_at = models.DateTimeField(null=True, blank=True)
-    approved_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="approved_from")
+    approved_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="approved_from", blank=True, null=True)
     validation_comment = models.TextField(blank=True)
 
     created = models.DateTimeField(_("Created"), auto_now_add=True)
