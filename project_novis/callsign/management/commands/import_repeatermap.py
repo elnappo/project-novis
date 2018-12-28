@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import GEOSGeometry
 
-from ...models import CallSign, Repeater
+from ...models import CallSign, Repeater, Transmitter
 
 
 class Command(BaseCommand):
@@ -46,8 +46,17 @@ class Command(BaseCommand):
                                                                                  defaults={"callsign": call_sign_instance,
                                                                                            "website": repeater["url"],
                                                                                            "location": GEOSGeometry('POINT(%f %f)' % (repeater["lon"], repeater["lat"]))})
+                        transmitter_instance, new_transmitter = Transmitter.objects.get_or_create(
+                            repeater=repeater_instance, transmit_frequency=repeater["tx"],
+                            defaults={"repeater": repeater_instance,
+                                      "transmit_frequency": repeater["tx"],
+                                      "offset": repeater["rx"] - repeater["tx"],
+                                      "mode": repeater["mode"],
+                                      "description": repeater["remarks"]})
+
                     except:
                         self.stderr.write(repeater)
+
 
         self.stdout.write(self.style.SUCCESS('call sings: %d new call sings: %d updated call sings: %d errors: %d source: %s' % (
             counter, new_callsign_counter, update_callsign_counter, error, options['url'])))

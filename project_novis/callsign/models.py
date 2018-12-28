@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from django.contrib.gis.db import models as gis_models
 from django.utils.translation import ugettext_lazy as _
@@ -342,8 +344,8 @@ class Repeater(BaseModel):
 class Transmitter(BaseModel):
     repeater = models.ForeignKey(Repeater, on_delete=models.CASCADE, related_name='transmitters')
     active = models.BooleanField(default=True)
-    transmit_frequency = models.FloatField()
-    offset = models.FloatField()
+    transmit_frequency = models.DecimalField(max_digits=18, decimal_places=6)
+    offset = models.DecimalField(max_digits=18, decimal_places=6)
     colorcode = models.SmallIntegerField(blank=True, null=True)
     ctcss = models.FloatField("CTCSS", choices=CTCSS_CHOICES, blank=True, null=True, help_text="Continuous Tone Coded Squelch System")
     mode = models.CharField(max_length=16, choices=MODE_CHOICES)
@@ -352,5 +354,5 @@ class Transmitter(BaseModel):
     echolink = models.IntegerField(blank=True, null=True)
 
     @property
-    def receive_frequency(self) -> float:
+    def receive_frequency(self) -> Decimal:
         return self.transmit_frequency + self.offset

@@ -47,7 +47,7 @@ class CallsignSerializer(serializers.ModelSerializer):
     class Meta:
         model = CallSign
         fields = ("name", "prefix", "country", "dxcc", "cq_zone", "itu_zone",
-                  "itu_region", "latitude", "longitude", "type", "dstar", "dmr_ids", "created_by")
+                  "itu_region", "location", "type", "dstar", "dmr_ids", "created_by")
 
 
 class CallSignPrefixSerializer(serializers.ModelSerializer):
@@ -55,11 +55,13 @@ class CallSignPrefixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CallSignPrefix
-        fields = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "latitude", "longitude", "utc_offset", "type")
-        read_only = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "latitude", "longitude", "utc_offset", "type")
+        fields = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "location", "utc_offset", "type")
+        read_only = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "location", "utc_offset", "type")
 
 
 class TransmitterSerializer(serializers.ModelSerializer):
+    receive_frequency = serializers.DecimalField(max_digits=18, decimal_places=6, read_only=True)
+
     class Meta:
         model = Transmitter
         fields = ("transmit_frequency", "offset", "receive_frequency", "colorcode", "ctcss", "mode", "pep", "echolink",
