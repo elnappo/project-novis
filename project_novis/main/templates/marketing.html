@@ -22,7 +22,7 @@
 <div class="alert alert-warning alert-dismissible">
 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 <h4><i class="icon fa fa-warning"></i> Beta</h4>
-This site is in early beta stage, use with caution and without warranty. Database could be dropped without further notice!
+This site is in beta stage, use with caution and without warranty. Database could be dropped without further notice!
 </div>
 
   <div class="jumbotron">
@@ -36,29 +36,38 @@ This site is in early beta stage, use with caution and without warranty. Databas
   <div class="row">
     <div class="col-lg-4">
       <h2>OAuth Provider</h2>
-      <p>Use project novis as a <a href="https://en.wikipedia.org/wiki/OAuth">OAuth</a> provider to authenticate users to your amateur radio related service. As we are validating the ownership of call sings you can make sure that a user owns a specific call sign. No more call sign validations required on different sites!</p>
+      <p>Use project novis as a <a href="https://en.wikipedia.org/wiki/OAuth">OAuth</a> provider to authenticate users
+          to your amateur radio related service. As we are validating the ownership of call sings you can make sure that
+          a user owns a specific call sign. No more call sign validations required on different sites!</p>
       <p><a class="btn btn-primary" href="{% url "oauth2_provider:list" %}" role="button">View details »</a></p>
     </div>
     <div class="col-lg-4">
       <h2>API</h2>
-      <p>We provide an open and modern REST API for all kinds of amateur radio applications. As our APIs are based on Swagger/OpenAPI it can easily be integrated in your application with the help of auto-generated code. GraphQL support is planed for the near future.</p>
+      <p>We provide an open and modern REST API for all kinds of amateur radio applications. As our APIs are based on
+          Swagger/OpenAPI it can easily be integrated in your application with the help of auto-generated code. GraphQL
+          support is planed for the near future.</p>
       <p><a class="btn btn-primary" href="{% url "api:schema-swagger-ui" %}" role="button">View details »</a></p>
    </div>
     <div class="col-lg-4">
       <h2>Hamnet Authentication</h2>
-      <p>At the moment authentification to Hamnet access points is a mess. We try to solve is problem and make the hamnet more secure by restricted the access to access points to our users which validated their call sign. Therefore we provide a <a href="https://en.wikipedia.org/wiki/RADIUS">RADIUS</a> Server which can be used by your access point with WPA2 Enterprise.</p>
+      <p>At the moment authentication to Hamnet access points is suboptimal. We try to solve this problem and make
+          hamnet more secure by restricted access to to users which validated their call sign.
+          Therefore we provide a <a href="https://en.wikipedia.org/wiki/RADIUS">RADIUS</a> server which can be used by
+          your access point with WPA2 Enterprise.</p>
       <p><a class="btn btn-primary" href="#" role="button">View details »</a></p>
     </div>
   </div>
   <div class="row">
     <div class="col-lg-4">
       <h2>Open-Source</h2>
-      <p>project novis is free and open-source software. We believe in the open amateur radio spirit and want to provide an open platform for various tech related ham radio services.</p>
+      <p>project novis is free and open-source software. We believe in the open amateur radio spirit and want to
+          provide an open platform for various tech related ham radio services. Contributors wanted!</p>
       <p><a class="btn btn-primary" href="https://github.com/elnappo/project-novis" role="button">View details »</a></p>
     </div>
     <div class="col-lg-4">
       <h2>Amateur Radio Database</h2>
-      <p>Currently limited to call sings but project novis should include many more amateur radio related data in the future e.g. Repeaters, DMR IDs, and more. All available from a simple and modern API.</p>
+      <p>We try to build a database for many different use cases. Currently this includes call sings, prefixes, DXCC
+          entries, repeater and DMR IDs. All available from a simple and modern API.</p>
       <p><a class="btn btn-primary" href="{% url "api:schema-swagger-ui" %}" role="button">View details »</a></p>
     </div>
   </div>

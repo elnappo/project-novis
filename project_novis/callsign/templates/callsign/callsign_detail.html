@@ -94,7 +94,7 @@
                 <!-- /.box-body -->
             </div>
         </div>
-        {% if object.latitude and object.longitude %}
+        {% if object.location %}
         <div class="col-md-4">
             <div class="box box-info">
                 <div class="box-header with-border">
@@ -104,7 +104,7 @@
                     <div id="map" style="width: auto; height: 300px;"></div>
                     <script>
                       function initMap() {
-                        var location = {lat: {{ object.latitude}}, lng: {{ object.longitude}} };
+                        var location = {lat: {{ object.location.y }}, lng: {{ object.location.x }} };
                         var map = new google.maps.Map(document.getElementById('map'), {zoom: 7, center: location});
                         var marker = new google.maps.Marker({position: location, map: map});
                       }

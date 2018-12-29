@@ -43,7 +43,7 @@ class CallSignCreate(LoginRequiredMixin, CreateView):
 class CallSignUpdate(LoginRequiredMixin, UpdateView):
     model = CallSign
     slug_field = "name"
-    fields = ["type", 'cq_zone', "itu_zone", "grid", "latitude", "longitude", "issued", "active", "dstar"]
+    fields = ["type", 'cq_zone', "itu_zone", "grid", "dstar"]
     template_name_suffix = '_update_form'
 
     #TODO(elnappo) Replace permission check with django-guardian?
