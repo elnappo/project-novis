@@ -84,5 +84,11 @@ class UserValidationAdmin(admin.ModelAdmin):
     list_display_links = ("user",)
     list_filter = ("approved", "approved_at", "approved_by")
 
+    fieldsets = (
+        (_('Submitted data'), {'fields': ('user', 'validation_comment', 'validation_file')}),
+        (_('Approves'), {'fields': ('approved', 'approved_at', 'approved_by')}),
+        (_('Advanced options'), {'fields': ('created', 'modified')}),
+    )
+
     readonly_fields = ('created', 'modified')
     raw_id_fields = ("user", "approved_by")

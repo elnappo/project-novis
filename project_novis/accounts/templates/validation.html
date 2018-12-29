@@ -24,6 +24,8 @@
             {% elif user_validation and user_validation.approved %}
                 <p><b>Validation complete!</b></p>
                 <p><b>Validated name:</b> {{ user_validation.user.name }}</p>
+            {% elif not user.name %}
+                <p><b>Name missing!</b> Please set your name <a href="{% url 'profile_change' %}">here</a>.</p>
             {% else %}
                 <form class="form" method="post">
                     {% csrf_token %}
