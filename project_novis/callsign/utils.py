@@ -64,3 +64,20 @@ class QTHLocatorField(models.CharField):
         name, path, args, kwargs = super().deconstruct()
         del kwargs['max_length']
         return name, path, args, kwargs
+
+
+def generate_aprs_passcode(callsign: str) -> int:
+    """
+    Generate APRS passcode from callsing based on https://github.com/magicbug/PHP-APRS-Passcode/blob/master/aprs_func.php
+    """
+
+    hash_value = 0x73e2
+    i = 0
+    length = len(callsign)
+
+    while i < length:
+        hash_value ^= ord(callsign[i:i+1]) << 8
+        hash_value ^= ord(callsign[i+1:i+1+1])
+        i += 2
+
+    return hash_value & 0x7fff

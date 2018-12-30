@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, QTHLocatorField
+from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, QTHLocatorField, generate_aprs_passcode
 
 CALL_SIGN_TYPE_CHOICES = (
     ("beacon", _("Beacon")),
@@ -263,6 +263,10 @@ class CallSign(BaseModel):
     @property
     def hamcall_profile_url(self) -> str:
         return f"https://hamcall.net/call?callsign={ self.name }"
+
+    @property
+    def aprs_passcode(self) -> int:
+        return generate_aprs_passcode(self.name)
 
     def __str__(self) -> str:
         return self.name
