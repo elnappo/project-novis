@@ -78,3 +78,13 @@ class RepeaterSerializer(GeoModelSerializer):
         model = Repeater
         fields = ("callsign", "active", "website", "location", "altitude", "transmitters")
         read_only = ("callsign", "active", "website", "location", "altitude", "transmitters")
+
+
+class APRSPasscodeSerializer(serializers.ModelSerializer):
+    name = serializers.StringRelatedField(read_only=True)
+    aprs_passcode = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = CallSign
+        fields = ("name", "aprs_passcode")
+        read_only = ("name", "aprs_passcode")

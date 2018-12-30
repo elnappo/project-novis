@@ -15,7 +15,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 
 from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix, Repeater
 from .serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer,\
-    DMRIDSerializer, CallSignPrefixSerializer, RepeaterSerializer, TransmitterSerializer
+    DMRIDSerializer, CallSignPrefixSerializer, RepeaterSerializer, APRSPasscodeSerializer
 
 
 class DefaultPagination(LimitOffsetPagination):
@@ -178,6 +178,18 @@ class UserCallSignViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'name'
     queryset = CallSign.objects.all()
     serializer_class = CallsignSerializer
+
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        return user.callsign_set.all()
+
+
+class APRSPasscodeView(generics.RetrieveAPIView):
+    lookup_field = 'name'
+    queryset = CallSign.objects.all()
+    serializer_class = APRSPasscodeSerializer
 
     permission_classes = (IsAuthenticated,)
 

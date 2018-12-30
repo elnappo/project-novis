@@ -4,7 +4,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import routers
 from rest_framework.permissions import AllowAny
 
-from callsign.views import CountryViewSet, DXCCEntryViewSet, CallSignViewSet, UserCallSignViewSet, CallSignCreateAPIView, DMRIDViewSet, CallSignPrefixViewSet, RepeaterViewSet
+from callsign.views import CountryViewSet, DXCCEntryViewSet, CallSignViewSet, UserCallSignViewSet, CallSignCreateAPIView, DMRIDViewSet, CallSignPrefixViewSet, RepeaterViewSet, APRSPasscodeView
 from api.apps import ApiConfig
 from accounts.views import CurrentUserAPIView
 
@@ -36,7 +36,7 @@ router.register(r'user/callsign', UserCallSignViewSet)
 urlpatterns = [
     path('callsign', CallSignCreateAPIView.as_view(), name="callsign-create"),
     path('user', CurrentUserAPIView.as_view(), name="userinfo-retrieve"),
-
+    path('user/callsign/<str:name>/aprs_passcode', APRSPasscodeView.as_view(), name="aprs-passcode"),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=None), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=None), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=None), name='schema-redoc'),
