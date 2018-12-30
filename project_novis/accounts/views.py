@@ -51,7 +51,7 @@ class CurrentUserAPIView(generics.RetrieveUpdateAPIView):
 class UserValidationView(LoginRequiredMixin, CreateView):
     template_name = "validation.html"
     model = UserValidation
-    fields = ['validation_comment', 'validation_file']
+    fields = ['validation_file', 'validation_comment']
     success_url = reverse_lazy('profile_validation')
 
     def get_context_data(self, **kwargs):

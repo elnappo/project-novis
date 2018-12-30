@@ -98,7 +98,7 @@ class DMRIDFilter(rest_framework.FilterSet):
         fields = {
             'active': ['exact'],
             'callsign__name': ['exact'],
-            'issued': ['year', 'month', 'week', 'range', 'lt', 'gt'],
+            #'issued': ['year', 'month', 'week', 'range', 'lt', 'gt'],
         }
 
 
@@ -146,9 +146,10 @@ class CallSignViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'name'
     pagination_class = DefaultPagination
 
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, DistanceToPointFilter)
     filterset_fields = ('active', 'issued')
     search_fields = ('name',)
+    distance_filter_field = 'location'
 
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
