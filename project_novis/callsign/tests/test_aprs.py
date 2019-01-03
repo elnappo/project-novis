@@ -1,9 +1,9 @@
-from django.test import TestCase
+from django.test import TestCase, SimpleTestCase
 
-from .utils import generate_aprs_passcode
+from ..utils import generate_aprs_passcode
 
 
-class APRSPasscodeTestCase(TestCase):
+class APRSPasscodeTestCase(SimpleTestCase):
     def setUp(self):
         self.known_valid_passcodes = (
             ("KI4SWY", 23457),

@@ -1,11 +1,16 @@
+import re
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 
+CALLSIGN_REGEX = r"^([a-zA-Z]+[0-9][a-zA-Z]+)$"
+CALLSIGN_REGEX_COMPILE = re.compile(CALLSIGN_REGEX)
+CALLSIGN_EXTRACT_REGEX_COMPILE = re.compile(r"([A-Z0-9]+[/_-]{1})?([a-zA-Z]+[0-9][a-zA-Z]+)([/-_]{1}[A-Z0-9]+)?")
+
 
 class CallSignField(models.CharField):
     # TODO(elnappo) enhance regex validation
-    default_validators = [RegexValidator(regex=r"^(\w*)$")]
+    default_validators = [RegexValidator(regex=CALLSIGN_REGEX)]
     description = _("Ham radio call sign field")
 
     def __init__(self, *args, **kwargs):
@@ -64,6 +69,20 @@ class QTHLocatorField(models.CharField):
         name, path, args, kwargs = super().deconstruct()
         del kwargs['max_length']
         return name, path, args, kwargs
+
+
+def extract_callsign(value: str) -> str:
+    value = value.replace(" ", "").upper()
+
+    if CALLSIGN_REGEX_COMPILE.search(value):
+        return value
+
+    callsign_groups = CALLSIGN_EXTRACT_REGEX_COMPILE.search(value)
+
+    if callsign_groups:
+        return callsign_groups.group(2)
+
+    return ""
 
 
 def generate_aprs_passcode(callsign: str) -> int:

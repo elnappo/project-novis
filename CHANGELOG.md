@@ -30,3 +30,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * Repeaters
 * Swagger/OpenAPI 2.0 schemas
 * API endpoint for RADIUS authentication
+* APRS passcode API endpoint
