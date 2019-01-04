@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 
-CALLSIGN_REGEX = r"^([a-zA-Z]+[0-9][a-zA-Z]+)$"
+CALLSIGN_REGEX = r"^([a-zA-Z0-9]+[0-9][a-zA-Z0-9]+)$"
 CALLSIGN_REGEX_COMPILE = re.compile(CALLSIGN_REGEX)
 CALLSIGN_EXTRACT_REGEX_COMPILE = re.compile(r"([A-Z0-9]+[/_-]{1})?([a-zA-Z]+[0-9][a-zA-Z]+)([/-_]{1}[A-Z0-9]+)?")
 
