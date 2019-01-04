@@ -50,7 +50,7 @@ set_call_sign_metadata.short_description = "Set default metadata"
 
 
 @admin.register(CallSign)
-class CallSignAdmin(BaseModelAdmin):
+class CallsignAdmin(BaseModelAdmin):
     list_display = ("name", "country", "owner", "type")
     list_display_links = ("name",)
     list_filter = ("type", "issued", "created", "modified")
@@ -69,7 +69,7 @@ class CallSignAdmin(BaseModelAdmin):
         }),
         ('Advanced options', {
             'classes': ('collapse',),
-            'fields': ('created', 'modified', "created_by")
+            'fields': ('internal_comment', 'source', 'created', 'modified', "created_by")
         }),
     )
     raw_id_fields = ("owner", "prefix", "created_by")
@@ -137,4 +137,21 @@ class TransmitterAdmin(BaseModelAdmin):
     list_filter = ("mode",)
     ordering = ('repeater',)
 
+    fieldsets = (
+        ('General', {
+            'fields': ('repeater', 'active', 'transmit_frequency', 'offset', 'receive_frequency', 'mode', 'pep', 'description')
+        }),
+        ('Analog', {
+            'fields': ('ctcss', 'echolink')
+        }),
+        ('Digital', {
+            'fields': ('dmr_id', 'brandmeister_repeater_url', 'colorcode')
+        }),
+        ('Advanced options', {
+            'classes': ('collapse',),
+            'fields': ('source', 'created', 'modified', "created_by")
+        }),
+    )
+
+    readonly_fields = ('receive_frequency', 'brandmeister_repeater_url', 'created', 'modified')
     raw_id_fields = ("repeater",)

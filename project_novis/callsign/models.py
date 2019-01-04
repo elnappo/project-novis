@@ -207,10 +207,11 @@ class CallSign(BaseModel):
     active = models.BooleanField(default=True)
     issued = models.DateField(null=True, blank=True)
     dstar = models.BooleanField("D-STAR", default=False)
-
-    created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="created_by")
     comment = models.TextField(blank=True)
 
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="callsigns")
+    internal_comment = models.TextField(blank=True)
+    source = models.CharField(max_length=256, blank=True)
     objects = CallSignManager()
 
     # TODO(elnappo) make sure a user can not change his name after validation
@@ -295,6 +296,7 @@ class Club(BaseModel):
     owner = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     members = models.ManyToManyField(get_user_model(), related_name="members")
     website = models.URLField(blank=True)
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="clubs")
 
     def __str__(self) -> str:
         return self.callsign.name
@@ -310,10 +312,10 @@ class LOTWUser(BaseModel):
 
 class ClublogUser(BaseModel):
     callsign = models.OneToOneField(CallSign, on_delete=models.CASCADE)
-    clublog_first_qso = models.DateTimeField()
-    clublog_last_qso = models.DateTimeField()
-    clublog_last_upload = models.DateTimeField()
-    clublog_oqrs = models.BooleanField()
+    clublog_first_qso = models.DateTimeField(blank=True, null=True)
+    clublog_last_qso = models.DateTimeField(blank=True, null=True)
+    clublog_last_upload = models.DateTimeField(blank=True, null=True)
+    clublog_oqrs = models.NullBooleanField(blank=True, null=True)
 
     @property
     def profile_url(self) -> str:
@@ -337,9 +339,13 @@ class EQSLUser(BaseModel):
 class Repeater(BaseModel):
     callsign = models.ForeignKey(CallSign, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
-    website = models.URLField(max_length=400, blank=True)
+    website = models.URLField(max_length=400, blank=True, null=True)
     altitude = models.FloatField(blank=True, null=True)
     location = gis_models.PointField(blank=True, null=True)
+    description = models.TextField(blank=True)
+
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="repeaters")
+    source = models.CharField(max_length=256, blank=True)
 
     def __str__(self) -> str:
         return self.callsign.name
@@ -350,13 +356,32 @@ class Transmitter(BaseModel):
     active = models.BooleanField(default=True)
     transmit_frequency = models.DecimalField(max_digits=18, decimal_places=6)
     offset = models.DecimalField(max_digits=18, decimal_places=6)
-    colorcode = models.SmallIntegerField(blank=True, null=True)
-    ctcss = models.FloatField("CTCSS", choices=CTCSS_CHOICES, blank=True, null=True, help_text="Continuous Tone Coded Squelch System")
     mode = models.CharField(max_length=16, choices=MODE_CHOICES)
-    pep = models.FloatField(null=True, blank=True)
-    description = models.TextField(blank=True)
+    pep = models.FloatField("PEP", null=True, blank=True, help_text="Peak Envelope Power")
+    description = models.TextField(blank=True, null=True)
+    hardware = models.CharField(max_length=256, blank=True)
+
+    # Analog
+    ctcss = models.FloatField("CTCSS", choices=CTCSS_CHOICES, blank=True, null=True, help_text="Continuous Tone Coded Squelch System")
     echolink = models.IntegerField(blank=True, null=True)
+
+    # Digital
+    dmr_id = models.ForeignKey(DMRID, on_delete=models.PROTECT, related_name="transmitters", verbose_name="DMR ID", blank=True, null=True)
+    colorcode = models.SmallIntegerField(blank=True, null=True)
+
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="transmitters")
+    source = models.CharField(max_length=256, blank=True)
 
     @property
     def receive_frequency(self) -> Decimal:
         return self.transmit_frequency + self.offset
+
+    @property
+    def brandmeister_repeater_url(self) -> str:
+        if self.dmr_id:
+            return f"https://brandmeister.network/index.php?page=repeater&id={ self.dmr_id.name }"
+        else:
+            return "#"
+
+    def __str__(self) -> str:
+        return f"{ self.repeater.callsign.name } at { self.transmit_frequency } MHz"
