@@ -17,6 +17,7 @@ flex
 gunicorn
 psycopg2
 pylint
+PyPDF2
 python-dateutil
 raven
 rope
