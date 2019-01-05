@@ -10,11 +10,11 @@
 {% block body %}
 <div class="register-box">
     <div class="register-logo">
-      <a href="../../index2.html">Project <b>novis</b></a>
+      <a href="{% url 'index' %}">Project <b>novis</b></a>
     </div>
 
     <div class="register-box-body">
-      <p class="login-box-msg">{% trans "Register a new membership" %}</p>
+      <p class="login-box-msg"><strong>{% trans "Register a new membership" %}</strong></p>
 
       <form action="{% url 'account_signup' %}" method="post" id="signup_form">
         {% csrf_token %}

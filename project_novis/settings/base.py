@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_yasg',
     'oauth2_provider',
+    'crispy_forms',
     'avatar',
 
     'main.apps.MainConfig',
@@ -140,6 +141,8 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     )
 }
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/

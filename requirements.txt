@@ -7,6 +7,7 @@ django-allauth
 django-avatar
 django-bootstrap3
 django-cors-headers
+django-crispy-forms
 django-debug-toolbar
 django-oauth-toolkit
 djangorestframework
