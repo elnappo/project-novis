@@ -16,6 +16,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix, Repeater
 from .serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer,\
     DMRIDSerializer, CallSignPrefixSerializer, RepeaterSerializer, APRSPasscodeSerializer
+from .forms import CallsignForm
 
 
 class DefaultPagination(LimitOffsetPagination):
@@ -43,7 +44,7 @@ class CallSignCreate(LoginRequiredMixin, CreateView):
 class CallSignUpdate(LoginRequiredMixin, UpdateView):
     model = CallSign
     slug_field = "name"
-    fields = ["type", 'cq_zone', "itu_zone", "grid", "dstar"]
+    form_class = CallsignForm
     template_name_suffix = '_update_form'
 
     #TODO(elnappo) Replace permission check with django-guardian?
