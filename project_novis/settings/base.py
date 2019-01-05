@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_yasg',
     'oauth2_provider',
-    'bootstrap3',
+    'avatar',
 
     'main.apps.MainConfig',
     'callsign.apps.CallsignConfig',
