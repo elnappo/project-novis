@@ -33,5 +33,5 @@ class HomePageView(TemplateView):
 class RobotsView(View):
     def get(self, request) -> HttpResponse:
         return HttpResponse(
-            "User-agent: *\nDisallow: /media/\nDisallow: /static/\nSitemap: https://www.project-novis.org/sitemap.xml",
+            "User-agent: *\nDisallow: /admin/\nSitemap: https://www.project-novis.org/sitemap.xml",
             content_type="text/plain")

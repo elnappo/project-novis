@@ -3,12 +3,21 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
+from django.contrib.sitemaps.views import sitemap
+from django.contrib.flatpages.sitemaps import FlatPageSitemap
 
+from main.sitemaps import StaticViewSitemap
+
+sitemaps = {
+    'static': StaticViewSitemap,
+    'flatpages': FlatPageSitemap
+}
 
 urlpatterns = [
     path('', include('main.urls')),
     path('accounts/', include('accounts.urls')),
     path('.well-known/change-password', RedirectView.as_view(pattern_name='account_change_password', permanent=False)),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('c/', include('callsign.urls')),
     path("api/v1/", include("api.urls", namespace='v1')),

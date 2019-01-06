@@ -1,0 +1,18 @@
+{% extends 'index.html' %}
+{% load static i18n account crispy_forms_tags %}
+
+{% block title %}{{ flatpage.title }}{% endblock %}
+
+{% block content_header %}
+<h1>
+    {{ flatpage.title }}
+</h1>
+<ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Pages</a></li>
+    <li class="active">{{ flatpage.title }}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+    {{ flatpage.content }}
+{% endblock %}
