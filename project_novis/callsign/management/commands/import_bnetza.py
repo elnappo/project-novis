@@ -19,7 +19,7 @@ class Command(ImportCommand):
         callsings = list()
 
         with requests.get(options['url'], stream=False) as r:
-            if r.status_code == 200:
+            if r.ok:
                 data = BytesIO(r.content)
                 pdfReader = PyPDF2.PdfFileReader(data)
                 number_of_pages = pdfReader.getNumPages()
