@@ -1,55 +1,74 @@
-from decimal import Decimal
-
 import requests
-from django.contrib.auth import get_user_model
-from django.core.management.base import BaseCommand
+from django.contrib.gis.geos import GEOSGeometry
 
-from ...models import CallSign
+from . import ImportCommand
+from ...models import Repeater, Transmitter, DMRID
 
 
-class Command(BaseCommand):
+class Command(ImportCommand):
     help = 'Import DMR repeater from Brandmeister'
+    source = 'brandmeister'
 
     def add_arguments(self, parser):
         parser.add_argument('url', nargs='?', type=str, default="https://api.brandmeister.network/v1.0/repeater/?action=LIST")
 
     def handle(self, *args, **options):
-        counter = 0
-        new_callsign_counter = 0
-        update_callsign_counter = 0
-        error = 0
-
-        self.stdout.write("Import DMR repeater from Brandmeister")
         r = requests.get(options['url'], stream=False)
         if r.ok:
             repeaters = r.json()
             for repeater in repeaters:
-                # TODO validate name/call sign
-                counter += 1
-                call_sign_instance, new_call_sign = CallSign.objects.get_or_create(name=repeater["callsign"],
-                                                                                   defaults={"name": repeater["callsign"],
-                                                                                             "created_by": get_user_model().objects.get(id=1),
-                                                                                             "type": "repeater"})
-                if new_call_sign:
-                    call_sign_instance.set_default_meta_data()
-                    # TODO handle 0.0 0.0 and 10000.0 0.0
-                    # if repeater["lat"] and repeater["lng"]:
-                    #     try:
-                    #         call_sign_instance.latitude = Decimal(repeater["lat"])
-                    #         call_sign_instance.longitude = Decimal(repeater["lng"])
-                    #     except Exception:
-                    #         print(repeater)
+                call_sign_instance, new_call_sign = self._handle_callsign(repeater["callsign"])
+                if not call_sign_instance:
+                    continue
+
+                if not call_sign_instance.type:
+                    call_sign_instance.type = "repeater"
                     call_sign_instance.save()
-                    new_callsign_counter += 1
 
-                # if (repeater["lat"] and repeater["lng"]) and (call_sign_instance.latitude != Decimal(repeater["lat"]) or call_sign_instance.longitude != Decimal(repeater["lng"])):
-                #     try:
-                #         call_sign_instance.latitude = Decimal(repeater["lat"])
-                #         call_sign_instance.longitude = Decimal(repeater["lng"])
-                #         call_sign_instance.save()
-                #         update_callsign_counter += 1
-                #     except Exception:
-                #         print(repeater)
+                if new_call_sign:
+                    # TODO handle updates
+                    if repeater["lat"] and repeater["lng"]:
+                        try:
+                            latitude = float(repeater["lat"])
+                            longitude = float(repeater["lng"])
+                            if (-180 <= latitude <= 180) and (0 <= longitude <= 360):
+                                call_sign_instance.location = GEOSGeometry('POINT(%f %f)' % (longitude, latitude))
+                            call_sign_instance.save()
 
-        self.stdout.write(self.style.SUCCESS('call sings: %d new call sings: %d updated call sings: %d errors: %d source: %s' % (
-            counter, new_callsign_counter, update_callsign_counter, error, options['url'])))
+                        except Exception as e:
+                            self._error(str(e))
+
+                dmr_id_instance, _ = DMRID.objects.get_or_create(name=repeater["repeaterid"],
+                                            defaults={"name": repeater["repeaterid"],
+                                                      "callsign": call_sign_instance})
+
+                try:
+                    # TODO handle updates
+                    repeater_instance, new_repeater = Repeater.objects.get_or_create(
+                        callsign=call_sign_instance,
+                        defaults={"callsign": call_sign_instance,
+                                  "website": repeater.get("website", None),
+                                  "location": call_sign_instance.location,
+                                  "altitude": repeater.get("agl", None),
+                                  "created_by_id": self._import_user_id,
+                                  "source": self.source})
+                    transmitter_instance, new_transmitter = Transmitter.objects.update_or_create(
+                        repeater=repeater_instance, transmit_frequency=float(repeater["tx"]),
+                        defaults={"repeater": repeater_instance,
+                                  "transmit_frequency": float(repeater["tx"]),
+                                  "offset": float(repeater["rx"]) - float(repeater["tx"]),
+                                  "mode": "dmr",
+                                  "pep": repeater.get("pep", None),
+                                  "description": repeater.get("description", ""),
+                                  "hardware": repeater.get("hardware", ""),
+                                  "colorcode": repeater.get("colorcode", None),
+                                  "dmr_id": dmr_id_instance,
+                                  "created_by_id": self._import_user_id,
+                                  "source": self.source})
+
+                except Exception as e:
+                    self._error(str(e))
+                    self._error(str(repeater))
+            self._finish()
+        else:
+            self._error(f"Failed to get DMR repeater list. Status code {r.status_code}")
