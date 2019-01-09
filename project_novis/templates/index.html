@@ -160,10 +160,10 @@
     <footer class="main-footer">
         <!-- To the right -->
         <div class="pull-right hidden-xs">
-        Please submit feedback to <a href="mailto:feedback@project-novis.org">feedback@project-novis.org</a>
+        <a href="{% url 'help' %}">Help</a> &bull; <a href="{% url 'privacy' %}">Privacy</a> &bull; <a href="{% url 'about' %}">About</a>
         </div>
         <!-- Default to the left -->
-        <strong>nerdpol</strong>
+        Please submit feedback to <a href="mailto:feedback@project-novis.org">feedback@project-novis.org</a>
     </footer>
     <!-- ./wrapper -->
 {% endblock %}

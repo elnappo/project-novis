@@ -1,169 +1,183 @@
 {% extends 'index.html' %}
-{% load static i18n account bootstrap3%}
+{% load static i18n account crispy_forms_tags %}
 
 {% block title %}{{ object.name }}{% endblock %}
 
 {% block content_header %}
-<h1>
-    {{ object.name }}
-</h1>
-<ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Callsign</a></li>
-    <li class="active">{{ object.name }}</li>
-</ol>
+    <h1>
+        {{ object.name }}
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Callsign</a></li>
+        <li class="active">{{ object.name }}</li>
+    </ol>
 {% endblock %}
 
 {% block content %}
     <div class="row">
-            <div class="col-md-8">
+        <div class="col-md-8">
             <div class="box box-info">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Information</h3>
-                  {% if user == object.owner %}
-                  <div class="box-tools pull-right">
-                    <a href="{% url "callsign:callsign-html-update" object.name %}" class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Edit</a>
-                  </div>
-                  {% elif user.is_authenticated %}
-                  <div class="box-tools pull-right">
-                  <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#callSignClaimModal"><i class="fa fa-plus"></i> Claim</button>
-                  </div>
-                  <div class="modal fade" id="callSignClaimModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Confirm callsign claim</h4>
-                      </div>
-                      <div class="modal-body">
-                         Are you sure to claim <mark>{{ object.name }}</mark> to your account?
-                         <form class="form" method="post" action={% url "callsign:callsign-html-claim" object.name %}>
-                        {% csrf_token %}
-                       <div class="modal-footer">
-                        <button class="btn btn-primary" type="submit" name="action">Claim {{ object.name }}</button>
-                      </div>
-                        </form>
-                      </div>
+                    <h3 class="box-title">Information</h3>
+                    {% if user == object.owner %}
+                        <div class="box-tools pull-right">
+                            <a href="{% url "callsign:callsign-html-update" object.name %}"
+                               class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Edit</a>
+                        </div>
+                    {% elif user.is_authenticated %}
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-sm btn-default" data-toggle="modal"
+                                    data-target="#callSignClaimModal"><i class="fa fa-plus"></i> Claim
+                            </button>
+                        </div>
+                        <div class="modal fade" id="callSignClaimModal" tabindex="-1" role="dialog"
+                             aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">Confirm callsign claim</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure to claim
+                                        <mark>{{ object.name }}</mark>
+                                        to your account?
+                                        <form class="form" method="post"
+                                              action={% url "callsign:callsign-html-claim" object.name %}>
+                                            {% csrf_token %}
+                                            <div class="modal-footer">
+                                                <button class="btn btn-primary" type="submit" name="action">
+                                                    Claim {{ object.name }}</button>
+                                            </div>
+                                        </form>
+                                    </div>
 
-                    </div>
-                  </div>
-                </div>
-                  {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="box-body no-padding">
-                  <table class="table table-hover">
-                       <tbody>
+                    <table class="table table-hover">
+                        <tbody>
                         <tr>
-                          <td>Callsign</td>
-                          <td>{{ object.name }}</td>
+                            <td>Country</td>
+                            <td>{{ object.country }}</td>
                         </tr>
                         <tr>
-                          <td>Country</td>
-                          <td>{{ object.country }}</td>
+                            <td>DXCC Entry</td>
+                            <td>{{ object.prefix.dxcc }}</td>
                         </tr>
                         <tr>
-                          <td>DXCC Entry</td>
-                          <td>{{ object.prefix.dxcc }}</td>
+                            <td>Grid</td>
+                            <td>{{ object.grid }}</td>
                         </tr>
                         <tr>
-                          <td>Grid</td>
-                          <td>{{ object.grid }}</td>
+                            <td>CQ Zone</td>
+                            <td>{{ object.cq_zone }}</td>
                         </tr>
                         <tr>
-                          <td>CQ Zone</td>
-                          <td>{{ object.cq_zone }}</td>
+                            <td>ITU Zone</td>
+                            <td>{{ object.itu_zone }}</td>
                         </tr>
                         <tr>
-                          <td>ITU Zone</td>
-                          <td>{{ object.itu_zone }}</td>
+                            <td>Type</td>
+                            <td>{{ object.type }}</td>
                         </tr>
                         <tr>
-                          <td>Type</td>
-                          <td>{{ object.type }}</td>
+                            <td>DMR ID</td>
+                            <td>{% for entry in object.dmr_ids.all %}
+                                <a href="{{ entry.brandmeister_profile_url }}" target="_blank"
+                                   rel="noopener">{{ entry.name }} </a>{% endfor %}</td>
                         </tr>
                         <tr>
-                          <td>DMR ID</td>
-                          <td>{% for entry in object.dmr_ids.all %}<a href="{{ entry.brandmeister_profile_url }}" target="_blank" rel="noopener">{{entry.name}} </a>{% endfor %}</td>
+                            <td>D-STAR</td>
+                            <td>{{ object.dstar|yesno }}</td>
                         </tr>
-                        <tr>
-                          <td>D-STAR</td>
-                          <td>{{ object.dstar|yesno }}</td>
-                        </tr>
-                      </tbody>
+                        </tbody>
                     </table>
                 </div>
                 <!-- /.box-body -->
             </div>
         </div>
         {% if object.location %}
-        <div class="col-md-4">
+            <div class="col-md-4">
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Location</h3>
+                    </div>
+                    <div class="box-body no-padding">
+                        <div id="map" style="width: auto; height: 300px;"></div>
+                        <script>
+                            function initMap() {
+                                var location = {lat: {{ object.location.y }}, lng: {{ object.location.x }}};
+                                var map = new google.maps.Map(document.getElementById('map'), {
+                                    zoom: 7,
+                                    center: location
+                                });
+                                var marker = new google.maps.Marker({position: location, map: map});
+                            }
+                        </script>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        {% endif %}
+        <div class="col-md-4 pull-right">
             <div class="box box-info">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Location</h3>
+                    <h3 class="box-title">Links</h3>
                 </div>
                 <div class="box-body no-padding">
-                    <div id="map" style="width: auto; height: 300px;"></div>
-                    <script>
-                      function initMap() {
-                        var location = {lat: {{ object.location.y }}, lng: {{ object.location.x }} };
-                        var map = new google.maps.Map(document.getElementById('map'), {zoom: 7, center: location});
-                        var marker = new google.maps.Marker({position: location, map: map});
-                      }
-                    </script>
+                    <table class="table table-hover">
+                        <tbody>
+                        {% if object.lotwuser %}
+                            <tr>
+                                <td>LOTW</td>
+                            </tr>
+                        {% endif %}
+                        {% if object.eqsluser %}
+                            <tr>
+                                <td><a href="{{ entry.eqsl_profile_url }}" target="_blank" rel="noopener">eQSL</a></td>
+                            </tr>
+                        {% endif %}
+                        {% if object.clubloguser %}
+                            <tr>
+                                <td><a href="{{ entry.clublog_profile_url }}" target="_blank" rel="noopener">Clublog</a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td><a href="{{ entry.dxheat_profile_url }}" target="_blank" rel="noopener">DXHeat</a></td>
+                        </tr>
+                        <tr>
+                            <td><a href="{{ entry.aprsfi_profile_url }}" target="_blank" rel="noopener">APRS</a></td>
+                        </tr>
+                        <tr>
+                            <td><a href="{{ entry.pskreporter_profile_url }}" target="_blank"
+                                   rel="noopener">PSKreporter</a></td>
+                        </tr>
+                        <tr>
+                            <td><a href="{{ entry.qrz_profile_url }}" target="_blank" rel="noopener">QRZ.com</a></td>
+                        </tr>
+                        <tr>
+                            <td><a href="{{ entry.hamqth_profile_url }}" target="_blank" rel="noopener">HamQTH</a></td>
+                        </tr>
+                        <tr>
+                            <td><a href="{{ entry.hamcall_profile_url }}" target="_blank" rel="noopener">HamCall</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <!-- /.box-body -->
             </div>
         </div>
-        {% endif %}
-        <div class="col-md-4 pull-right">
-        <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title">Links</h3>
-            </div>
-            <div class="box-body no-padding">
-              <table class="table table-hover">
-               <tbody>
-               {% if object.lotwuser %}
-               <tr>
-                  <td>LOTW </td>
-                </tr>
-               {% endif %}
-               {% if object.eqsluser %}
-                <tr>
-                  <td><a href="{{ entry.eqsl_profile_url }}" target="_blank" rel="noopener">eQSL</a></td>
-                </tr>
-               {% endif %}
-               {% if object.clubloguser %}
-                <tr>
-                  <td><a href="{{ entry.clublog_profile_url }}" target="_blank" rel="noopener">Clublog</a></td>
-                </tr>
-               {% endif %}
-               <tr>
-                  <td><a href="{{ entry.dxheat_profile_url }}" target="_blank" rel="noopener">DXHeat</a></td>
-                </tr>
-                <tr>
-                  <td><a href="{{ entry.aprsfi_profile_url }}" target="_blank" rel="noopener">APRS</a></td>
-                </tr>
-                <tr>
-                  <td><a href="{{ entry.pskreporter_profile_url }}" target="_blank" rel="noopener">PSKreporter</a></td>
-                </tr>
-                <tr>
-                  <td><a href="{{ entry.qrz_profile_url }}" target="_blank" rel="noopener">QRZ.com</a></td>
-                </tr>
-               <tr>
-                  <td><a href="{{ entry.hamqth_profile_url }}" target="_blank" rel="noopener">HamQTH</a></td>
-                </tr>
-               <tr>
-                  <td><a href="{{ entry.hamcall_profile_url }}" target="_blank" rel="noopener">HamCall</a></td>
-                </tr>
-              </tbody>
-            </table>
-            </div>
-            <!-- /.box-body -->
-        </div>
-    </div>
     </div>
 {% endblock %}
 
 {% block extra_foot %}
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcml_vhlyb_QC1tyvMwdIXI1xU6UWKvwo&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcml_vhlyb_QC1tyvMwdIXI1xU6UWKvwo&callback=initMap"
+            async defer></script>
 {% endblock %}
