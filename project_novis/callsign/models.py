@@ -1,100 +1,14 @@
 from decimal import Decimal
 
-from django.db import models
-from django.contrib.gis.db import models as gis_models
-from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.contrib.gis.db import models
 from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.geos import Point
 
-from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, QTHLocatorField, generate_aprs_passcode
+from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, WikidataObjectField, generate_aprs_passcode
 
-CALL_SIGN_TYPE_CHOICES = (
-    ("beacon", _("Beacon")),
-    ("club", _("Club")),
-    ("educational", _("Educational")),
-    ("experimental", _("Experimental")),
-    ("military", _("Military")),
-    ("personal", _("Personal")),
-    ("repeater", _("Repeater")),
-    ("shortwave_listener", _("Shortwave Listener")),
-    ("special_event", _("Special Event")),
-)
-
-CONTINENT_CHOICES = (
-    ("AF", _("Asia")),
-    ("AN", _("Antarctica")),
-    ("AS", _("Africa")),
-    ("EU", _("Europe")),
-    ("NA", _("North America")),
-    ("OC", _("Oceania")),
-    ("SA", _("South America"))
-)
-
-CTCSS_CHOICES = (
-    (67.0, "67.0 Hz"),
-    (69.3, "69.3 Hz"),
-    (71.9, "71.9 Hz"),
-    (74.4, "74.4 Hz"),
-    (77.0, "77.0 Hz"),
-    (79.7, "79.7 Hz"),
-    (82.5, "82.5 Hz"),
-    (85.4, "85.4 Hz"),
-    (88.5, "88.5 Hz"),
-    (91.5, "91.5 Hz"),
-    (94.8, "94.8 Hz"),
-    (97.4, "97.4 Hz"),
-    (100.0, "100.0 Hz"),
-    (103.5, "103.5 Hz"),
-    (107.2, "107.2 Hz"),
-    (110.9, "110.9 Hz"),
-    (114.8, "114.8 Hz"),
-    (118.8, "118.8 Hz"),
-    (123.0, "123.0 Hz"),
-    (127.3, "127.3 Hz"),
-    (131.8, "131.8 Hz"),
-    (136.5, "136.5 Hz"),
-    (141.3, "141.3 Hz"),
-    (146.2, "146.2 Hz"),
-    (150.0, "150.0 Hz"),
-    (151.4, "151.4 Hz"),
-    (156.7, "156.7 Hz"),
-    (159.8, "159.8 Hz"),
-    (162.2, "162.2 Hz"),
-    (165.5, "165.5 Hz"),
-    (167.9, "167.9 Hz"),
-    (171.3, "171.3 Hz"),
-    (173.8, "173.8 Hz"),
-    (177.3, "177.3 Hz"),
-    (179.9, "179.9 Hz"),
-    (183.5, "183.5 Hz"),
-    (186.2, "186.2 Hz"),
-    (189.9, "189.9 Hz"),
-    (192.8, "192.8 Hz"),
-    (196.6, "196.6 Hz"),
-    (199.5, "199.5 Hz"),
-    (203.5, "203.5 Hz"),
-    (206.5, "206.5 Hz"),
-    (210.7, "210.7 Hz"),
-    (213.8, "213.8 Hz"),
-    (218.1, "218.1 Hz"),
-    (221.3, "221.3 Hz"),
-    (225.7, "225.7 Hz"),
-    (229.1, "229.1 Hz"),
-    (233.6, "233.6 Hz"),
-    (237.1, "237.1 Hz"),
-    (241.8, "241.8 Hz"),
-    (245.5, "245.5 Hz"),
-    (250.3, "250.3 Hz"),
-    (254.1, "254.1 Hz"),
-)
-
-MODE_CHOICES = (
-    ("am", _("AM")),
-    ("fm", _("FM")),
-    ("dstar", _("D-STAR")),
-    ("dmr", _("DMR")),
-    ("ssb", _("SSB")),
-)
+from .enums import CALLSIGN_TYPES, CONTINENTS, CTCSS, RF_MODES
 
 
 class BaseModel(models.Model):
@@ -105,21 +19,158 @@ class BaseModel(models.Model):
         abstract = True
 
 
+class LocationBaseModel(BaseModel):
+    location = models.PointField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    @property
+    def grid(self):
+        """
+        Converts WGS84 coordinates into the corresponding Maidenhead Locator.
+        Based on https://github.com/dh1tw/pyhamtools/blob/master/pyhamtools/locator.py
+        """
+        # TODO add parameter for grid accuracy
+        longitude = self.location.x + 180
+        latitude = self.location.y + 90
+
+        locator = chr(ord('A') + int(longitude / 20))
+        locator += chr(ord('A') + int(latitude / 10))
+        locator += chr(ord('0') + int((longitude % 20) / 2))
+        locator += chr(ord('0') + int(latitude % 10))
+        locator += chr(ord('A') + int((longitude - int(longitude / 2) * 2) / (2 / 24))).lower()
+        locator += chr(ord('A') + int((latitude - int(latitude / 1) * 1) / (1 / 24))).lower()
+
+        return locator
+
+    @grid.setter
+    def grid(self, value):
+        """
+        Converts Maidenhead locator in the corresponding WGS84 coordinates
+        Based on https://github.com/dh1tw/pyhamtools/blob/master/pyhamtools/locator.py
+        """
+        # TODO allow arbitrary grid accuracy
+        locator = value.upper()
+
+        if len(locator) == 5 or len(locator) < 4:
+            raise ValueError
+
+        if ord(locator[0]) > ord('R') or ord(locator[0]) < ord('A'):
+            raise ValueError
+
+        if ord(locator[1]) > ord('R') or ord(locator[1]) < ord('A'):
+            raise ValueError
+
+        if ord(locator[2]) > ord('9') or ord(locator[2]) < ord('0'):
+            raise ValueError
+
+        if ord(locator[3]) > ord('9') or ord(locator[3]) < ord('0'):
+            raise ValueError
+
+        if len(locator) == 6:
+            if ord(locator[4]) > ord('X') or ord(locator[4]) < ord('A'):
+                raise ValueError
+            if ord (locator[5]) > ord('X') or ord(locator[5]) < ord('A'):
+                raise ValueError
+
+        longitude = (ord(locator[0]) - ord('A')) * 20 - 180
+        latitude = (ord(locator[1]) - ord('A')) * 10 - 90
+        longitude += (ord(locator[2]) - ord('0')) * 2
+        latitude += (ord(locator[3]) - ord('0'))
+
+        if len(locator) == 6:
+            longitude += ((ord(locator[4])) - ord('A')) * (2 / 24)
+            latitude += ((ord(locator[5])) - ord('A')) * (1 / 24)
+
+            # move to center of subsquare
+            longitude += 1 / 24
+            latitude += 0.5 / 24
+
+        else:
+            # move to center of square
+            longitude += 1
+            latitude += 0.5
+
+        self.location = Point(longitude, latitude)
+
+    @property
+    def cq_zone(self) -> int:
+        raise NotImplementedError
+
+    @property
+    def itu_zone(self) -> int:
+        raise NotImplementedError
+
+    @property
+    def itu_region(self) -> int:
+        raise NotImplementedError
+
+    @property
+    def continent(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def dxcc(self) -> int:
+        raise NotImplementedError
+
+    @property
+    def country(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def utc_offset(self) -> int:
+        raise NotImplementedError
+
+
 class Country(BaseModel):
     name = models.CharField(max_length=64, unique=True, db_index=True)
-    adif_name = models.CharField(max_length=64, db_index=True, blank=True)
     alpha_2 = models.CharField(max_length=2, unique=True, db_index=True)
     alpha_3 = models.CharField(max_length=3, unique=True, db_index=True)
     numeric_3 = models.CharField(max_length=3, unique=True, db_index=True)
+    wikidata_object = WikidataObjectField(unique=True, db_index=True)
+
+    # Additional Information
+    adif_name = models.CharField(max_length=64, db_index=True, blank=True, null=True)
+    geonames_id = models.PositiveIntegerField(null=True, blank=True)
+    osm_relation_id = models.PositiveIntegerField(null=True, blank=True)
+    itu_object_identifier = models.CharField(max_length=16, blank=True, null=True)
+    itu_letter_code = models.CharField(max_length=3, blank=True, null=True)
+    fips = models.CharField(max_length=2, blank=True, null=True)
 
     def __str__(self) -> str:
         return self.name
 
+    @property
+    def wikidata_url(self) -> str:
+        return f"https://www.wikidata.org/wiki/{self.wikidata_object}"
+
+    @property
+    def geonames_url(self) -> str:
+        if self.geonames_id:
+            return f"https://www.geonames.org/{self.geonames_id}"
+        else:
+            return ""
+
+    @property
+    def osm_relation_url(self) -> str:
+        if self.osm_relation_id:
+            return f"https://www.openstreetmap.org/relation/{self.osm_relation_id}"
+        else:
+            return ""
+
+    @property
+    def world_fact_book_url(self) -> str:
+        if self.fips:
+            return f"https://www.cia.gov/library/publications/the-world-factbook/geos/{self.fips}.html"
+        else:
+            return ""
+
 
 class DXCCEntry(BaseModel):
     name = models.CharField(max_length=64, db_index=True)
-    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True)
     deleted = models.BooleanField(default=False)
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -130,45 +181,6 @@ class DXCCEntry(BaseModel):
         unique_together = ("name", "deleted")
 
 
-# class Location(BaseModel):
-#     # Use a custom field for this?
-#     latitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
-#     longitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
-#     space = models.BooleanField(default=False)
-#
-#     @property
-#     def cq_zone(self) -> int:
-#         return 1
-#
-#     @property
-#     def itu_zone(self) -> int:
-#         return 1
-#
-#     @property
-#     def itu_region(self) -> int:
-#         return 1
-#
-#     @property
-#     def grid(self) -> str:
-#         return "JN"
-#
-#     @property
-#     def continent(self) -> str:
-#         return "Europe"
-#
-#     @property
-#     def dxcc(self) -> int:
-#         return 1
-#
-#     @property
-#     def country(self) -> str:
-#         return "Germany"
-#
-#     @property
-#     def utc_offset(self) -> int:
-#         return 1
-
-
 class CallSignPrefix(BaseModel):
     name = models.CharField(max_length=16, unique=True, db_index=True)
     country = models.ForeignKey(Country, on_delete=models.PROTECT, null=True, blank=True)
@@ -176,10 +188,10 @@ class CallSignPrefix(BaseModel):
     cq_zone = CQZoneField(null=True, blank=True)
     itu_zone = ITUZoneField(null=True, blank=True)
     itu_region = ITURegionField(null=True, blank=True)
-    continent = models.CharField(choices=CONTINENT_CHOICES, max_length=2, blank=True)
-    location = gis_models.PointField(null=True, blank=True)
+    continent = models.CharField(choices=CONTINENTS, max_length=2, blank=True)
+    location = models.PointField(null=True, blank=True)
     utc_offset = models.FloatField(null=True, blank=True)
-    type = models.CharField(choices=CALL_SIGN_TYPE_CHOICES, max_length=32, blank=True)
+    type = models.CharField(choices=CALLSIGN_TYPES, max_length=32, blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -193,21 +205,20 @@ class CallSignManager(models.Manager):
         return call_sign
 
 
-class CallSign(BaseModel):
+class CallSign(LocationBaseModel):
     name = CallSignField(unique=True, db_index=True)
     prefix = models.ForeignKey(CallSignPrefix, on_delete=models.PROTECT, null=True, blank=True)
     country = models.ForeignKey(Country, on_delete=models.PROTECT, null=True, blank=True)
     cq_zone = CQZoneField("CQ zone", null=True, blank=True)
     itu_zone = ITUZoneField("ITU zone", null=True, blank=True)
     itu_region = ITURegionField("ITU region", null=True, blank=True)
-    grid = QTHLocatorField(blank=True)
-    location = gis_models.PointField(null=True, blank=True)
-    type = models.CharField(choices=CALL_SIGN_TYPE_CHOICES, max_length=32, blank=True)
+    type = models.CharField(choices=CALLSIGN_TYPES, max_length=32, blank=True)
     owner = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(default=True)
     issued = models.DateField(null=True, blank=True)
     dstar = models.BooleanField("D-STAR", default=False)
     comment = models.TextField(blank=True)
+    official_validated = models.BooleanField(default=False, help_text="Callsign is validated by a government agency")
 
     created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="callsigns")
     internal_comment = models.TextField(blank=True)
@@ -232,6 +243,13 @@ class CallSign(BaseModel):
 
     def get_absolute_url(self):
         return reverse('callsign:callsign-html-detail', args=[self.name])
+
+    @property
+    def location_source(self) -> str:
+        if self.location == self.prefix.location:
+            return "prefix"
+        else:
+            return "manual"
 
     @property
     def eqsl_profile_url(self) -> str:
@@ -274,14 +292,23 @@ class CallSign(BaseModel):
 
 
 class DMRID(BaseModel):
-    name = models.PositiveIntegerField()
+    name = models.PositiveIntegerField(unique=True, db_index=True)
     callsign = models.ForeignKey(CallSign, related_name='dmr_ids', on_delete=models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(default=True)
     issued = models.DateTimeField(null=True, blank=True)
 
+    # Optional information used for DMR ID list
+    owner = models.CharField(max_length=128, blank=True)
+    city = models.CharField(max_length=128, blank=True)
+    state = models.CharField(max_length=128, blank=True)
+    remarks = models.CharField(max_length=128, blank=True)
+
     @property
     def brandmeister_profile_url(self) -> str:
-        return f"https://brandmeister.network/index.php?page=profile&call={ self.callsign.name }"
+        if self.callsign:
+            return f"https://brandmeister.network/index.php?page=profile&call={ self.callsign.name }"
+        else:
+            return ""
 
     def __str__(self) -> str:
         return str(self.name)
@@ -341,7 +368,7 @@ class Repeater(BaseModel):
     active = models.BooleanField(default=True)
     website = models.URLField(max_length=400, blank=True, null=True)
     altitude = models.FloatField(blank=True, null=True)
-    location = gis_models.PointField(blank=True, null=True)
+    location = models.PointField(blank=True, null=True)
     description = models.TextField(blank=True)
 
     created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="repeaters")
@@ -356,13 +383,13 @@ class Transmitter(BaseModel):
     active = models.BooleanField(default=True)
     transmit_frequency = models.DecimalField(max_digits=18, decimal_places=6)
     offset = models.DecimalField(max_digits=18, decimal_places=6)
-    mode = models.CharField(max_length=16, choices=MODE_CHOICES)
+    mode = models.CharField(max_length=16, choices=RF_MODES)
     pep = models.FloatField("PEP", null=True, blank=True, help_text="Peak Envelope Power")
     description = models.TextField(blank=True, null=True)
     hardware = models.CharField(max_length=256, blank=True)
 
     # Analog
-    ctcss = models.FloatField("CTCSS", choices=CTCSS_CHOICES, blank=True, null=True, help_text="Continuous Tone Coded Squelch System")
+    ctcss = models.FloatField("CTCSS", choices=CTCSS, blank=True, null=True, help_text="Continuous Tone Coded Squelch System")
     echolink = models.IntegerField(blank=True, null=True)
 
     # Digital
