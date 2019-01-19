@@ -412,3 +412,15 @@ class Transmitter(BaseModel):
 
     def __str__(self) -> str:
         return f"{ self.repeater.callsign.name } at { self.transmit_frequency } MHz"
+
+
+class TelecommunicationAgency(BaseModel):
+    name = models.CharField(max_length=64, unique=True)
+    country = models.ForeignKey(Country, on_delete=models.PROTECT)
+    url = models.URLField(max_length=256, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    callsign_data_url = models.URLField(max_length=256, blank=True, null=True)
+    callsign_data_description = models.TextField(blank=True, null=True)
+
+    def __str__(self) -> str:
+        return self.name
