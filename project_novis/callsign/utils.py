@@ -1,7 +1,8 @@
 import re
-from django.db import models
-from django.utils.translation import gettext_lazy as _
+
+from django.contrib.gis.db import models
 from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
 
 CALLSIGN_REGEX = r"^(?=.*[a-zA-Z])([a-zA-Z0-9]+[0-9][a-zA-Z0-9]+)$"
 CALLSIGN_REGEX_COMPILE = re.compile(CALLSIGN_REGEX)
@@ -65,6 +66,21 @@ class QTHLocatorField(models.CharField):
         kwargs['max_length'] = 8
         super().__init__(*args, **kwargs)
 
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        del kwargs['max_length']
+        return name, path, args, kwargs
+
+
+class WikidataObjectField(models.CharField):
+    # TODO WikidataObject class, save as int
+    description = _("Wikidata object field")
+    default_validators = [RegexValidator(regex=r"^Q\d+$")]
+
+    def __init__(self, *args, **kwargs):
+        kwargs['max_length'] = 16
+        super().__init__(*args, **kwargs)
+    
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
         del kwargs['max_length']
