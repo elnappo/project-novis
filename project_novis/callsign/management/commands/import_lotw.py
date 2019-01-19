@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
 from ...models import CallSign, LOTWUser
+from ...utils import extract_callsign
 
 
 class Command(BaseCommand):
@@ -26,25 +27,28 @@ class Command(BaseCommand):
         if r.status_code == 200:
             reader = csv.reader(r.iter_lines(decode_unicode=True), delimiter=',')
             for row in reader:
-                valid = re.match('^[\w]+$', row[0]) is not None
-                if valid:
-                    counter += 1
+                callsign = extract_callsign(row[0])
+                if not callsign:
+                    self.stdout.write(f"Invalid callsign { row[0] }")
+                    continue
 
-                    call_sign_instance, new_call_sign = CallSign.objects.get_or_create(name=row[0],
-                                                                                       defaults={"name": row[0],
-                                                                                                 "created_by": get_user_model().objects.get(id=1)})
-                    if new_call_sign:
-                        call_sign_instance.set_default_meta_data()
-                        call_sign_instance.save()
-                        new_counter += 1
+                counter += 1
 
-                    last_activity = parse(row[1] + "T" + row[2] + "Z")
-                    lotw_instance, lotw_instance_created = LOTWUser.objects.get_or_create(callsign=call_sign_instance,
-                                                                                          defaults={"callsign": call_sign_instance,
-                                                                                                    "lotw_last_activity": last_activity})
-                    if not lotw_instance_created and lotw_instance.lotw_last_activity < last_activity:
-                        lotw_instance.lotw_last_activity = last_activity
-                        lotw_instance.save()
+                call_sign_instance, new_call_sign = CallSign.objects.get_or_create(name=callsign,
+                                                                                   defaults={"name": callsign,
+                                                                                             "created_by": get_user_model().objects.get(id=1)})
+                if new_call_sign:
+                    call_sign_instance.set_default_meta_data()
+                    call_sign_instance.save()
+                    new_counter += 1
+
+                last_activity = parse(row[1] + "T" + row[2] + "Z")
+                lotw_instance, lotw_instance_created = LOTWUser.objects.get_or_create(callsign=call_sign_instance,
+                                                                                      defaults={"callsign": call_sign_instance,
+                                                                                                "lotw_last_activity": last_activity})
+                if not lotw_instance_created and lotw_instance.lotw_last_activity < last_activity:
+                    lotw_instance.lotw_last_activity = last_activity
+                    lotw_instance.save()
 
             self.stdout.write(self.style.SUCCESS('call sings: %d new call sings: %d errors: %d source: %s' % (
                 counter, new_counter, error, options['url'])))

@@ -1,5 +1,5 @@
 import requests
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import Point
 
 from . import ImportCommand
 from ...models import Repeater, Transmitter, DMRID
@@ -7,7 +7,7 @@ from ...models import Repeater, Transmitter, DMRID
 
 class Command(ImportCommand):
     help = 'Import DMR repeater from Brandmeister'
-    source = 'brandmeister'
+    source = 'brandmeister.network'
 
     def add_arguments(self, parser):
         parser.add_argument('url', nargs='?', type=str, default="https://api.brandmeister.network/v1.0/repeater/?action=LIST")
@@ -32,7 +32,7 @@ class Command(ImportCommand):
                             latitude = float(repeater["lat"])
                             longitude = float(repeater["lng"])
                             if (-180 <= latitude <= 180) and (0 <= longitude <= 360):
-                                call_sign_instance.location = GEOSGeometry('POINT(%f %f)' % (longitude, latitude))
+                                call_sign_instance.location = Point(longitude, latitude)
                             call_sign_instance.save()
 
                         except Exception as e:

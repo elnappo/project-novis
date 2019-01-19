@@ -36,23 +36,26 @@ class ImportCommand(BaseCommand):
         self.stderr.write(self.style.ERROR(message))
 
     def _success(self, message: str):
-        self.stderr.write(self.style.SUCCESS(message))
+        self.stdout.write(self.style.SUCCESS(message))
 
-    def _handle_callsign(self, callsign: str):
+    def _write(self, message:str):
+        self.stdout.write(message)
+
+    def _handle_callsign(self, callsign: str, source: str = "", official: bool = False):
         self._callsign_counter += 1
         raw_callsign = extract_callsign(callsign)
 
         if not raw_callsign:
             self._error_counter += 1
-            self._warning(f"Invalid callsign {callsign}")
-            return None, None
+            raise ValueError(f"Invalid callsign {callsign}")
 
         elif raw_callsign not in self._existing_callsigns:
             call_sign_instance, new_call_sign = CallSign.objects.get_or_create(
                 name=raw_callsign,
                 defaults={"name": raw_callsign,
                           "created_by_id": self._import_user_id,
-                          "source": self.source})
+                          "source": source if source else self.source,
+                          "official_validated": official})
             if new_call_sign:
                 self._new_callsign_counter += 1
                 call_sign_instance.set_default_meta_data()

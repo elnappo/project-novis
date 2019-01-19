@@ -11,7 +11,9 @@ class ExtractCallsignTestCase(SimpleTestCase):
             "IK4IDP",
             "HB9STEVE",
             "OEM6CLD",
-            "A65BP"
+            "A65BP",
+            "OG60F",
+            "OJ0Y"
         ]
 
         self.invalid_callsigns = [
