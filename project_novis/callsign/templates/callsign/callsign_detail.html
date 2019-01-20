@@ -9,7 +9,7 @@
 
 {% block content_header %}
     <h1>
-        {{ object.name }}
+        {{ object.name }} {% if object.official_validated %}<i class="fa fa-check-circle" title="Callsign official issued"></i>{% endif %}
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Callsign</a></li>
