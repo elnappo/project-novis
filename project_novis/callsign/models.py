@@ -94,33 +94,33 @@ class LocationBaseModel(BaseModel):
 
         self.location = Point(longitude, latitude)
 
-    @property
-    def cq_zone(self) -> int:
-        raise NotImplementedError
-
-    @property
-    def itu_zone(self) -> int:
-        raise NotImplementedError
-
-    @property
-    def itu_region(self) -> int:
-        raise NotImplementedError
-
-    @property
-    def continent(self) -> str:
-        raise NotImplementedError
-
-    @property
-    def dxcc(self) -> int:
-        raise NotImplementedError
-
-    @property
-    def country(self) -> str:
-        raise NotImplementedError
-
-    @property
-    def utc_offset(self) -> int:
-        raise NotImplementedError
+    # @property
+    # def cq_zone(self) -> int:
+    #     raise NotImplementedError
+    #
+    # @property
+    # def itu_zone(self) -> int:
+    #     raise NotImplementedError
+    #
+    # @property
+    # def itu_region(self) -> int:
+    #     raise NotImplementedError
+    #
+    # @property
+    # def continent(self) -> str:
+    #     raise NotImplementedError
+    #
+    # @property
+    # def dxcc(self) -> int:
+    #     raise NotImplementedError
+    #
+    # @property
+    # def country(self) -> str:
+    #     raise NotImplementedError
+    #
+    # @property
+    # def utc_offset(self) -> int:
+    #     raise NotImplementedError
 
 
 class Country(BaseModel):

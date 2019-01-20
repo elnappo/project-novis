@@ -1,5 +1,4 @@
 from django.contrib.gis import forms
-from dal import autocomplete
 
 from .models import CallSign
 
