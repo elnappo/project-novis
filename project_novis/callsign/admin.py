@@ -62,7 +62,7 @@ class CallsignAdmin(BaseModelAdmin):
             'fields': (('name', 'prefix'), 'country')
         }),
         ('Details', {
-            'fields': ('type', 'owner', 'active', "issued", "dstar", "comment")
+            'fields': ('official_validated', 'type', 'owner', 'active', "issued", "dstar", "comment")
         }),
         ('Location', {
             'fields': ('cq_zone', 'itu_zone', 'itu_region', 'grid', 'location')
@@ -73,6 +73,7 @@ class CallsignAdmin(BaseModelAdmin):
         }),
     )
     raw_id_fields = ("owner", "prefix", "created_by")
+    readonly_fields = ('created', 'modified', 'grid')
     inlines = [DMRIDInline, LOTWUserInline, ClublogUserInline, ESQLUserInline]
 
 
@@ -155,3 +156,9 @@ class TransmitterAdmin(BaseModelAdmin):
 
     readonly_fields = ('receive_frequency', 'brandmeister_repeater_url', 'created', 'modified')
     raw_id_fields = ("repeater",)
+
+
+@admin.register(TelecommunicationAgency)
+class TelecommunicationAgencyAdmin(BaseModelAdmin):
+    list_display = ("name", "country")
+    list_display_links = ("name",)
