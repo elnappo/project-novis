@@ -17,8 +17,9 @@ class Command(ImportCommand):
         if r.ok:
             repeaters = r.json()
             for repeater in repeaters:
-                call_sign_instance, new_call_sign = self._handle_callsign(repeater["callsign"])
-                if not call_sign_instance:
+                try:
+                    call_sign_instance, new_call_sign = self._handle_callsign(repeater["callsign"])
+                except ValueError:
                     continue
 
                 if not call_sign_instance.type:

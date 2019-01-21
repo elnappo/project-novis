@@ -24,7 +24,7 @@ class Command(ImportCommand):
                 try:
                     callsign_instance, _ = self._handle_callsign(row[1], source="ham-digital.org")
                     DMRID.objects.get_or_create(name=row[0], defaults={"name": row[0], "callsign": callsign_instance})
-                except ValueError:
+                except (ValueError, IndexError):
                     self._warning(f"Invalid data: {row}")
 
         # Import D-STAR users
@@ -58,7 +58,7 @@ class Command(ImportCommand):
                                                              "state": row[4],
                                                              "country": row[5],
                                                              "remarks": ""})
-                except ValueError:
+                except (ValueError, IndexError):
                     self._warning(f"Invalid data: {row}")
 
     def handle(self, *args, **options):
