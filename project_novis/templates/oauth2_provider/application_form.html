@@ -1,5 +1,5 @@
 {% extends 'settings_base.html' %}
-{% load static i18n account bootstrap3 %}
+{% load static i18n account crispy_forms_tags %}
 
 {% block title %}{% trans "Edit application" %} {{ application.name }}{% endblock %}
 
@@ -10,11 +10,9 @@
 <div class="box-body">
     <form class="form" method="post" action="{% url 'oauth2_provider:update' application.id %}">
         {% csrf_token %}
-        {% bootstrap_form form %}
-        {% buttons %}
+        {{ form|crispy }}
             <a class="btn" href="{% url "oauth2_provider:detail" application.id %}">{% trans "Go Back" %}</a>
             <button type="submit" class="btn btn-primary">Save</button>
-        {% endbuttons %}
     </form>
 </div>
 <!-- /.box-body -->

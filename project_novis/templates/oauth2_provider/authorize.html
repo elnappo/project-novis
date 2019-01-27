@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static i18n account bootstrap3 %}
+{% load static i18n account %}
 
 {% block title %}{% trans "Authorize" %}{% endblock %}
 {% block extra_head %}
@@ -34,10 +34,8 @@
     {{ form.errors }}
     {{ form.non_field_errors }}
 
-    {% buttons %}
         <input type="submit" class="btn btn-large" value="Cancel"/>
         <input type="submit" class="btn btn-large btn-primary" name="allow" value="Authorize"/>
-    {% endbuttons %}
     </form>
   {% else %}
     <h2>Error: {{ error.error }}</h2>

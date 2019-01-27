@@ -1,5 +1,5 @@
 {% extends 'settings_base.html' %}
-{% load static i18n account bootstrap3%}
+{% load static i18n account %}
 
 {% block title %}{% trans "Confirm Application Delete" %}{% endblock %}
 
@@ -10,10 +10,8 @@
 <div class="box-body">
     <form method="post" action="{% url 'oauth2_provider:delete' application.pk %}">
         {% csrf_token %}
-        {% buttons %}
-            <a class="btn btn-large" href="{% url "oauth2_provider:list" %}">{% trans "Cancel" %}</a>
-            <input type="submit" class="btn btn-large btn-danger" name="allow" value="{% trans "Delete" %}"/>
-        {% endbuttons %}
+        <a class="btn btn-large" href="{% url "oauth2_provider:list" %}">{% trans "Cancel" %}</a>
+        <input type="submit" class="btn btn-large btn-danger" name="allow" value="{% trans "Delete" %}"/>
     </form>
 </div>
 <!-- /.box-body -->
