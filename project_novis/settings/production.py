@@ -47,5 +47,6 @@ EMAIL_SUBJECT_PREFIX = ""
 # Sentry configuration
 sentry_sdk.init(
     dsn=os.environ.get("DJANGO_SENTRY_DSN"),
-    integrations=[DjangoIntegration()]
+    integrations=[DjangoIntegration(),],
+    release=VERSION
 )

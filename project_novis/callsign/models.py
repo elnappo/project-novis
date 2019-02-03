@@ -26,11 +26,14 @@ class LocationBaseModel(BaseModel):
         abstract = True
 
     @property
-    def grid(self):
+    def grid(self) -> str:
         """
         Converts WGS84 coordinates into the corresponding Maidenhead Locator.
         Based on https://github.com/dh1tw/pyhamtools/blob/master/pyhamtools/locator.py
         """
+        if not self.location:
+            return ""
+
         # TODO add parameter for grid accuracy
         longitude = self.location.x + 180
         latitude = self.location.y + 90
@@ -45,7 +48,7 @@ class LocationBaseModel(BaseModel):
         return locator
 
     @grid.setter
-    def grid(self, value):
+    def grid(self, value: str):
         """
         Converts Maidenhead locator in the corresponding WGS84 coordinates
         Based on https://github.com/dh1tw/pyhamtools/blob/master/pyhamtools/locator.py
