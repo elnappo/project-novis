@@ -4,6 +4,8 @@ from setuptools_scm import get_version
 
 from .base import *
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -41,3 +43,9 @@ EMAIL_PORT = "587"
 EMAIL_USE_TLS = True
 EMAIL_SUBJECT_PREFIX = ""
 #EMAIL_TIMEOUT = 60
+
+# Sentry configuration
+sentry_sdk.init(
+    dsn=os.environ.get("DJANGO_SENTRY_DSN"),
+    integrations=[DjangoIntegration()]
+)

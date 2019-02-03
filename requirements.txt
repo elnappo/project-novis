@@ -24,6 +24,7 @@ python-dateutil
 raven
 rope
 setuptools-scm
+sentry-sdk
 swagger-spec-validator
 whitenoise
 yapf
