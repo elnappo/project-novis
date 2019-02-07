@@ -76,18 +76,20 @@
                         <tr>
                             <td>Grid</td>
                             <td>
+                                {% if object.grid %}
                                 <div style="font-size: 125%">
                                     <span class="label label-info label-as-badge"> {{ object.grid }} </span>
                                 </div>
+                                {% endif %}
                             </td>
                         </tr>
                         <tr>
                             <td>CQ Zone</td>
-                            <td><span class="badge">{{ object.cq_zone }}</span></td>
+                            <td>{% if object.cq_zone %}<span class="badge">{{ object.cq_zone }}</span>{% endif %}</td>
                         </tr>
                         <tr>
                             <td>ITU Zone</td>
-                            <td><span class="badge">{{ object.itu_zone }}</span></td>
+                            <td>{% if object.itu_zone %}<span class="badge">{{ object.itu_zone }}</span>{% endif %}</td>
                         </tr>
                         <tr>
                             <td>Type</td>
