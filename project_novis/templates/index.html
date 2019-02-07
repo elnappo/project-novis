@@ -7,7 +7,7 @@
         <nav class="navbar navbar-static-top">
         <div class="container-fluid">
             <div class="navbar-header">
-            <a href="/" class="navbar-brand">project <b>novis</b></a>
+            <a href="{% url 'index' %}" class="navbar-brand">project <b>novis</b></a>
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
                 <i class="fa fa-bars"></i>
             </button>
@@ -18,10 +18,9 @@
             {% block nav_header %}
                 {% include 'nav_main_header.html' %}
             {% endblock %}
-            <form class="navbar-form navbar-left" role="search" method="post" action={% url "callsign:callsign-html-search" %}>
-                {% csrf_token %}
+            <form class="navbar-form navbar-left" role="search" action="#" onsubmit="return process(this);">
                 <div class="form-group">
-                <input type="text" class="form-control" id="navbar-search-input" name="name" placeholder="Callsign Search">
+                <input type="text" class="form-control" id="navbar-search-input" name="name" placeholder="Callsign Search" required>
                 </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
