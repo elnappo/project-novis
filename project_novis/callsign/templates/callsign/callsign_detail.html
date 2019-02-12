@@ -3,13 +3,15 @@
 
 {% block title %}{{ object.name }} - Amateur Radio Callsign{% endblock %}
 
-    {% block meta_content %}
-        <meta name="description" content="{{ object.name }} is an amateur radio callsign located in {{ object.country.name }} ({{ object.grid }}).">
-    {% endblock %}
+{% block meta_content %}
+    <meta name="description" content="{{ object.name }} is an amateur radio callsign{% if object.location and object.country.name %} located in {{ object.country.name }} (QTH: {{ object.grid }}){% endif %}. Project novis is a free and open-source platform for amateur radio related services. Provides acomprehensive database with an easy to use and modern API.">
+    <meta name="callsign" content="{{ object.name }}">
+{% endblock %}
 
 {% block content_header %}
     <h1>
-        {{ object.name }} {% if object.official_validated %}<i class="fa fa-check-circle" title="Callsign official issued"></i>{% endif %}
+        {{ object.name }} {% if object.official_validated %}
+        <i class="fa fa-check-circle" title="Callsign official issued"></i>{% endif %}
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Callsign</a></li>
@@ -67,7 +69,7 @@
                         <tbody>
                         <tr>
                             <td>Country</td>
-                            <td>{{ object.country }}</td>
+                            <td>{{ object.country|default_if_none:"Unknown" }}</td>
                         </tr>
                         <tr>
                             <td>DXCC Entry</td>
@@ -77,9 +79,9 @@
                             <td>Grid</td>
                             <td>
                                 {% if object.grid %}
-                                <div style="font-size: 125%">
-                                    <span class="label label-info label-as-badge"> {{ object.grid }} </span>
-                                </div>
+                                    <div style="font-size: 125%">
+                                        <span class="label label-info label-as-badge"> {{ object.grid }} </span>
+                                    </div>
                                 {% endif %}
                             </td>
                         </tr>
@@ -165,8 +167,7 @@
                             <td><a href="{{ object.aprsfi_profile_url }}" target="_blank" rel="noopener">APRS</a></td>
                         </tr>
                         <tr>
-                            <td><a href="{{ object.pskreporter_profile_url }}" target="_blank"
-                                   rel="noopener">PSKreporter</a></td>
+                            <td><a href="{{ object.pskreporter_profile_url }}" target="_blank" rel="noopener">PSKreporter</a></td>
                         </tr>
                         <tr>
                             <td><a href="{{ object.qrz_profile_url }}" target="_blank" rel="noopener">QRZ.com</a></td>
