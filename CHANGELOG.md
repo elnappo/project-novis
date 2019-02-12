@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * OAuth provider
 * Custom user model
 * Current user data API endpoint, OAuth scops
+    * APRS passcode for validated callsigns
 * User verification process
 * Ham radio database models
     * Country
@@ -25,9 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * Countries
     * DXCC Entries
     * Prefixes 
-    * Call Signs
+    * Callsigns
     * DMR IDs
     * Repeaters
 * Swagger/OpenAPI 2.0 schemas
 * API endpoint for RADIUS authentication
-* APRS passcode API endpoint
+* Sentry error tracking
+* CORS header for `/api/*`

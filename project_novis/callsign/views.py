@@ -37,6 +37,7 @@ class CallSignCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         obj = form.save(commit=False)
         obj.created_by = self.request.user
+        obj.source = "user"
         obj.set_default_meta_data()
         return super().form_valid(form)
 
@@ -66,19 +67,6 @@ class CallSignClaimView(LoginRequiredMixin, SingleObjectMixin, View):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         request.user.claim_call_sign(self.object)
-        return redirect(self.object)
-
-
-class CallSignSearchView(SingleObjectMixin, View):
-    model = CallSign
-    slug_field = "name"
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return redirect(self.object)
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
         return redirect(self.object)
 
 

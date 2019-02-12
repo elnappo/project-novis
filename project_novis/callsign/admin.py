@@ -13,11 +13,21 @@ class LOTWUserInline(admin.TabularInline):
     verbose_name = "LOTW"
     verbose_name_plural = "LOTW"
 
+    readonly_fields = ("lotw_last_activity",)
+
+    def has_add_permission(self, request, obj=None) -> bool:
+        return False
+
 
 class ClublogUserInline(admin.TabularInline):
     model = ClublogUser
     verbose_name = "Clublog"
     verbose_name_plural = "Clublog"
+
+    readonly_fields = ("clublog_first_qso", "clublog_last_qso", "clublog_last_upload", "clublog_oqrs")
+
+    def has_add_permission(self, request, obj=None) -> bool:
+        return False
 
 
 class ESQLUserInline(admin.TabularInline):
@@ -25,21 +35,27 @@ class ESQLUserInline(admin.TabularInline):
     verbose_name = "ESQL"
     verbose_name_plural = "ESQL"
 
+    def has_add_permission(self, request, obj=None) -> bool:
+        return False
+
 
 class DMRIDInline(admin.TabularInline):
     model = DMRID
     verbose_name = "DMR ID"
     verbose_name_plural = "DMR IDs"
 
+    show_change_link = True
+    fields = ("name", "owner", "active", "issued")
+    readonly_fields = ("name", "owner", "active", "issued")
+
+    def has_add_permission(self, request, obj=None) -> bool:
+        return False
 
 class TransmitterInline(admin.TabularInline):
     model = Transmitter
     show_change_link = True
     fields = ("transmit_frequency", "offset", "mode")
     readonly_fields = ("transmit_frequency", "offset", "mode")
-
-    def has_add_permission(self, request, obj=None):
-        return False
 
 
 def set_call_sign_metadata(modeladmin, request, queryset):

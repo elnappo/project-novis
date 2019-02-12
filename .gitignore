@@ -1,9 +1,6 @@
 
 # Created by https://www.gitignore.io/api/linux,macos,django,python,jetbrains,visualstudiocode
 
-chart/requirements.lock
-chart/charts/*
-
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json
@@ -231,6 +228,5 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-
 
 # End of https://www.gitignore.io/api/linux,macos,django,python,jetbrains

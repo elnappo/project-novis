@@ -15,9 +15,6 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 ALLOWED_HOSTS = ["www.project-novis.org"]
 
-CORS_ORIGIN_ALLOW_ALL = False
-#CORS_ORIGIN_WHITELIST = ("",)
-
 DATABASES = {
         'default': {
             'ENGINE': 'django.contrib.gis.db.backends.postgis',
@@ -31,7 +28,6 @@ DATABASES = {
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 DEFAULT_FROM_EMAIL = "info@project-novis.org"
 SERVER_EMAIL = "root@project-novis.org"

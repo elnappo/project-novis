@@ -17,7 +17,7 @@ django-filter
 drf-yasg
 flex
 gunicorn
-psycopg2
+psycopg2 --no-binary psycopg2
 pylint
 PyPDF2
 python-dateutil
@@ -26,6 +26,6 @@ rope
 setuptools-scm
 sentry-sdk
 swagger-spec-validator
-whitenoise
+whitenoise[brotli]
 yapf
 wheel
