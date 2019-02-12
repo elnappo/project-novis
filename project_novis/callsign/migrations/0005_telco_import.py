@@ -11,10 +11,12 @@ TELCOS = [
     {"alpha_3": "DEU",
      "name": "German Federal Network Agency",
      "url": "https://www.bundesnetzagentur.de/EN/",
+     "used_for_official_callsign_import": True,
      "callsign_data_url": "https://www.bundesnetzagentur.de/SharedDocs/Downloads/DE/Sachgebiete/Telekommunikation/Unternehmen_Institutionen/Frequenzen/Amateurfunk/Rufzeichenliste/Rufzeichenliste_AFU.pdf"},
     {"alpha_3": "FIN",
      "name": "Finnish Transport and Communications Agency",
      "url": "https://www.traficom.fi/en",
+     "used_for_official_callsign_import": True,
      "callsign_data_url": "https://eservices.viestintavirasto.fi/Licensesservices/Forms/AmateurLicenses.aspx",
      "callsign_data_description": "See https://github.com/OH6AD/koolit/blob/master/fetch_from_ficora"},
     {"alpha_3": "BEL",
@@ -24,14 +26,21 @@ TELCOS = [
     {"alpha_3": "NLD",
      "name": "Radiocommunications Agency Netherlands",
      "url": "https://www.agentschaptelecom.nl/radiocommunications-agency",
-     "callsign_data_url": "https://www.bipt.be/en/consumers/radio/radio-amateurs/licences-prefixes/prefixes",
      "callsign_data_description": "Overview issued permits relay stations and beacon stations radio amateurs: https://www.agentschaptelecom.nl/onderwerpen/radiozendamateurs/documenten/publicaties/2018/januari/01/overzicht-uitgegeven-vergunningen-relaisstations-en-bakenstations"},
     {"alpha_3": "GBR",
      "name": "Office of Communications",
      "url": "https://www.ofcom.org.uk/"},
     {"alpha_3": "FRA",
      "name": "L’Agence nationale des fréquences (ANFR)",
-     "url": "https://www.anfr.fr/en/home/",}
+     "url": "https://www.anfr.fr/en/home/",},
+    {"alpha_3": "JPN",
+     "name": "Ministry of Internal Affairs and Communications",
+     "url": "http://www.soumu.go.jp/english/index.html",},
+    {"alpha_3": "USA",
+     "name": "Federal Communications Commission",
+     "url": "https://www.fcc.gov/",
+     "callsign_data_url": "https://www.fcc.gov/wireless/data"}
+
 ]
 
 
