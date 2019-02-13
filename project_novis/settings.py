@@ -9,11 +9,56 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 import socket
 
+import dj_database_url
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 from setuptools_scm import get_version
 
 
+def bool_env(key, default=None):
+    true_values = ('yes', 'y', 'true', '1')
+    false_values = ('no', 'n', 'false', '0', '')
+    value = os.environ.get(key)
+
+    if default not in (True, False):
+        raise ValueError(
+            'Default value {0!r} is not a boolean value'.format(default))
+
+    if value is None:
+        return default
+
+    normalized_value = value.strip().lower()
+
+    if normalized_value in true_values:
+        return True
+    elif normalized_value in false_values:
+        return False
+    else:
+        raise ValueError('Cannot interpret boolean value {0!r}'.format(key))
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Define if run in production mode
+PRODUCTION = bool_env("DJANGO_PRODUCTION", False)
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = not PRODUCTION
+
+if PRODUCTION:
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    USE_X_FORWARDED_HOST = True
+
+else:
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "INSECURE")
+
+ALLOWED_HOSTS = [os.environ.get("DJANGO_ALLOWED_HOSTS", "*")]
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -59,6 +104,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
+# Django Debug Toolbar
+if PRODUCTION:
+    INSTALLED_APPS += ['debug_toolbar']
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+    INTERNAL_IPS = ['127.0.0.1']
+
 ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
@@ -73,25 +124,31 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'debug': DEBUG,
         },
     },
 ]
+
+DATABASES = {
+    'default': dj_database_url.config(default=os.environ.get("DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:5432/postgres"))
+}
 
 WSGI_APPLICATION = 'wsgi.application'
 
 SITE_ID = 1
 
-VERSION = get_version(root='../..', relative_to=__file__)
+VERSION = get_version(root='../', relative_to=__file__)
 
 HOSTNAME = socket.gethostname()
 
+# Security settings
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# CORS settings
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
 
@@ -130,8 +187,7 @@ LOGIN_REDIRECT_URL = "/"
 
 OAUTH2_PROVIDER = {
     'SCOPES': {'user': 'Grants read/write access to user data',
-               'user:read': 'Grants access to read user data',
-               'user:email': 'Grants read access to a users email addresses'}
+               'user:read': 'Grants access to read user data'}
 }
 
 REST_FRAMEWORK = {
@@ -149,6 +205,31 @@ REST_FRAMEWORK = {
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+# Sentry settings
+if PRODUCTION and os.environ.get("DJANGO_SENTRY_DSN"):
+    sentry_sdk.init(
+        dsn=os.environ.get("DJANGO_SENTRY_DSN"),
+        integrations=[DjangoIntegration(),],
+        release=VERSION,
+        environment=os.environ.get("DJANGO_SENTRY_ENVIRONMENT", "unknown")
+    )
+
+# Email settings
+if PRODUCTION:
+    DEFAULT_FROM_EMAIL = os.environ.get("DJANGO_DEFAULT_FROM_EMAIL", "info@project-novis.org")
+    SERVER_EMAIL = os.environ.get("DJANGO_SERVER_EMAIL", "root@project-novis.org")
+
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.environ.get("DJANGO_EMAIL_HOST", "mail.gandi.net")
+    EMAIL_HOST_USER = os.environ.get("DJANGO_EMAIL_HOST_USER", "info@project-novis.org")
+    EMAIL_HOST_PASSWORD = os.environ.get("DJANGO_EMAIL_HOST_PASSWORD", "")
+    EMAIL_PORT = os.environ.get("DJANGO_EMAIL_PORT", "587")
+    EMAIL_USE_TLS = True
+    EMAIL_SUBJECT_PREFIX = os.environ.get("DJANGO_", "")
+    # EMAIL_TIMEOUT = 60
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
