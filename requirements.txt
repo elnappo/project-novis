@@ -16,7 +16,7 @@ djangorestframework-gis
 django-filter
 drf-yasg
 flex
-gunicorn
+gunicorn[gevent]
 psycopg2 --no-binary psycopg2
 pylint
 PyPDF2
