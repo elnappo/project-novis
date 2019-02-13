@@ -30,7 +30,7 @@
                             <a href="{% url "callsign:callsign-html-update" object.name %}"
                                class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Edit</a>
                         </div>
-                    {% elif user.is_authenticated %}
+                    {% elif user.is_authenticated and object.owner == None%}
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-sm btn-default" data-toggle="modal"
                                     data-target="#callSignClaimModal"><i class="fa fa-plus"></i> Claim
@@ -73,7 +73,7 @@
                         </tr>
                         <tr>
                             <td>DXCC Entry</td>
-                            <td>{{ object.prefix.dxcc }}</td>
+                            <td>{{ object.prefix.dxcc }} ({{ object.prefix.dxcc.id }})</td>
                         </tr>
                         <tr>
                             <td>Grid</td>
@@ -95,7 +95,7 @@
                         </tr>
                         <tr>
                             <td>Type</td>
-                            <td>{{ object.type }}</td>
+                            <td>{{ object.get_type_display }}</td>
                         </tr>
                         <tr>
                             <td>DMR ID</td>
