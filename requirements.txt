@@ -2,7 +2,7 @@ coreapi
 coreschema
 coverage
 dj-database-url
-Django
+Django>=2.1
 django-allauth
 django-avatar
 django-bootstrap3
@@ -17,7 +17,7 @@ django-filter
 drf-yasg
 flex
 gunicorn[gevent]
-psycopg2 --no-binary psycopg2
+psycopg2-binary
 pylint
 PyPDF2
 python-dateutil
