@@ -8,8 +8,12 @@ from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix, Repeate
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
-        fields = ("id", "name", "adif_name", "alpha_2", "alpha_3", "numeric_3")
-        read_only = ("id", "name", "adif_name", "alpha_2", "alpha_3", "numeric_3")
+        fields = ("id", "name", "adif_name", "alpha_2", "alpha_3", "numeric_3", "wikidata_object", "geonames_id",
+                  "osm_relation_id", "itu_object_identifier", "itu_letter_code", "fips", "wikidata_url", "geonames_url",
+                  "osm_relation_url", "world_fact_book_url")
+        read_only = ("id", "name", "adif_name", "alpha_2", "alpha_3", "numeric_3", "wikidata_object", "geonames_id",
+                     "osm_relation_id", "itu_object_identifier", "itu_letter_code", "fips", "wikidata_url", "geonames_url",
+                     "osm_relation_url", "world_fact_book_url")
 
 
 class DXCCEntrySerializer(serializers.ModelSerializer):
