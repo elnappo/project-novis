@@ -6,7 +6,7 @@ ENV PATH /venv/bin:$PATH
 
 RUN groupadd --system app && useradd --no-log-init --system --gid app app
 
-RUN apt update && apt dist-upgrade --assume-yes && apt-get install --assume-yes --no-install-recommends\
+RUN apt-get update && apt-get dist-upgrade --assume-yes && apt-get install --assume-yes --no-install-recommends\
     bash \
     git \
     python3-minimal \
@@ -21,12 +21,12 @@ RUN apt update && apt dist-upgrade --assume-yes && apt-get install --assume-yes 
 ENV LANG en_US.utf8
 
 COPY requirements.txt /requirements.txt
-RUN apt update && apt-get install --assume-yes --no-install-recommends python3-dev libpq-dev gcc \
+RUN apt-get update && apt-get install --assume-yes --no-install-recommends python3-dev libpq-dev gcc \
  && python3 -m venv /venv \
  && /venv/bin/pip install --upgrade pip \
  && /venv/bin/pip install --upgrade --no-cache-dir --requirement /requirements.txt \
- && apt purge --assume-yes python3-dev libpq-dev gcc \
- && apt autoremove --assume-yes \
+ && apt-get purge --assume-yes python3-dev libpq-dev gcc \
+ && apt-get autoremove --assume-yes \
  && rm -rf /var/lib/apt/lists/*
 
 COPY . /code/

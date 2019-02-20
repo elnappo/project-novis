@@ -17,7 +17,7 @@ django-filter
 drf-yasg
 flex
 gunicorn[gevent]
-psycopg2-binary
+psycopg2
 pylint
 PyPDF2
 python-dateutil

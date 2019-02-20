@@ -105,7 +105,7 @@ MIDDLEWARE = [
 ]
 
 # Django Debug Toolbar
-if PRODUCTION:
+if not PRODUCTION:
     INSTALLED_APPS += ['debug_toolbar']
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
     INTERNAL_IPS = ['127.0.0.1']
@@ -130,7 +130,7 @@ TEMPLATES = [
 ]
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get("DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:5432/postgres"))
+    'default': dj_database_url.config(default=os.environ.get("DATABASE_URL", "postgis://postgres:postgres@127.0.0.1:5432/postgres"))
 }
 
 WSGI_APPLICATION = 'wsgi.application'
