@@ -39,8 +39,19 @@ TELCOS = [
     {"alpha_3": "USA",
      "name": "Federal Communications Commission",
      "url": "https://www.fcc.gov/",
-     "callsign_data_url": "https://www.fcc.gov/wireless/data"}
-
+     "callsign_data_url": "https://www.fcc.gov/wireless/data",
+     "used_for_official_callsign_import": False},
+    {"alpha_3": "CHE",
+     "name": "Switzerland Federal Office of Communications",
+     "url": "https://www.bakom.admin.ch/bakom/en/homepage.html"},
+    {"alpha_3": "AUT",
+     "name": "Austrian Ministry for Transport, Innovation and Technology",
+     "url": "https://www.bmvit.gv.at/en/index.html",
+     "callsign_data_url": "https://www.bmvit.gv.at/ofb/funk/funkdienste/downloads/rfzliste.pdf",
+     "used_for_official_callsign_import": False},
+    {"alpha_3": "POL",
+     "name": "Poland Office of Electronic Communications",
+     "url": "https://www.uke.gov.pl/en/"},
 ]
 
 
