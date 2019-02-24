@@ -87,3 +87,17 @@ RF_MODES = (
     ("dmr", _("DMR")),
     ("ssb", _("SSB")),
 )
+LICENSE_TYPE = {
+    # Add CEPT equivalent?
+    # https://en.wikipedia.org/wiki/Amateur_radio_licensing_in_the_United_States
+    "USA": ("Technician Class", "General Class", "Amateur Extra Class", "Novice Class", "Advanced Class", "Technician Plus Class"),
+    # https://de.wikipedia.org/wiki/Amateurfunkzeugnis
+    "DEU": ("Class A", "Class E"),
+    # https://de.wikipedia.org/wiki/Amateurfunkzeugnis
+    "CHE": ("Amateurfunkkonzession 1", "Amateurfunkkonzession 2", "Amateurfunkkonzession 3"),
+    # https://de.wikipedia.org/wiki/Amateurfunkzeugnis
+    "AUT": ("Bewilligungsklasse 1", "Bewilligungsklasse 3", "Bewilligungsklasse 4"),
+    # https://de.wikipedia.org/wiki/Amateurfunkzeugnis
+    "POL": (),
+    "GENERIC": ("CEPT", "CEPT-Novice", "IARP")
+}
