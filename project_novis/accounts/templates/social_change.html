@@ -1,0 +1,18 @@
+{% extends 'settings_base.html' %}
+{% load static i18n account crispy_forms_tags %}
+
+{% block title %}{% trans "Social Media" %}{% endblock %}
+
+{% block settings_content %}
+<div class="box-header with-border">
+  <h3 class="box-title">{% trans "Social Media" %}</h3>
+</div>
+<div class="box-body">
+    <form class="form" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">{% trans "Update" %}</button>
+    </form>
+</div>
+<!-- /.box-body -->
+{% endblock %}

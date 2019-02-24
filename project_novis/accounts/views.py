@@ -13,9 +13,19 @@ from .models import UserValidation
 
 class UserUpdate(LoginRequiredMixin, UpdateView):
     model = get_user_model()
-    fields = ['name']
+    fields = ['name', 'address', 'country', 'bio']
     template_name = 'profile_change.html'
     success_url = reverse_lazy('profile_change')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
+class UserSocialUpdate(LoginRequiredMixin, UpdateView):
+    model = get_user_model()
+    fields = ['twitter', 'youtube', 'facebook', 'flicker', 'vimeo', 'sykpe', 'matrix', 'jabber']
+    template_name = 'social_change.html'
+    success_url = reverse_lazy('profile_social_change')
 
     def get_object(self, queryset=None):
         return self.request.user

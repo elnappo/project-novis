@@ -1,9 +1,8 @@
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser, BaseUserManager, UnicodeUsernameValidator
+from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth import get_user_model
-from django.core.exceptions import PermissionDenied
 
 
 class UserManager(BaseUserManager):
@@ -37,15 +36,42 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    username = None
     first_name = None
     last_name = None
 
     email = models.EmailField(_('Email address'), unique=True, db_index=True)
-    name = models.CharField(_('Name'), max_length=200, blank=True)
+    name = models.CharField(_('Name'), max_length=200, blank=True, help_text="Your name, please don't use callsigns")
 
-    # bio?
-    # location?
+    # username_validator = UnicodeUsernameValidator()
+    #
+    # username = models.CharField(
+    #     _('username'),
+    #     max_length=150,
+    #     unique=True,
+    #     null=True,
+    #     blank=True,
+    #     default=None,
+    #     help_text=_('Only used if no callsign is connected. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+    #     validators=[username_validator],
+    #     error_messages={
+    #         'unique': _("A user with that username already exists."),
+    #     },
+    # )
+
+    # location
+    address = models.TextField(max_length=512, blank=True)
+    country = models.ForeignKey("callsign.Country", on_delete=models.SET_NULL, blank=True, null=True)
+    bio = models.TextField(blank=True)
+    # social
+    twitter = models.CharField(max_length=64, blank=True, help_text="Twitter username without @")
+    youtube = models.CharField("YouTube", max_length=64, blank=True, help_text="YouTube channel ID")
+    facebook = models.CharField(max_length=64, blank=True, help_text="Facebook username")
+    flickr = models.CharField(max_length=64, blank=True, help_text="flickr username")
+    vimeo = models.CharField(max_length=64, blank=True, help_text="Vimeo username")
+    skype = models.CharField(max_length=64, blank=True)
+    matrix = models.CharField(max_length=128, blank=True)
+    jabber = models.CharField(max_length=128, blank=True)
+
     # default callsign?
 
     created = models.DateTimeField(_("Created"), auto_now_add=True)
@@ -62,6 +88,9 @@ class User(AbstractUser):
         else:
             return False
 
+    # def clean_username(self):
+    #     return self.cleaned_data['username'] or None
+
     # TODO(elnappo) Move to app?
     def claim_call_sign(self, callsign):
         if not callsign.owner:
@@ -69,6 +98,34 @@ class User(AbstractUser):
             callsign.save()
         else:
             raise PermissionDenied("Another user already owns this call sign!")
+
+    @property
+    def twitter_profile_url(self) -> str:
+        return f"https://twitter.com/{ self.twitter }"
+
+    @property
+    def youtube_profile_url(self) -> str:
+        return f"https://www.youtube.com/channel/{ self.youtube }"
+
+    @property
+    def facebook_profile_url(self) -> str:
+        return f"https://www.facebook.com/{ self.facebook }"
+
+    @property
+    def flickr_profile_url(self) -> str:
+        return f"https://www.flickr.com/photos/{ self.flickr }"
+
+    @property
+    def vimeo_profile_url(self) -> str:
+        return f"https://vimeo.com/{ self.vimeo }"
+
+    @property
+    def jabber_link(self) -> str:
+        return f"xmpp:{ self.jabber }"
+
+    @property
+    def skype_link(self) -> str:
+        return f"skype:{ self.skype }"
 
 
 class UserValidation(models.Model):
