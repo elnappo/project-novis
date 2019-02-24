@@ -248,11 +248,34 @@ class CallSign(LocationBaseModel):
         return reverse('callsign:callsign-html-detail', args=[self.name])
 
     @property
+    def aprs_passcode(self) -> int:
+        if self.official_validated == "false" or self.type == "shortwave_listener":
+            # Not a good idea to raise an exception here?
+            raise PermissionDenied("callsign is not official assigned or is shortwave listener")
+        return generate_aprs_passcode(self.name)
+
+    @property
+    def official_validated(self) -> str:
+        if self.country and self.country.telecommunicationagency.used_for_official_callsign_import and self._official_validated:
+            return "true"
+        elif self.country and self.country.telecommunicationagency.used_for_official_callsign_import and not self._official_validated:
+            return "false"
+        else:
+            return "unknown"
+
+    @property
     def location_source(self) -> str:
         if self.location == self.prefix.location:
             return "prefix"
         else:
-            return "manual"
+            return "user"
+
+    @property
+    def grid(self):
+        if self.location_source == "prefix":
+            return self._grid(high_accuracy=False)
+        else:
+            return self._grid(high_accuracy=True)
 
     @property
     def eqsl_profile_url(self) -> str:
