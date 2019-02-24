@@ -87,6 +87,13 @@ RF_MODES = (
     ("dmr", _("DMR")),
     ("ssb", _("SSB")),
 )
+
+BLACKLIST_REASONS = (
+    ("invalid", _("Invalid Callsign")),
+    ("abuse", _("Abuse")),
+    ("other", _("Other")),
+)
+
 LICENSE_TYPE = {
     # Add CEPT equivalent?
     # https://en.wikipedia.org/wiki/Amateur_radio_licensing_in_the_United_States

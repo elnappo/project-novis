@@ -45,8 +45,8 @@ class DMRIDInline(admin.TabularInline):
     verbose_name_plural = "DMR IDs"
 
     show_change_link = True
-    fields = ("name", "owner", "active", "issued")
-    readonly_fields = ("name", "owner", "active", "issued")
+    fields = ("name", "active", "issued")
+    readonly_fields = ("name", "active", "issued")
 
     def has_add_permission(self, request, obj=None) -> bool:
         return False
@@ -69,7 +69,7 @@ set_call_sign_metadata.short_description = "Set default metadata"
 class CallsignAdmin(BaseModelAdmin):
     list_display = ("name", "country", "owner", "type")
     list_display_links = ("name",)
-    list_filter = ("type", "issued", "created", "modified")
+    list_filter = ("type", "_official_validated", "country", "issued", "created", "modified")
     search_fields = ("name",)
     actions = [set_call_sign_metadata]
 
@@ -78,7 +78,7 @@ class CallsignAdmin(BaseModelAdmin):
             'fields': (('name', 'prefix'), 'country')
         }),
         ('Details', {
-            'fields': ('official_validated', 'type', 'owner', 'active', "issued", "dstar", "comment")
+            'fields': ('_official_validated', 'official_validated', 'type', 'owner', 'active', "issued", "dstar", "comment")
         }),
         ('Location', {
             'fields': ('cq_zone', 'itu_zone', 'itu_region', 'grid', 'location')
@@ -89,7 +89,7 @@ class CallsignAdmin(BaseModelAdmin):
         }),
     )
     raw_id_fields = ("owner", "prefix", "created_by")
-    readonly_fields = ('created', 'modified', 'grid')
+    readonly_fields = ('created', 'modified', 'grid', 'official_validated')
     inlines = [DMRIDInline, LOTWUserInline, ClublogUserInline, ESQLUserInline]
 
 
@@ -178,3 +178,28 @@ class TransmitterAdmin(BaseModelAdmin):
 class TelecommunicationAgencyAdmin(BaseModelAdmin):
     list_display = ("name", "country")
     list_display_links = ("name",)
+    list_filter = ("used_for_official_callsign_import", "created", "modified")
+
+
+@admin.register(Person)
+class PersonAdmin(BaseModelAdmin):
+    list_display = ("name", "identifier", "source")
+    list_display_links = ("name", "identifier")
+    list_filter = ("source", "country", "telco_agency", "created", "modified")
+
+    raw_id_fields = ("callsigns",)
+
+
+@admin.register(DataImport)
+class DataImportAdmin(BaseModelAdmin):
+    list_display = ("task", "start", "success")
+    list_display_links = ("task",)
+    list_filter = ("task", "success", "start", "stop")
+    ordering = ('-start',)
+
+
+@admin.register(CallsignBlacklist)
+class CallsignBlacklistAdmin(BaseModelAdmin):
+    list_display = ("callsign", "submitter", "reason", "approved")
+    list_display_links = ("callsign",)
+    list_filter = ("reason", "approved", "created", "modified")

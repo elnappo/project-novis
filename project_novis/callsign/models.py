@@ -1,14 +1,16 @@
+from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
+from django.contrib.postgres.fields import JSONField
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.geos import Point
+from django.core.exceptions import PermissionDenied, ValidationError
 
+from .enums import CALLSIGN_TYPES, CONTINENTS, CTCSS, RF_MODES, BLACKLIST_REASONS
 from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, WikidataObjectField, generate_aprs_passcode
-
-from .enums import CALLSIGN_TYPES, CONTINENTS, CTCSS, RF_MODES
 
 
 class BaseModel(models.Model):
@@ -25,8 +27,7 @@ class LocationBaseModel(BaseModel):
     class Meta:
         abstract = True
 
-    @property
-    def grid(self) -> str:
+    def _grid(self, high_accuracy: bool = True) -> str:
         """
         Converts WGS84 coordinates into the corresponding Maidenhead Locator.
         Based on https://github.com/dh1tw/pyhamtools/blob/master/pyhamtools/locator.py
@@ -42,10 +43,15 @@ class LocationBaseModel(BaseModel):
         locator += chr(ord('A') + int(latitude / 10))
         locator += chr(ord('0') + int((longitude % 20) / 2))
         locator += chr(ord('0') + int(latitude % 10))
-        locator += chr(ord('A') + int((longitude - int(longitude / 2) * 2) / (2 / 24))).lower()
-        locator += chr(ord('A') + int((latitude - int(latitude / 1) * 1) / (1 / 24))).lower()
+        if high_accuracy:
+            locator += chr(ord('A') + int((longitude - int(longitude / 2) * 2) / (2 / 24))).lower()
+            locator += chr(ord('A') + int((latitude - int(latitude / 1) * 1) / (1 / 24))).lower()
 
         return locator
+
+    @property
+    def grid(self):
+        return self._grid(high_accuracy=True)
 
     @grid.setter
     def grid(self, value: str):
@@ -97,6 +103,10 @@ class LocationBaseModel(BaseModel):
 
         self.location = Point(longitude, latitude)
 
+    @property
+    def aprs_fi_url(self) -> str:
+        return f"https://aprs.fi/#!addr={self.grid}"
+
     # @property
     # def cq_zone(self) -> int:
     #     raise NotImplementedError
@@ -134,12 +144,12 @@ class Country(BaseModel):
     wikidata_object = WikidataObjectField(unique=True, db_index=True)
 
     # Additional Information
-    adif_name = models.CharField(max_length=64, db_index=True, blank=True, null=True)
-    geonames_id = models.PositiveIntegerField(null=True, blank=True)
-    osm_relation_id = models.PositiveIntegerField(null=True, blank=True)
-    itu_object_identifier = models.CharField(max_length=16, blank=True, null=True)
-    itu_letter_code = models.CharField(max_length=3, blank=True, null=True)
-    fips = models.CharField(max_length=2, blank=True, null=True)
+    adif_name = models.CharField("ADIF name", max_length=64, db_index=True, blank=True, null=True)
+    geonames_id = models.PositiveIntegerField("Geonames ID", null=True, blank=True)
+    osm_relation_id = models.PositiveIntegerField("OSM relation ID", null=True, blank=True)
+    itu_object_identifier = models.CharField("ITU object identifier", max_length=16, blank=True, null=True)
+    itu_letter_code = models.CharField("ITU letter code", max_length=3, blank=True, null=True)
+    fips = models.CharField("FIPS", max_length=2, blank=True, null=True)
 
     def __str__(self) -> str:
         return self.name
@@ -188,12 +198,12 @@ class CallSignPrefix(BaseModel):
     name = models.CharField(max_length=16, unique=True, db_index=True)
     country = models.ForeignKey(Country, on_delete=models.PROTECT, null=True, blank=True)
     dxcc = models.ForeignKey(DXCCEntry, on_delete=models.PROTECT, null=True, blank=True)
-    cq_zone = CQZoneField(null=True, blank=True)
-    itu_zone = ITUZoneField(null=True, blank=True)
-    itu_region = ITURegionField(null=True, blank=True)
+    cq_zone = CQZoneField("CQ zone", null=True, blank=True)
+    itu_zone = ITUZoneField("ITU zone", null=True, blank=True)
+    itu_region = ITURegionField("ITU region", null=True, blank=True)
     continent = models.CharField(choices=CONTINENTS, max_length=2, blank=True)
     location = models.PointField(null=True, blank=True)
-    utc_offset = models.FloatField(null=True, blank=True)
+    utc_offset = models.FloatField("UTC offset", null=True, blank=True)
     type = models.CharField(choices=CALLSIGN_TYPES, max_length=32, blank=True)
 
     def __str__(self) -> str:
@@ -201,11 +211,15 @@ class CallSignPrefix(BaseModel):
 
 
 class CallSignManager(models.Manager):
-    def create_call_sign(self, call_sign: str):
-        call_sign = self.create(name=call_sign)
-        call_sign.set_default_meta_data()
-        call_sign.save()
-        return call_sign
+    def create_callsign(self, callsign: str, check_blacklist: bool = True):
+        # Check if callsign is blacklisted
+        if check_blacklist and CallsignBlacklist.objects.filter(callsign=callsign).exists():
+            raise ValidationError("callsign is blacklisted")
+
+        callsign = self.create(name=callsign)
+        callsign.set_default_meta_data()
+        callsign.save()
+        return callsign
 
 
 class CallSign(LocationBaseModel):
@@ -219,9 +233,13 @@ class CallSign(LocationBaseModel):
     owner = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(default=True)
     issued = models.DateField(null=True, blank=True)
+    expired = models.DateField(null=True, blank=True)
+    license_type = models.CharField(max_length=64, blank=True)
     dstar = models.BooleanField("D-STAR", default=False)
+    identifier = models.CharField(_("Optional identifier"), max_length=128, unique=True, blank=True, null=True)
+    website = models.URLField(max_length=128, blank=True, null=True)
     comment = models.TextField(blank=True)
-    official_validated = models.BooleanField(default=False, help_text="Callsign is validated by a government agency")
+    _official_validated = models.BooleanField(default=False, help_text="Callsign is validated by a government agency")
 
     created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="callsigns")
     internal_comment = models.TextField(blank=True)
@@ -229,6 +247,9 @@ class CallSign(LocationBaseModel):
     objects = CallSignManager()
 
     # TODO(elnappo) make sure a user can not change his name after validation
+
+    def __str__(self) -> str:
+        return self.name
 
     def set_default_meta_data(self):
         call_sign = self.name
@@ -309,12 +330,7 @@ class CallSign(LocationBaseModel):
     def hamcall_profile_url(self) -> str:
         return f"https://hamcall.net/call?callsign={ self.name }"
 
-    @property
-    def aprs_passcode(self) -> int:
-        return generate_aprs_passcode(self.name)
 
-    def __str__(self) -> str:
-        return self.name
 
 
 class DMRID(BaseModel):
@@ -322,12 +338,7 @@ class DMRID(BaseModel):
     callsign = models.ForeignKey(CallSign, related_name='dmr_ids', on_delete=models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(default=True)
     issued = models.DateTimeField(null=True, blank=True)
-
-    # Optional information used for DMR ID list
-    owner = models.CharField(max_length=128, blank=True)
-    city = models.CharField(max_length=128, blank=True)
-    state = models.CharField(max_length=128, blank=True)
-    remarks = models.CharField(max_length=128, blank=True)
+    comment = models.TextField(blank=True)
 
     @property
     def brandmeister_profile_url(self) -> str:
@@ -357,7 +368,7 @@ class Club(BaseModel):
 
 class LOTWUser(BaseModel):
     callsign = models.OneToOneField(CallSign, on_delete=models.CASCADE)
-    lotw_last_activity = models.DateTimeField()
+    lotw_last_activity = models.DateTimeField("LOTW last activity")
 
     def __str__(self) -> str:
         return self.callsign.name
@@ -365,10 +376,10 @@ class LOTWUser(BaseModel):
 
 class ClublogUser(BaseModel):
     callsign = models.OneToOneField(CallSign, on_delete=models.CASCADE)
-    clublog_first_qso = models.DateTimeField(blank=True, null=True)
-    clublog_last_qso = models.DateTimeField(blank=True, null=True)
+    clublog_first_qso = models.DateTimeField("Clublog first QSO", blank=True, null=True)
+    clublog_last_qso = models.DateTimeField("Clublog last QSO", blank=True, null=True)
     clublog_last_upload = models.DateTimeField(blank=True, null=True)
-    clublog_oqrs = models.NullBooleanField(blank=True, null=True)
+    clublog_oqrs = models.NullBooleanField("Clublog OQRS", lank=True, null=True)
 
     @property
     def profile_url(self) -> str:
@@ -434,7 +445,7 @@ class Transmitter(BaseModel):
         if self.dmr_id:
             return f"https://brandmeister.network/index.php?page=repeater&id={ self.dmr_id.name }"
         else:
-            return "#"
+            return ""
 
     def __str__(self) -> str:
         return f"{ self.repeater.callsign.name } at { self.transmit_frequency } MHz"
@@ -442,11 +453,83 @@ class Transmitter(BaseModel):
 
 class TelecommunicationAgency(BaseModel):
     name = models.CharField(max_length=64, unique=True)
-    country = models.ForeignKey(Country, on_delete=models.PROTECT)
-    url = models.URLField(max_length=256, blank=True, null=True)
+    country = models.OneToOneField(Country, on_delete=models.PROTECT)
+    url = models.URLField("URL", max_length=256, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    callsign_data_url = models.URLField(max_length=256, blank=True, null=True)
+    callsign_data_url = models.URLField("Callsign data URL", max_length=256, blank=True, null=True)
     callsign_data_description = models.TextField(blank=True, null=True)
+    used_for_official_callsign_import = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return self.name
+
+
+class Person(LocationBaseModel):
+    identifier = models.CharField(max_length=128, db_index=True)
+    source = models.CharField(max_length=128, db_index=True)
+    callsigns = models.ManyToManyField(CallSign, blank=True)
+    name = models.CharField(max_length=128, db_index=True)
+    address = models.TextField(blank=True)
+    city = models.CharField(max_length=128, blank=True)
+    state = models.CharField(max_length=128, blank=True)
+    country = models.ForeignKey(Country, on_delete=models.PROTECT, null=True, blank=True)
+    email = models.EmailField(max_length=128, blank=True, null=True)
+    telco_agency = models.ForeignKey(TelecommunicationAgency, on_delete=models.PROTECT, null=True, blank=True, help_text="Related telecommunication agency")
+    comment = models.TextField(blank=True)
+    optional_data = JSONField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ("identifier", "source")
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class DataImport(BaseModel):
+    start = models.DateTimeField()
+    task = models.CharField(max_length=128)
+    description = models.TextField(blank=True)
+    optional_data = JSONField(blank=True, null=True)
+
+    stop = models.DateTimeField(blank=True, null=True)
+    callsigns = models.PositiveIntegerField(default=0)
+    new_callsigns = models.PositiveIntegerField(default=0)
+    updated_callsigns = models.PositiveIntegerField(default=0)
+    deleted_callsigns = models.PositiveIntegerField(default=0)
+    invalid_callsigns = models.PositiveIntegerField(default=0)
+    blacklisted_callsigns = models.PositiveIntegerField(default=0)
+    errors = models.PositiveIntegerField(default=0)
+
+    def __str__(self) -> str:
+        return f"{self.task}-{self.start}"
+
+    @property
+    def finished(self) -> bool:
+        return bool(self.stop)
+
+    @property
+    def duration(self) -> timedelta:
+        if self.stop:
+            return self.stop - self.start
+        else:
+            return timedelta(0)
+
+
+class CallsignBlacklist(BaseModel):
+    callsign = CallSignField(unique=True, db_index=True)
+    reason = models.CharField(max_length=128, choices=BLACKLIST_REASONS, blank=True)
+    submitter = models.CharField(max_length=128, blank=True)
+    submitter_email = models.EmailField(max_length=128, blank=True)
+    message = models.TextField(blank=True)
+    approved = models.NullBooleanField(default=None)
+    comment = models.TextField(blank=True)
+
+    def __str__(self) -> str:
+        return self.callsign
+
+    @property
+    def submitter_email_link(self) -> str:
+        if self.submitter_email:
+            return f"{self.submitter_email_link}?subject={self.callsign}%20Blacklist%20Request&body=Hello%20{self.submitter},%0Athank%20your%20for%20your%20request,%20"
+        else:
+            return ""
