@@ -4,14 +4,18 @@
 {% block title %}{{ object.name }} - Amateur Radio Callsign{% endblock %}
 
 {% block meta_content %}
-    <meta name="description" content="{{ object.name }} is an amateur radio callsign{% if object.location and object.country.name %} located in {{ object.country.name }} (QTH: {{ object.grid }}){% endif %}. Project novis is a free and open-source platform for amateur radio related services. Provides acomprehensive database with an easy to use and modern API.">
+    <meta name="description" content="{{ object.name }} is an amateur radio callsign{% if object.location and object.country.name %} located in {{ object.country.name }} (QTH: {{ object.grid }}){% endif %}. Project novis is a free and open-source platform for amateur radio related services. Provides a comprehensive database with an easy to use and modern API.">
     <meta name="callsign" content="{{ object.name }}">
 {% endblock %}
 
 {% block content_header %}
     <h1>
-        {{ object.name }} {% if object.official_validated %}
-        <i class="fa fa-check-circle" title="Callsign official issued"></i>{% endif %}
+        {{ object.name }}
+        {% if object.official_validated == "true" %}
+        <i class="fa fa-check-circle" title="Callsign official issued"></i>
+        {% elif object.official_validated == "false" %}
+        <i class="fa fa-times-circle" title="Callsign not official issued"></i>
+        {% endif %}
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Callsign</a></li>
@@ -30,7 +34,7 @@
                             <a href="{% url "callsign:callsign-html-update" object.name %}"
                                class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Edit</a>
                         </div>
-                    {% elif user.is_authenticated and object.owner == None%}
+                    {% else %}
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-sm btn-default" data-toggle="modal"
                                     data-target="#callSignClaimModal"><i class="fa fa-plus"></i> Claim
@@ -46,9 +50,18 @@
                                         <h4 class="modal-title" id="myModalLabel">Confirm callsign claim</h4>
                                     </div>
                                     <div class="modal-body">
-                                        Are you sure to claim
-                                        <mark>{{ object.name }}</mark>
-                                        to your account?
+                                        {% if not user.is_authenticated %}
+                                            To claim and edit a callsign please create an account <a href="{% url 'account_signup' %}">here</a>.
+                                        {% else %}
+                                        <p><strong>
+                                            Are you sure to claim <mark>{{ object.name }}</mark> to your account?
+                                        </strong></p>
+                                        {% endif %}
+                                        <p>
+                                            After you claimed a callsign to your account you can edit details and
+                                            validate the ownership to get access to e.g. the APRS passcode.
+                                        </p>
+                                        {% if user.is_authenticated %}
                                         <form class="form" method="post"
                                               action={% url "callsign:callsign-html-claim" object.name %}>
                                             {% csrf_token %}
@@ -57,8 +70,12 @@
                                                     Claim {{ object.name }}</button>
                                             </div>
                                         </form>
+                                        {% else %}
+                                            <div class="modal-footer">
+                                                <a href="{% url 'account_signup' %}" class="btn btn-primary" role="button">Signup</a>
+                                            </div>
+                                        {% endif %}
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -73,14 +90,15 @@
                         </tr>
                         <tr>
                             <td>DXCC Entry</td>
-                            <td>{{ object.prefix.dxcc }} ({{ object.prefix.dxcc.id }})</td>
+                            <td>{% if object.prefix.dxcc %}{{ object.prefix.dxcc }} ({{ object.prefix.dxcc.id }}){% endif %}</td>
                         </tr>
                         <tr>
                             <td>Grid</td>
                             <td>
                                 {% if object.grid %}
                                     <div style="font-size: 125%">
-                                        <span class="label label-info label-as-badge"> {{ object.grid }} </span>
+                                        <a href="{{ object.aprs_fi_url }}" target="_blank"
+                                   rel="noopener"><span class="label label-info label-as-badge"> {{ object.grid }} </span></a>
                                     </div>
                                 {% endif %}
                             </td>
