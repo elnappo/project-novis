@@ -64,7 +64,7 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (_('Personal info'), {'fields': ('name', 'validated', 'bio')}),
-        (_('Address'), {'fields': ('address', 'country')}),
+        (_('Address'), {'fields': ('address', 'country', 'location')}),
         (_('Social'), {'fields': ('twitter', 'youtube', 'facebook', 'flickr', 'vimeo', 'skype', 'matrix', 'jabber')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined', 'created', 'modified')}),
