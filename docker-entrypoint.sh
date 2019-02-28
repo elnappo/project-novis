@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
+# Based on https://github.com/lukin0110/docker-django-boilerplate/blob/master/deployment/docker-entrypoint.sh
 
 set -o errexit    # abort script at first error
 set -o pipefail   # return the exit status of the last command in the pipe
 
-[[ -z "$DATABASE_URL" ]] && echo "ERROR: Need to set DATABASE_URL" && exit 1;
+[[ -z "$DATABASE_URL" ]] && echo "ERROR: DATABASE_URL must be set!" && exit 1;
 
 # Define help message
 show_help() {
