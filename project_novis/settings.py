@@ -134,6 +134,8 @@ DATABASES = {
     'default': dj_database_url.config(default=os.environ.get("DATABASE_URL", "postgis://postgres:postgres@127.0.0.1:5432/postgres"))
 }
 
+#DATABASES["default"]["OPTIONS"]["connect_timeout"] = 5
+
 WSGI_APPLICATION = 'wsgi.application'
 
 SITE_ID = 1
@@ -152,6 +154,8 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # CORS settings
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
+# For OAuth2
+# CORS_URLS_REGEX = r'^(/api/|/o/).*$'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -187,7 +191,7 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 LOGIN_REDIRECT_URL = "/"
 
 OAUTH2_PROVIDER = {
-    'SCOPES': {'user': 'Grants read/write access to user data',
+    'SCOPES': {'user:write': 'Grants read/write access to user data',
                'user:read': 'Grants access to read user data'}
 }
 
@@ -227,7 +231,7 @@ if PRODUCTION:
     EMAIL_HOST_PASSWORD = os.environ.get("DJANGO_EMAIL_HOST_PASSWORD", "")
     EMAIL_PORT = os.environ.get("DJANGO_EMAIL_PORT", "587")
     EMAIL_USE_TLS = True
-    EMAIL_SUBJECT_PREFIX = os.environ.get("DJANGO_", "")
+    EMAIL_SUBJECT_PREFIX = os.environ.get("DJANGO_EMAIL_SUBJECT_PREFIX", "")
     # EMAIL_TIMEOUT = 60
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
