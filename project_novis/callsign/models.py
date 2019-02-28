@@ -76,18 +76,18 @@ class LocationBaseModel(BaseModel):
 
 class Country(BaseModel):
     name = models.CharField(max_length=64, unique=True, db_index=True)
-    alpha_2 = models.CharField(max_length=2, unique=True, db_index=True)
-    alpha_3 = models.CharField(max_length=3, unique=True, db_index=True)
-    numeric_3 = models.CharField(max_length=3, unique=True, db_index=True)
+    alpha_2 = models.CharField(max_length=2, unique=True, db_index=True, help_text="ISO 3166-1 alpha-2 – two-letter country code")
+    alpha_3 = models.CharField(max_length=3, unique=True, db_index=True, help_text="ISO 3166-1 alpha-3 – three-letter country code")
+    numeric_3 = models.CharField(max_length=3, unique=True, db_index=True, help_text="ISO 3166-1 numeric – three-digit country code")
     wikidata_object = WikidataObjectField(unique=True, db_index=True)
 
     # Additional Information
-    adif_name = models.CharField("ADIF name", max_length=64, db_index=True, blank=True, null=True)
+    adif_name = models.CharField("ADIF name", max_length=64, db_index=True, blank=True, null=True, help_text="Amateur Data Interchange Format (ADIF) country name")
     geonames_id = models.PositiveIntegerField("Geonames ID", null=True, blank=True)
-    osm_relation_id = models.PositiveIntegerField("OSM relation ID", null=True, blank=True)
-    itu_object_identifier = models.CharField("ITU object identifier", max_length=16, blank=True, null=True)
-    itu_letter_code = models.CharField("ITU letter code", max_length=3, blank=True, null=True)
-    fips = models.CharField("FIPS", max_length=2, blank=True, null=True)
+    osm_relation_id = models.PositiveIntegerField("OSM relation ID", null=True, blank=True, help_text="OpenStreetMap relation ID")
+    itu_object_identifier = models.CharField("ITU object identifier", max_length=16, blank=True, null=True, help_text="International Telecommunication Union (ITU) object identifier")
+    itu_letter_code = models.CharField("ITU letter code", max_length=3, blank=True, null=True, help_text="International Telecommunication Union (ITU) letter code")
+    fips = models.CharField("FIPS", max_length=2, blank=True, null=True, help_text="Federal Information Processing Standards (FIPS) 10-4 standard country code")
 
     def __str__(self) -> str:
         return self.name
@@ -135,7 +135,7 @@ class DXCCEntry(BaseModel):
 class CallSignPrefix(BaseModel):
     name = models.CharField(max_length=16, unique=True, db_index=True)
     country = models.ForeignKey(Country, on_delete=models.PROTECT, null=True, blank=True)
-    dxcc = models.ForeignKey(DXCCEntry, on_delete=models.PROTECT, null=True, blank=True)
+    dxcc = models.ForeignKey(DXCCEntry, on_delete=models.PROTECT, null=True, blank=True, verbose_name="DXCC")
     cq_zone = CQZoneField("CQ zone", null=True, blank=True)
     itu_zone = ITUZoneField("ITU zone", null=True, blank=True)
     itu_region = ITURegionField("ITU region", null=True, blank=True)
@@ -154,10 +154,10 @@ class CallSignManager(models.Manager):
         if check_blacklist and CallsignBlacklist.objects.filter(callsign=callsign).exists():
             raise ValidationError("callsign is blacklisted")
 
-        callsign = self.create(name=callsign)
-        callsign.set_default_meta_data()
-        callsign.save()
-        return callsign
+        instance = self.create(name=callsign)
+        instance.set_default_meta_data()
+        instance.save()
+        return instance
 
 
 class CallSign(LocationBaseModel):
@@ -378,7 +378,9 @@ class Transmitter(BaseModel):
 
 
 class TelecommunicationAgency(BaseModel):
-    name = models.CharField(max_length=64, unique=True)
+    name = models.CharField(max_length=128, unique=True, help_text="English Name")
+    original_name = models.CharField(max_length=128, blank=True)
+    original_name_short = models.CharField(max_length=32, blank=True)
     country = models.OneToOneField(Country, on_delete=models.PROTECT)
     url = models.URLField("URL", max_length=256, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
