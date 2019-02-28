@@ -108,3 +108,10 @@ LICENSE_TYPE = {
     "POL": (),
     "GENERIC": ("CEPT", "CEPT-Novice", "IARP")
 }
+
+LOCATION_SOURCE_CHOICES = (
+    ("user", _("User")),
+    ("official", _("Official")),
+    ("unofficial", _("Unofficial")),
+    ("prefix", _("Prefix"))
+)

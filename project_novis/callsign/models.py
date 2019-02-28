@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied, ValidationError
 
-from .enums import CALLSIGN_TYPES, CONTINENTS, CTCSS, RF_MODES, BLACKLIST_REASONS
+from .enums import CALLSIGN_TYPES, CONTINENTS, CTCSS, RF_MODES, BLACKLIST_REASONS, LOCATION_SOURCE_CHOICES
 from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, WikidataObjectField, generate_aprs_passcode, point_to_grid, grid_to_point
 
 
@@ -178,6 +178,7 @@ class CallSign(LocationBaseModel):
     website = models.URLField(max_length=128, blank=True, null=True)
     comment = models.TextField(blank=True)
     _official_validated = models.BooleanField(default=False, help_text="Callsign is validated by a government agency")
+    _location_source = models.CharField(max_length=32, choices=LOCATION_SOURCE_CHOICES, blank=True)
 
     lotw_last_activity = models.DateTimeField("LOTW last activity", null=True, blank=True)
     eqsl = models.BooleanField(default=False)
@@ -202,6 +203,7 @@ class CallSign(LocationBaseModel):
                 self.cq_zone = prefix.cq_zone
                 self.itu_zone = prefix.itu_zone
                 self.location = prefix.location
+                self._location_source = "prefix"
                 break
             else:
                 call_sign = call_sign[:-1]
@@ -227,10 +229,10 @@ class CallSign(LocationBaseModel):
 
     @property
     def location_source(self) -> str:
-        if self.location == self.prefix.location:
-            return "prefix"
+        if self._location_source in ("official", "unofficial"):
+            return "address"
         else:
-            return "user"
+            return self._location_source
 
     @property
     def grid(self):
