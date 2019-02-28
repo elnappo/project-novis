@@ -8,32 +8,12 @@ class BaseModelAdmin(admin.ModelAdmin):
     list_filter = ("created", "modified")
 
 
-class LOTWUserInline(admin.TabularInline):
-    model = LOTWUser
-    verbose_name = "LOTW"
-    verbose_name_plural = "LOTW"
-
-    readonly_fields = ("lotw_last_activity",)
-
-    def has_add_permission(self, request, obj=None) -> bool:
-        return False
-
-
 class ClublogUserInline(admin.TabularInline):
     model = ClublogUser
     verbose_name = "Clublog"
     verbose_name_plural = "Clublog"
 
     readonly_fields = ("clublog_first_qso", "clublog_last_qso", "clublog_last_upload", "clublog_oqrs")
-
-    def has_add_permission(self, request, obj=None) -> bool:
-        return False
-
-
-class ESQLUserInline(admin.TabularInline):
-    model = EQSLUser
-    verbose_name = "ESQL"
-    verbose_name_plural = "ESQL"
 
     def has_add_permission(self, request, obj=None) -> bool:
         return False
@@ -78,7 +58,7 @@ class CallsignAdmin(BaseModelAdmin):
             'fields': (('name', 'prefix'), 'country')
         }),
         ('Details', {
-            'fields': ('_official_validated', 'official_validated', 'type', 'owner', 'active', "issued", "dstar", "comment")
+            'fields': ('_official_validated', 'official_validated', 'type', 'owner', 'active', "issued", "dstar", "comment", "eqsl", "lotw_last_activity")
         }),
         ('Location', {
             'fields': ('cq_zone', 'itu_zone', 'itu_region', 'grid', 'location')
@@ -90,7 +70,7 @@ class CallsignAdmin(BaseModelAdmin):
     )
     raw_id_fields = ("owner", "prefix", "created_by")
     readonly_fields = ('created', 'modified', 'grid', 'official_validated')
-    inlines = [DMRIDInline, LOTWUserInline, ClublogUserInline, ESQLUserInline]
+    inlines = [DMRIDInline, ClublogUserInline]
 
 
 @admin.register(DMRID)

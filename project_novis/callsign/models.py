@@ -179,6 +179,9 @@ class CallSign(LocationBaseModel):
     comment = models.TextField(blank=True)
     _official_validated = models.BooleanField(default=False, help_text="Callsign is validated by a government agency")
 
+    lotw_last_activity = models.DateTimeField("LOTW last activity", null=True, blank=True)
+    eqsl = models.BooleanField(default=False)
+
     created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="callsigns")
     internal_comment = models.TextField(blank=True)
     source = models.CharField(max_length=256, blank=True)
@@ -235,6 +238,10 @@ class CallSign(LocationBaseModel):
             return self._grid(high_accuracy=False)
         else:
             return self._grid(high_accuracy=True)
+
+    @property
+    def lotw(self) -> bool:
+        return bool(self.lotw_last_activity)
 
     @property
     def eqsl_profile_url(self) -> str:
@@ -304,35 +311,16 @@ class Club(BaseModel):
         return self.callsign.name
 
 
-class LOTWUser(BaseModel):
-    callsign = models.OneToOneField(CallSign, on_delete=models.CASCADE)
-    lotw_last_activity = models.DateTimeField("LOTW last activity")
-
-    def __str__(self) -> str:
-        return self.callsign.name
-
-
 class ClublogUser(BaseModel):
     callsign = models.OneToOneField(CallSign, on_delete=models.CASCADE)
     clublog_first_qso = models.DateTimeField("Clublog first QSO", blank=True, null=True)
     clublog_last_qso = models.DateTimeField("Clublog last QSO", blank=True, null=True)
     clublog_last_upload = models.DateTimeField(blank=True, null=True)
-    clublog_oqrs = models.NullBooleanField("Clublog OQRS", lank=True, null=True)
+    clublog_oqrs = models.NullBooleanField("Clublog OQRS", blank=True, null=True)
 
     @property
     def profile_url(self) -> str:
         return self.callsign.clublog_profile_url
-
-    def __str__(self) -> str:
-        return self.callsign.name
-
-
-class EQSLUser(BaseModel):
-    callsign = models.OneToOneField(CallSign, on_delete=models.CASCADE)
-
-    @property
-    def profile_url(self) -> str:
-        return self.callsign.eqsl_profile_url
 
     def __str__(self) -> str:
         return self.callsign.name
