@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied, ValidationError
 
 from .enums import CALLSIGN_TYPES, CONTINENTS, CTCSS, RF_MODES, BLACKLIST_REASONS
-from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, WikidataObjectField, generate_aprs_passcode
+from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, WikidataObjectField, generate_aprs_passcode, point_to_grid, grid_to_point
 
 
 class BaseModel(models.Model):
@@ -28,80 +28,18 @@ class LocationBaseModel(BaseModel):
         abstract = True
 
     def _grid(self, high_accuracy: bool = True) -> str:
-        """
-        Converts WGS84 coordinates into the corresponding Maidenhead Locator.
-        Based on https://github.com/dh1tw/pyhamtools/blob/master/pyhamtools/locator.py
-        """
         if not self.location:
             return ""
 
-        # TODO add parameter for grid accuracy
-        longitude = self.location.x + 180
-        latitude = self.location.y + 90
-
-        locator = chr(ord('A') + int(longitude / 20))
-        locator += chr(ord('A') + int(latitude / 10))
-        locator += chr(ord('0') + int((longitude % 20) / 2))
-        locator += chr(ord('0') + int(latitude % 10))
-        if high_accuracy:
-            locator += chr(ord('A') + int((longitude - int(longitude / 2) * 2) / (2 / 24))).lower()
-            locator += chr(ord('A') + int((latitude - int(latitude / 1) * 1) / (1 / 24))).lower()
-
-        return locator
+        return point_to_grid(self.location, high_accuracy=high_accuracy)
 
     @property
     def grid(self):
         return self._grid(high_accuracy=True)
 
     @grid.setter
-    def grid(self, value: str):
-        """
-        Converts Maidenhead locator in the corresponding WGS84 coordinates
-        Based on https://github.com/dh1tw/pyhamtools/blob/master/pyhamtools/locator.py
-        """
-        # TODO allow arbitrary grid accuracy
-        locator = value.upper()
-
-        if len(locator) == 5 or len(locator) < 4:
-            raise ValueError
-
-        if ord(locator[0]) > ord('R') or ord(locator[0]) < ord('A'):
-            raise ValueError
-
-        if ord(locator[1]) > ord('R') or ord(locator[1]) < ord('A'):
-            raise ValueError
-
-        if ord(locator[2]) > ord('9') or ord(locator[2]) < ord('0'):
-            raise ValueError
-
-        if ord(locator[3]) > ord('9') or ord(locator[3]) < ord('0'):
-            raise ValueError
-
-        if len(locator) == 6:
-            if ord(locator[4]) > ord('X') or ord(locator[4]) < ord('A'):
-                raise ValueError
-            if ord (locator[5]) > ord('X') or ord(locator[5]) < ord('A'):
-                raise ValueError
-
-        longitude = (ord(locator[0]) - ord('A')) * 20 - 180
-        latitude = (ord(locator[1]) - ord('A')) * 10 - 90
-        longitude += (ord(locator[2]) - ord('0')) * 2
-        latitude += (ord(locator[3]) - ord('0'))
-
-        if len(locator) == 6:
-            longitude += ((ord(locator[4])) - ord('A')) * (2 / 24)
-            latitude += ((ord(locator[5])) - ord('A')) * (1 / 24)
-
-            # move to center of subsquare
-            longitude += 1 / 24
-            latitude += 0.5 / 24
-
-        else:
-            # move to center of square
-            longitude += 1
-            latitude += 0.5
-
-        self.location = Point(longitude, latitude)
+    def grid(self, grid: str):
+        self.location = grid_to_point(grid)
 
     @property
     def aprs_fi_url(self) -> str:
@@ -533,3 +471,15 @@ class CallsignBlacklist(BaseModel):
             return f"{self.submitter_email_link}?subject={self.callsign}%20Blacklist%20Request&body=Hello%20{self.submitter},%0Athank%20your%20for%20your%20request,%20"
         else:
             return ""
+
+
+class AddressLocationCache(BaseModel):
+    address = models.CharField(max_length=256, db_index=True)
+    provider = models.CharField(max_length=64, db_index=True)
+    location = models.PointField()
+
+    class Meta:
+        unique_together = ("address", "provider")
+
+    def __str__(self) -> str:
+        return self.address

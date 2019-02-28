@@ -16,6 +16,7 @@ djangorestframework-gis
 django-filter
 drf-yasg
 flex
+geocoder
 gunicorn[gevent]
 psycopg2
 pylint

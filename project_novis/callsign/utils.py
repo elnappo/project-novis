@@ -1,6 +1,9 @@
 import re
 
+import geocoder
+from django.apps import apps
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 
@@ -103,7 +106,7 @@ def extract_callsign(value: str) -> str:
 
 def generate_aprs_passcode(callsign: str) -> int:
     """
-    Generate APRS passcode from callsing based on https://github.com/magicbug/PHP-APRS-Passcode/blob/master/aprs_func.php
+    Generate APRS passcode from callsign based on https://github.com/magicbug/PHP-APRS-Passcode/blob/master/aprs_func.php
     """
 
     hash_value = 0x73e2
@@ -116,3 +119,97 @@ def generate_aprs_passcode(callsign: str) -> int:
         i += 2
 
     return hash_value & 0x7fff
+
+
+def point_to_grid(point: Point, high_accuracy: bool = True) -> str:
+    """
+    Converts WGS84 coordinates into the corresponding Maidenhead Locator.
+    Based on https://github.com/dh1tw/pyhamtools/blob/master/pyhamtools/locator.py
+    """
+    # TODO add parameter for various grid accuracy
+    longitude = point.x + 180
+    latitude = point.y + 90
+
+    locator = chr(ord('A') + int(longitude / 20))
+    locator += chr(ord('A') + int(latitude / 10))
+    locator += chr(ord('0') + int((longitude % 20) / 2))
+    locator += chr(ord('0') + int(latitude % 10))
+    if high_accuracy:
+        locator += chr(ord('A') + int((longitude - int(longitude / 2) * 2) / (2 / 24))).lower()
+        locator += chr(ord('A') + int((latitude - int(latitude / 1) * 1) / (1 / 24))).lower()
+
+    return locator
+
+
+def grid_to_point(grid: str) -> Point:
+    """
+    Converts Maidenhead locator in the corresponding WGS84 coordinates
+    Based on https://github.com/dh1tw/pyhamtools/blob/master/pyhamtools/locator.py
+    """
+    # TODO allow arbitrary grid accuracy
+    locator = grid.upper()
+
+    if len(locator) == 5 or len(locator) < 4:
+        raise ValueError
+
+    if ord(locator[0]) > ord('R') or ord(locator[0]) < ord('A'):
+        raise ValueError
+
+    if ord(locator[1]) > ord('R') or ord(locator[1]) < ord('A'):
+        raise ValueError
+
+    if ord(locator[2]) > ord('9') or ord(locator[2]) < ord('0'):
+        raise ValueError
+
+    if ord(locator[3]) > ord('9') or ord(locator[3]) < ord('0'):
+        raise ValueError
+
+    if len(locator) == 6:
+        if ord(locator[4]) > ord('X') or ord(locator[4]) < ord('A'):
+            raise ValueError
+        if ord(locator[5]) > ord('X') or ord(locator[5]) < ord('A'):
+            raise ValueError
+
+    longitude = (ord(locator[0]) - ord('A')) * 20 - 180
+    latitude = (ord(locator[1]) - ord('A')) * 10 - 90
+    longitude += (ord(locator[2]) - ord('0')) * 2
+    latitude += (ord(locator[3]) - ord('0'))
+
+    if len(locator) == 6:
+        longitude += ((ord(locator[4])) - ord('A')) * (2 / 24)
+        latitude += ((ord(locator[5])) - ord('A')) * (1 / 24)
+
+        # move to center of subsquare
+        longitude += 1 / 24
+        latitude += 0.5 / 24
+
+    else:
+        # move to center of square
+        longitude += 1
+        latitude += 0.5
+
+    return Point(longitude, latitude)
+
+
+def address_to_point(address: str, provider: str = "arcgis", session=None, use_cache: bool = True) -> Point:
+    # use provider string as function name
+    _geocoder = getattr(geocoder, provider)
+    AddressLocationCache = apps.get_model('callsign', 'AddressLocationCache')
+
+    if use_cache:
+        try:
+            return AddressLocationCache.objects.get(address=address, provider=provider).location
+        except AddressLocationCache.DoesNotExist:
+            g = _geocoder(address, session=session)
+            location = Point(g.lng, g.lat)
+            AddressLocationCache.objects.create(address=address, provider=provider, location=location)
+            return location
+    else:
+        g = _geocoder(address, session=session)
+        return Point(g.lng, g.lat)
+
+
+def address_to_grid_based_point(address: str, provider: str = "arcgis", session=None, use_cache: bool = True, high_accuracy: bool = True) -> Point:
+    """ Return location of address but limit accuracy to center of grid square"""
+    grid = point_to_grid(address_to_point(address=address, provider=provider, session=session, use_cache=use_cache), high_accuracy=high_accuracy)
+    return grid_to_point(grid)
