@@ -45,8 +45,8 @@ case "$1" in
     createsuperuser)
         [[ -z "$DJANGO_SUPERUSER_EMAIL" ]] && echo "ERROR: Need to set DJANGO_SUPERUSER_EMAIL" && exit 1;
         [[ -z "$DJANGO_SUPERUSER_PASSWORD" ]] && echo "ERROR: Need to set DJANGO_SUPERUSER_PASSWORD" && exit 1;
-        echo "Create superuser ${DJANGO_SUPERUSER_EMAIL}"
-        exec python manage.py shell -c "from django.contrib.auth import get_user_model; get_user_model().objects.create_superuser(\"$DJANGO_SUPERUSER_EMAIL\", \"$DJANGO_SUPERUSER_PASSWORD\")" || true
+        echo "Create Django superuser ${DJANGO_SUPERUSER_EMAIL}"
+        exec python manage.py shell -c "from django.contrib.auth import get_user_model; get_user_model().objects.create_superuser(\"$DJANGO_SUPERUSER_EMAIL\", \"$DJANGO_SUPERUSER_PASSWORD\")"
     ;;
     manage)
         echo "Running Django management command ${@:2}"

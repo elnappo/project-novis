@@ -43,21 +43,22 @@ image: alpine:latest
 
 variables:
   # KUBE_INGRESS_BASE_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
-  KUBE_INGRESS_BASE_DOMAIN: www.k8s.project-novis.org
+  # KUBE_INGRESS_BASE_DOMAIN: k8s.project-novis.org
+  KUBE_PRODUCTION_HOSTNAME: www.k8s.project-novis.org
 
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
   POSTGRES_ENABLED: "true"
   POSTGRES_DB: $CI_ENVIRONMENT_SLUG
 
-  KUBERNETES_VERSION: 1.11.6
-  HELM_VERSION: 2.13.0
+  KUBERNETES_VERSION: 1.13.3
+  HELM_VERSION: 2.12.2
 
   DOCKER_DRIVER: overlay2
 
 stages:
   - build
-  - test
+#  - test
   - review
   - dast
   - staging
@@ -251,7 +252,7 @@ review:
     - persist_environment_url
   environment:
     name: review/$CI_COMMIT_REF_NAME
-    url: http://$CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    url: https://$CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review
   artifacts:
     paths: [environment_url.txt]
@@ -306,7 +307,7 @@ staging:
     - deploy
   environment:
     name: staging
-    url: http://$CI_PROJECT_PATH_SLUG-staging.$KUBE_INGRESS_BASE_DOMAIN
+    url: https://$CI_PROJECT_PATH_SLUG-staging.$KUBE_INGRESS_BASE_DOMAIN
   only:
     refs:
       - master
@@ -330,7 +331,7 @@ canary:
     - deploy canary
   environment:
     name: production
-    url: http://$CI_PROJECT_PATH_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    url: https://$KUBE_PRODUCTION_HOSTNAME
   when: manual
   only:
     refs:
@@ -354,7 +355,7 @@ canary:
     - persist_environment_url
   environment:
     name: production
-    url: http://$CI_PROJECT_PATH_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    url: https://$KUBE_PRODUCTION_HOSTNAME
   artifacts:
     paths: [environment_url.txt]
 
@@ -403,7 +404,7 @@ production_manual:
     - persist_environment_url
   environment:
     name: production
-    url: http://$CI_PROJECT_PATH_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    url: https://$KUBE_PRODUCTION_HOSTNAME
   artifacts:
     paths: [environment_url.txt]
 
@@ -715,26 +716,25 @@ rollout 100%:
       echo "Deploying new release..."
       helm upgrade --install \
         --wait \
-        --set service.enabled="$service_enabled" \
+        --set ingress.enabled="$service_enabled" \
+        --set ingress.host="$KUBE_PRODUCTION_HOSTNAME" \
         --set releaseOverride="$CI_ENVIRONMENT_SLUG" \
         --set image.repository="$CI_APPLICATION_REPOSITORY" \
         --set image.tag="$CI_APPLICATION_TAG" \
         --set image.pullPolicy=IfNotPresent \
-        --set image.secrets[0].name="$secret_name" \
         --set application.track="$track" \
-        --set application.database_url="$DATABASE_URL" \
-        --set application.secretName="$APPLICATION_SECRET_NAME" \
-        --set application.secretChecksum="$APPLICATION_SECRET_CHECKSUM" \
-        --set service.commonName="le.$KUBE_INGRESS_BASE_DOMAIN" \
-        --set service.url="$CI_ENVIRONMENT_URL" \
-        --set service.additionalHosts="$additional_hosts" \
+        --set django.production="true" \
+        --set django.database_url="$DATABASE_URL" \
+        --set django.secretKey="$DJANGO_SECRET_KEY" \
+        --set django.superuser.password="$DJANGO_SUPERUSER_PASSWORD" \
+        --set django.sentry.dsn="$DJANGO_SENTRY_DSN" \
+        --set django.email.password="$DJANGO_EMAIL_HOST_PASSWORD" \
         --set replicaCount="$replicas" \
         --set postgresql.enabled="$postgres_enabled" \
         --set postgresql.nameOverride="postgres" \
         --set postgresql.postgresUser="$POSTGRES_USER" \
         --set postgresql.postgresPassword="$POSTGRES_PASSWORD" \
         --set postgresql.postgresDatabase="$POSTGRES_DB" \
-        --set application.migrateCommand="$DB_MIGRATE" \
         --namespace="$KUBE_NAMESPACE" \
         "$name" \
         chart/
