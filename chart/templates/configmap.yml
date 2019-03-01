@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "project-novis.fullname" . }}
+data:
+  DJANGO_PRODUCTION: {{ .Values.django.production | quote }}
+  DJANGO_ALLOWED_HOSTS: "*"
+  DJANGO_SENTRY_ENVIRONMENT: {{ .Values.application.track | quote }}

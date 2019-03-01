@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "project-novis.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "project-novis.name" . }}
+    app.kubernetes.io/version: {{ .Values.application.version }}
+    helm.sh/chart: {{ include "project-novis.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    track: "{{ .Values.application.track }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "project-novis.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "project-novis.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        track: "{{ .Values.application.track }}"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8001"
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: ["gunicorn"]
+          envFrom:
+            - configMapRef:
+                name: {{ include "project-novis.fullname" . }}
+            - secretRef:
+                name: {{ include "project-novis.fullname" . }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+            - name: metrics
+              containerPort: 8001
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 8000
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

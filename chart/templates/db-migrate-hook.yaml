@@ -1,0 +1,36 @@
+{{- if .Values.django.allowMigrations -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "project-novis.fullname" . }}-db-migrate
+  labels:
+    helm.sh/chart: {{ include "project-novis.chart" . }}
+    app.kubernetes.io/version: {{ .Values.application.version }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    track: "{{ .Values.application.track }}"
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade,post-rollback
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "10"
+spec:
+  template:
+    metadata:
+      name: {{ include "project-novis.fullname" . }}-db-migrate
+      labels:
+        app.kubernetes.io/name: {{ include "project-novis.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        track: "{{ .Values.application.track }}"
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: {{ include "project-novis.fullname" . }}-db-migrate
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args: ["migrate"]
+        envFrom:
+          - configMapRef:
+              name: {{ include "project-novis.fullname" . }}
+          - secretRef:
+              name: {{ include "project-novis.fullname" . }}
+{{- end -}}

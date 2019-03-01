@@ -58,7 +58,7 @@ variables:
 
 stages:
   - build
-#  - test
+  - test
   - review
   - dast
   - staging

@@ -1,0 +1,34 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "project-novis.fullname" . -}}
+{{- $ingressPaths := .Values.ingress.paths -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    app.kubernetes.io/name: {{ include "project-novis.name" . }}
+    app.kubernetes.io/version: {{ .Values.application.version }}
+    helm.sh/chart: {{ include "project-novis.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+{{- if .Values.ingress.tls }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host | quote }}
+      secretName: {{ .Values.ingress.host }}-tls
+{{- end }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ $fullName }}
+              servicePort: http
+{{- end }}
