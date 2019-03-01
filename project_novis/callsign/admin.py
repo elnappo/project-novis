@@ -172,10 +172,12 @@ class PersonAdmin(BaseModelAdmin):
 
 @admin.register(DataImport)
 class DataImportAdmin(BaseModelAdmin):
-    list_display = ("task", "start", "success")
+    list_display = ("task", "start", "finished")
     list_display_links = ("task",)
-    list_filter = ("task", "success", "start", "stop")
+    list_filter = ("task", "start", "stop")
     ordering = ('-start',)
+
+    readonly_fields = ("finished",)
 
 
 @admin.register(CallsignBlacklist)
