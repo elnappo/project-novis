@@ -463,6 +463,13 @@ class CallsignBlacklist(BaseModel):
     @property
     def submitter_email_link(self) -> str:
         if self.submitter_email:
+            return f"mailto:{self.submitter_email}"
+        else:
+            return ""
+
+    @property
+    def submitter_email_link_prefilled(self) -> str:
+        if self.submitter_email:
             return f"{self.submitter_email_link}?subject={self.callsign}%20Blacklist%20Request&body=Hello%20{self.submitter},%0Athank%20your%20for%20your%20request,%20"
         else:
             return ""
