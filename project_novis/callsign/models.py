@@ -266,6 +266,10 @@ class CallSign(LocationBaseModel):
         return f"http://www.pskreporter.de/table?call={ self.name }"
 
     @property
+    def qrzcq_profile_url(self) -> str:
+        return f"https://www.qrzcq.com/call/{ self.name }"
+
+    @property
     def qrz_profile_url(self) -> str:
         return f"https://www.qrz.com/db/{ self.name }"
 
