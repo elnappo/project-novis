@@ -724,7 +724,7 @@ rollout 100%:
         --set image.pullPolicy=IfNotPresent \
         --set application.track="$track" \
         --set django.production="true" \
-        --set django.database_url="$DATABASE_URL" \
+        --set django.databaseURL="$DATABASE_URL" \
         --set django.secretKey="$DJANGO_SECRET_KEY" \
         --set django.superuser.password="$DJANGO_SUPERUSER_PASSWORD" \
         --set django.sentry.dsn="$DJANGO_SENTRY_DSN" \

@@ -47,8 +47,11 @@ postgresql:
   image:
     repository: mdillon/postgis
     tag: 10
+  metrics:
+    enabled: true
   postgresqlDatabase: postgres
   postgresqlPassword: postgres
+  postgresqlDataDir: /bitnami/postgresql/data
   # Required for mdillon/postgis image, remove after replacement
   securityContext:
     enabled: false

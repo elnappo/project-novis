@@ -64,7 +64,7 @@ case "$1" in
         show_help
         ;;
     *)
-        echo "unknown command ${@:1}"
+        echo "Unknown command ${@:1}"
         show_help
         exit 1
     ;;
