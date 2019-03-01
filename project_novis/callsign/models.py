@@ -332,12 +332,11 @@ class ClublogUser(BaseModel):
         return self.callsign.name
 
 
-class Repeater(BaseModel):
+class Repeater(LocationBaseModel):
     callsign = models.ForeignKey(CallSign, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
     website = models.URLField(max_length=400, blank=True, null=True)
     altitude = models.FloatField(blank=True, null=True)
-    location = models.PointField(blank=True, null=True)
     description = models.TextField(blank=True)
 
     created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="repeaters")
