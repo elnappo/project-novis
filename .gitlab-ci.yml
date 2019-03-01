@@ -87,10 +87,10 @@ test:
   variables:
     POSTGRES_DB: test
   stage: test
-  image: docker:stable-git
+  image: "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
   script:
     - setup_test_db
-    - test
+    - /code/docker-entrypoint.sh test
   only:
     - branches
   except:
@@ -888,7 +888,7 @@ rollout 100%:
 
     echo "Pushing to GitLab Container Registry..."
     docker push "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
-    if [[ "CI_COMMIT_REF_NAME" == "master" ]]; then
+    if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then
       # Push git master to Docker registry as latest
       docker tag "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG" "$CI_APPLICATION_REPOSITORY:latest"
       docker push "$CI_APPLICATION_REPOSITORY:latest"

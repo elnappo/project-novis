@@ -2,7 +2,7 @@ coreapi
 coreschema
 coverage
 dj-database-url
-Django>=2.1
+Django~=2.1
 django-allauth
 django-avatar
 django-bootstrap3
