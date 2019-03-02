@@ -50,9 +50,10 @@ postgresql:
   metrics:
     enabled: true
   postgresqlDatabase: postgres
+  postgresqlUsername: postgres
   postgresqlPassword: postgres
-  postgresqlDataDir: /bitnami/postgresql/data
   # Required for mdillon/postgis image, remove after replacement
+  postgresqlDataDir: /bitnami/postgresql/data
   securityContext:
     enabled: false
   volumePermissions:
