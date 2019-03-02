@@ -16,7 +16,7 @@ python          : Start a Python shell
 shell           : Start a Django Python shell
 test            : Run tests
 migrate         : Run database migrations
-createsuperuser : Create superuser
+createsuperuser : Create Django superuser
 manage          : Run manage.py task
 dev             : Start a normal Django development server
 gunicorn        : Run Gunicorn server
@@ -53,11 +53,11 @@ case "$1" in
         exec python manage.py "${@:2}"
     ;;
     dev)
-        echo "Running Development Server on 0.0.0.0:8000"
+        echo "Starting Django development server on 0.0.0.0:8000"
         exec python manage.py runserver 0.0.0.0:8000
     ;;
     gunicorn)
-        echo "Running App via Gunicorn"
+        echo "Starting Django application via Gunicorn"
         exec gunicorn -b :8000 --worker-class gevent --worker-connections 20 --timeout 10 --graceful-timeout 30 --access-logfile - wsgi
     ;;
     help)

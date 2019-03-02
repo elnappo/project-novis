@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * DMR ID
     * LOTW, Clublog, and EQSL User
     * Repeater
+    * Federal Network Agencies
 * DXCC to country mapping
 * Ham radio prefix mapping
 * Management commands to import data from various ham radio web services
@@ -33,3 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * API endpoint for RADIUS authentication
 * Sentry error tracking
 * CORS header for `/api/*`
+* Docker support
+* Helm chart
+* Callsign blacklist
+* Geocode API to translate address to location (point)
+* Piwik
