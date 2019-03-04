@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import cache_page
@@ -7,18 +7,22 @@ from django.views.generic.base import TemplateView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.renderers import JSONRenderer
 
 
 class EmptyView(View):
-    def get(self, request) -> HttpResponse:
+    @staticmethod
+    def get(request: HttpRequest) -> HttpResponse:
         return HttpResponse("")
 
 
 class VersionView(APIView):
     swagger_schema = None
     permission_classes = (AllowAny,)
+    renderer_classes = (JSONRenderer,)
 
-    def get(self, request) -> Response:
+    @staticmethod
+    def get(request: HttpRequest) -> Response:
         return Response({
             "hostname": settings.HOSTNAME,
             "version": settings.VERSION
@@ -31,7 +35,8 @@ class HomePageView(TemplateView):
 
 @method_decorator(cache_page(60 * 60), name='dispatch')
 class RobotsView(View):
-    def get(self, request) -> HttpResponse:
+    @staticmethod
+    def get(request: HttpRequest) -> HttpResponse:
         return HttpResponse(
             "User-agent: *\nDisallow: /admin/\nSitemap: https://www.project-novis.org/sitemap.xml",
             content_type="text/plain")
