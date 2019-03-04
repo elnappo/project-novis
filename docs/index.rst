@@ -47,6 +47,7 @@ Project-novis is licensed under the `AGPL-3.0`_  license.
    :maxdepth: 2
    :caption: Contents:
 
+   index
    api
    oauth
 

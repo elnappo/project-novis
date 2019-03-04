@@ -261,3 +261,5 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+
+DOCS_URL = "https://project-novis.readthedocs.io/en/latest/"

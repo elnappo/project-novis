@@ -27,6 +27,7 @@ urlpatterns = [
     path("api/v1/", include("api.urls", namespace='v1')),
     path('', include('radius.urls')),
     path('admin/', admin.site.urls),
+    path('docs/', RedirectView.as_view(url=settings.DOCS_URL, permanent=False), name='go-to-docs'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
