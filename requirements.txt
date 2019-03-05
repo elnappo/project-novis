@@ -13,6 +13,7 @@ django-oauth-toolkit
 djangorestframework
 djangorestframework-csv
 djangorestframework-gis
+django-referrer-policy
 django-filter
 drf-yasg
 flex
