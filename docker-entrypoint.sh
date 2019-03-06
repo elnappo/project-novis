@@ -36,7 +36,7 @@ case "$1" in
         exec python manage.py shell
     ;;
     test)
-        exec python manage.py test
+        exec pytest
     ;;
     migrate)
         echo "Apply database migrations"

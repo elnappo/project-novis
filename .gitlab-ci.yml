@@ -92,6 +92,9 @@ test:
   script:
     - setup_test_db
     - /code/docker-entrypoint.sh test
+  artifacts:
+    reports:
+      junit: report.xml
   only:
     - branches
   except:

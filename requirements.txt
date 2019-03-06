@@ -22,6 +22,9 @@ gunicorn[gevent]
 psycopg2
 pylint
 PyPDF2
+pytest
+pytest-cov
+pytest-django
 python-dateutil
 raven
 rope
