@@ -740,7 +740,7 @@ rollout 100%:
         chart/
     fi
 
-    kubectl rollout status -n "$KUBE_NAMESPACE" -w "deployment/$name"
+    kubectl rollout status -n "$KUBE_NAMESPACE" -w "deployment/${name}-project-novis" || true
   }
 
   function scale() {

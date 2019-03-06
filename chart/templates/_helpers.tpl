@@ -30,3 +30,8 @@ Create chart name and version as used by the chart label.
 {{- define "project-novis.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{- define "project-novis.appname" -}}
+{{- $releaseName := default .Release.Name .Values.releaseOverride -}}
+{{- printf "%s" $releaseName | trunc 63 | trimSuffix "-" -}}
+{{- end -}}

@@ -11,6 +11,7 @@ image:
 
 nameOverride: ""
 fullnameOverride: ""
+releaseOverride: ""
 
 application:
   track: "development"

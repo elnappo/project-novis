@@ -8,6 +8,8 @@ metadata:
     helm.sh/chart: {{ include "project-novis.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    track: {{ .Values.application.track }}
+    app: {{ template "project-novis.appname" . }}
 spec:
   type: {{ .Values.service.type }}
   ports:
