@@ -20,7 +20,7 @@ flex==6.14.0
 geocoder==1.38.1
 gunicorn[gevent]==19.9.0
 psycopg2==2.7.7
-pylint
+pylint==2.3.1
 PyPDF2
 pytest
 pytest-cov
