@@ -1,4 +1,4 @@
-coreapi
+coreapi==2.3.3
 coreschema
 coverage
 dj-database-url
