@@ -1,6 +1,6 @@
 coreapi==2.3.3
 coreschema==0.0.4
-coverage
+coverage==4.5.2
 dj-database-url
 Django~=2.1
 django-allauth
