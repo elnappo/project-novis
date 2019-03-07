@@ -32,5 +32,5 @@ setuptools-scm==3.2.0
 sentry-sdk==0.7.6
 swagger-spec-validator==2.4.3
 whitenoise[brotli]==4.1.2
-yapf
+yapf==0.26.0
 wheel
