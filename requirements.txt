@@ -15,7 +15,7 @@ djangorestframework-csv==2.1.0
 djangorestframework-gis==0.14
 django-referrer-policy==1.0
 django-filter==2.1.0
-drf-yasg
+drf-yasg==1.14.0
 flex
 geocoder
 gunicorn[gevent]
