@@ -23,7 +23,7 @@ psycopg2==2.7.7
 pylint==2.3.1
 PyPDF2==1.26.0
 pytest==4.3.0
-pytest-cov
+pytest-cov==2.6.1
 pytest-django
 python-dateutil
 raven
