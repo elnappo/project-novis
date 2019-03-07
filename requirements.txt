@@ -27,7 +27,7 @@ pytest-cov==2.6.1
 pytest-django==3.4.8
 python-dateutil==2.8.0
 raven==6.10.0
-rope
+rope==0.12.0
 setuptools-scm
 sentry-sdk
 swagger-spec-validator
