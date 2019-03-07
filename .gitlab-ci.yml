@@ -88,10 +88,12 @@ test:
   variables:
     POSTGRES_DB: test
   stage: test
-  image: "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
+  image: ubuntu:rolling
   script:
     - setup_test_db
-    - /code/docker-entrypoint.sh test
+    - ./tools/install_requirements.sh
+    - pip3 install --requirement requirements.txt
+    - pytest
   artifacts:
     reports:
       junit: report.xml
