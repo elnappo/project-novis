@@ -28,7 +28,7 @@ pytest-django==3.4.8
 python-dateutil==2.8.0
 raven==6.10.0
 rope==0.12.0
-setuptools-scm
+setuptools-scm==3.2.0
 sentry-sdk
 swagger-spec-validator
 whitenoise[brotli]
