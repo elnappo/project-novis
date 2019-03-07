@@ -84,14 +84,19 @@ build:
 
 test:
   services:
-    - mdillon/postgis:latest
+  - name: mdillon/postgis:latest
+    alias: postgres
   variables:
     POSTGRES_DB: test
+    POSTGRES_PASSWORD: postgres
   stage: test
-  image: "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
+  image: ubuntu:rolling
   script:
     - setup_test_db
-    - /code/docker-entrypoint.sh test
+    - ./tools/install_requirements.sh
+    - pip3 install --requirement requirements.txt
+    - cd project_novis
+    - pytest
   artifacts:
     reports:
       junit: report.xml

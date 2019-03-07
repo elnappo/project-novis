@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:rolling
 
 ENV PYTHONUNBUFFERED=1
 ENV VIRTUAL_ENV /venv
