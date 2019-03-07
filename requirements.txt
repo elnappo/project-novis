@@ -9,7 +9,7 @@ django-bootstrap3==11.0.0
 django-cors-headers==2.5.0
 django-crispy-forms==1.7.2
 django-debug-toolbar==1.11
-django-oauth-toolkit
+django-oauth-toolkit==1.2.0
 djangorestframework
 djangorestframework-csv
 djangorestframework-gis
