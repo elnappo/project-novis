@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+import requests
 
-from ...models import CallSign, DataImport, CallsignBlacklist, Country
+from ...models import Country, CallSign, DataImport, CallsignBlacklist
 from ...utils import extract_callsign
 
 
@@ -35,6 +36,7 @@ class ImportCommand(BaseCommand):
                                                                         task=self.task,
                                                                         description=self.help)
         self.countries = dict(Country.objects.values_list("name", "id"))
+        self.session = requests.Session()
         self.stdout.write(self.help)
 
     def _warning(self, message: str):
@@ -64,7 +66,7 @@ class ImportCommand(BaseCommand):
             self._invalid_callsign_counter += 1
             raise ValueError(f"Invalid callsign {callsign}")
 
-        if raw_callsign in self._callsign_blacklist:
+        elif raw_callsign in self._callsign_blacklist:
             self._blacklist_callsign_counter += 1
             raise ValueError(f"Blacklisted callsign {callsign}")
 
@@ -94,7 +96,6 @@ class ImportCommand(BaseCommand):
         self._callsign_data_import_instance.invalid_callsigns = self._invalid_callsign_counter
         self._callsign_data_import_instance.blacklisted_callsigns = self._blacklist_callsign_counter
         self._callsign_data_import_instance.errors = self._error_counter
-        self._callsign_data_import_instance.success = True
         self._callsign_data_import_instance.stop = timezone.now()
         self._callsign_data_import_instance.save()
 
