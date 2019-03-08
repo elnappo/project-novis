@@ -1,0 +1,32 @@
+## nginx configuration
+## Ref: https://github.com/kubernetes/ingress/blob/master/controllers/nginx/configuration.md
+##
+controller:
+  hostNetwork: true
+  daemonset:
+    useHostPort: true
+
+  service:
+    ## Set external traffic policy to: "Local" to preserve source IP on
+    ## providers supporting it
+    ## Ref: https://kubernetes.io/docs/tutorials/services/source-ip/#source-ip-for-services-with-typeloadbalancer
+    externalTrafficPolicy: "Local"
+
+    targetPorts:
+      http: http
+      https: https
+
+    type: NodePort
+    nodePorts:
+     http: 32080
+     https: 32443
+
+  stats:
+    enabled: true
+
+  metrics:
+    enabled: true
+    service:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
