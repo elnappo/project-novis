@@ -88,7 +88,6 @@ test:
     alias: postgres
   variables:
     POSTGRES_DB: test
-    POSTGRES_PASSWORD: postgres
   stage: test
   image: ubuntu:rolling
   script:
@@ -800,7 +799,7 @@ rollout 100%:
     else
       DB_HOST=localhost
     fi
-    export DATABASE_URL="postgis://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:5432/${POSTGRES_DB}"
+    export DATABASE_URL="postgis://${POSTGRES_USER}:postgres@${DB_HOST}:5432/${POSTGRES_DB}"
   }
 
   function download_chart() {
