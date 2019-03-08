@@ -10,7 +10,7 @@ class RadiusAuthView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = RadiusAuthSerializer
 
-    def post(self, request, format=None):
+    def post(self, request, format=None) -> Response:
         print(request.data)
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})

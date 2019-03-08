@@ -39,3 +39,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Callsign blacklist
 * Geocode API to translate address to location (point)
 * Piwik
+* pytest
