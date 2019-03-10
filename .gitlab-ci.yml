@@ -98,7 +98,7 @@ test:
     - pytest
   artifacts:
     reports:
-      junit: report.xml
+      junit: project_novis/report.xml
   only:
     - branches
   except:

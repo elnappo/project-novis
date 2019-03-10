@@ -106,7 +106,8 @@ def extract_callsign(value: str) -> str:
 
 def generate_aprs_passcode(callsign: str) -> int:
     """
-    Generate APRS passcode from callsign based on https://github.com/magicbug/PHP-APRS-Passcode/blob/master/aprs_func.php
+    Generate APRS passcode from callsign based on
+    https://github.com/magicbug/PHP-APRS-Passcode/blob/master/aprs_func.php
     """
 
     hash_value = 0x73e2
@@ -209,7 +210,14 @@ def address_to_point(address: str, provider: str = "arcgis", session=None, use_c
         return Point(g.lng, g.lat)
 
 
-def address_to_grid_based_point(address: str, provider: str = "arcgis", session=None, use_cache: bool = True, high_accuracy: bool = True) -> Point:
+def address_to_grid_based_point(address: str,
+                                provider: str = "arcgis",
+                                session=None,
+                                use_cache: bool = True,
+                                high_accuracy: bool = True) -> Point:
     """ Return location of address but limit accuracy to center of grid square"""
-    grid = point_to_grid(address_to_point(address=address, provider=provider, session=session, use_cache=use_cache), high_accuracy=high_accuracy)
+    grid = point_to_grid(address_to_point(address=address,
+                                          provider=provider,
+                                          session=session,
+                                          use_cache=use_cache), high_accuracy=high_accuracy)
     return grid_to_point(grid)

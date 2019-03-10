@@ -3,13 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Project-novis Documentation
-=========================================
+project-novis Documentation
+===========================
 
 We want to establish an open platform for ham radio related web services
 everyone can participate.
 
-.. warning:: Documentation is in an very early stage.
+.. warning:: Documentation is in a very early stage.
 
 Features
 --------
