@@ -23,12 +23,14 @@
 <div class="alert alert-warning alert-dismissible">
 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 <h4><i class="icon fa fa-warning"></i> Beta</h4>
-This site is in beta stage, use with caution and without warranty. Database could be dropped without further notice!
+  This site is in beta stage, use with caution. API is not stable. Please report problems or improvements to
+  <a href="mailto:feedback@project-novis.org">feedback@project-novis.org</a> or via
+  <a href="https://github.com/elnappo/project-novis" target="_blank" rel="noopener">GitHub issues</a>.
 </div>
 
   <div class="jumbotron">
     <h1>Free & open amateur radio web services</h1>
-    <p class="lead">We want to establish a open platform for amateur radio related web services everyone can participate.</p>
+    <p class="lead">We want to establish a open and free platform for amateur radio related web services everyone can participate.</p>
     {% if not user.is_authenticated %}
     <p><a class="btn btn-lg btn-success" href="{% url 'account_signup' %}" role="button">Get started today</a></p>
     {% endif %}
@@ -37,7 +39,7 @@ This site is in beta stage, use with caution and without warranty. Database coul
   <div class="row">
     <div class="col-lg-4">
       <h2>OAuth Provider</h2>
-      <p>Use project novis as a <a href="https://en.wikipedia.org/wiki/OAuth">OAuth</a> provider to authenticate users
+      <p>Use project novis as a <a href="https://en.wikipedia.org/wiki/OAuth" target="_blank" rel="noopener">OAuth</a> provider to authenticate users
           to your amateur radio related service. As we are validating the ownership of call sings you can make sure that
           a user owns a specific callsign. No more callsign validations required on different sites!</p>
       <p><a class="btn btn-primary" href="{% url "oauth2_provider:list" %}" role="button">View details »</a></p>
@@ -53,7 +55,7 @@ This site is in beta stage, use with caution and without warranty. Database coul
       <h2>Hamnet Authentication</h2>
       <p>At the moment authentication to Hamnet access points is suboptimal. We try to solve this problem and make
           hamnet more secure by restricted access to to users which validated their callsign.
-          Therefore we provide a <a href="https://en.wikipedia.org/wiki/RADIUS">RADIUS</a> server which can be used by
+          Therefore we provide a <a href="https://en.wikipedia.org/wiki/RADIUS" target="_blank" rel="noopener">RADIUS</a> server which can be used by
           your access point with WPA2 Enterprise.</p>
       <p><a class="btn btn-primary" href="#" role="button">View details »</a></p>
     </div>
@@ -64,7 +66,7 @@ This site is in beta stage, use with caution and without warranty. Database coul
       <p>project novis is free and open-source software. We believe in the open amateur radio spirit and want to
           provide an open platform for various tech related ham radio services. If you have am idea or missing something
           feel free to open an issue on GitHub. Contributors wanted!</p>
-      <p><a class="btn btn-primary" href="https://github.com/elnappo/project-novis" role="button">View details »</a></p>
+      <p><a class="btn btn-primary" href="https://github.com/elnappo/project-novis" target="_blank" rel="noopener" role="button">View details »</a></p>
     </div>
     <div class="col-lg-4">
       <h2>Amateur Radio Database</h2>
