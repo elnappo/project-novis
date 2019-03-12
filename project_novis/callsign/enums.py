@@ -86,6 +86,11 @@ RF_MODES = (
     ("dstar", _("D-STAR")),
     ("dmr", _("DMR")),
     ("ssb", _("SSB")),
+    ("cw", _("CW")),
+    ("psk125", _("PSK125")),
+    ("PSK31", _("PSK31")),
+    ("psk63", _("PSK63")),
+    ("rtty", _("RTTY")),
 )
 
 BLACKLIST_REASONS = (
