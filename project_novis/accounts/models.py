@@ -36,6 +36,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
+    username = None
     first_name = None
     last_name = None
 
