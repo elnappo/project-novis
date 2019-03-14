@@ -201,12 +201,18 @@ def address_to_point(address: str, provider: str = "arcgis", session=None, use_c
         try:
             return AddressLocationCache.objects.get(address=address, provider=provider).location
         except AddressLocationCache.DoesNotExist:
-            g = _geocoder(address, session=session)
+            if session:
+                g = _geocoder(address, session=session)
+            else:
+                g = _geocoder(address)
             location = Point(g.lng, g.lat)
             AddressLocationCache.objects.create(address=address, provider=provider, location=location)
             return location
     else:
-        g = _geocoder(address, session=session)
+        if session:
+            g = _geocoder(address, session=session)
+        else:
+            g = _geocoder(address)
         return Point(g.lng, g.lat)
 
 
