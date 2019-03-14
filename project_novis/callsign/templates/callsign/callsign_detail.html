@@ -4,7 +4,7 @@
 {% block title %}{{ object.name }} - Amateur Radio Callsign{% endblock %}
 
 {% block meta_content %}
-    <meta name="description" content="{{ object.name }} is an amateur radio callsign{% if object.location and object.country.name %} located in {{ object.country.name }} (QTH: {{ object.grid }}){% endif %}. Project novis is a free and open-source platform for amateur radio related services. Provides a comprehensive database with an easy to use and modern API.">
+    <meta name="description" content="{{ object.name }} is an amateur radio callsign{% if object.location and object.country.name %} located in {{ object.country.name }} (QTH: {{ object.grid }}){% endif %}. Project novis is a free and open-source platform for amateur radio related services.">
     <meta name="callsign" content="{{ object.name }}">
 {% endblock %}
 

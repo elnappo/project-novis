@@ -28,7 +28,7 @@
                 <p><b>Name missing!</b> Please set your name <a href="{% url 'profile_change' %}">here</a>.</p>
             {% else %}
                 <p>Please provide a prove for you identity e.g. a passport copy. Its okay to black out all irrelevant parts.
-                    All data required for verification will be removed after the validation process. If we have further
+                    All data required for verification will be removed after the validation process or after 30 days. If we have further
                     questions we will contact you via email.</p>
                 <form class="form" method="post">
                     {% csrf_token %}

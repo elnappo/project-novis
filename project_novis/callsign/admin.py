@@ -174,7 +174,7 @@ class PersonAdmin(BaseModelAdmin):
 class DataImportAdmin(BaseModelAdmin):
     list_display = ("task", "start", "finished")
     list_display_links = ("task",)
-    list_filter = ("task", "start", "stop")
+    list_filter = ("task", "start", "stop", "created", "modified")
     ordering = ('-start',)
 
     readonly_fields = ("finished",)
