@@ -84,7 +84,7 @@ build:
 
 test:
   services:
-  - name: mdillon/postgis:latest
+  - name: mdillon/postgis:11-alpine
     alias: postgres
   variables:
     POSTGRES_DB: test
