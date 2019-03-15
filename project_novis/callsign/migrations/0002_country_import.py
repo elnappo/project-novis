@@ -2216,7 +2216,7 @@ def forwards(apps, schema_editor):
     for country in COUNTRIES:
         Country.objects.using(db_alias).create(**country)
 
-    User.objects.create(username="import_bot", email="bot@project-novis.org")
+    User.objects.create(email="bot@project-novis.org")
 
 
 class Migration(migrations.Migration):
