@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     'avatar',
 
     'main.apps.MainConfig',
+    'accounts.apps.AccountsConfig',
     'callsign.apps.CallsignConfig',
     'radius.apps.RadiusConfig',
 ]

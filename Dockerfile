@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends pytho
  && rm -rf /var/lib/apt/lists/*
 
 COPY . /code/
-WORKDIR /code/project_novis
+WORKDIR /code/
 
 RUN python manage.py collectstatic --noinput
 
