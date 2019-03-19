@@ -1,6 +1,5 @@
 .pytest_cache
 report.xml
-project_novis/staticfiles
 
 # Created by https://www.gitignore.io/api/linux,macos,django,python,jetbrains,visualstudiocode
 

@@ -36,7 +36,8 @@ case "$1" in
         exec python manage.py shell
     ;;
     test)
-        exec pytest
+        export COVERAGE_FILE=/tmp/.coverage
+        exec pytest -p no:cacheprovider --junitxml=/tmp/report.xml
     ;;
     migrate)
         echo "Apply database migrations"
