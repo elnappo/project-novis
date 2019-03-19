@@ -9,8 +9,10 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied, ValidationError
 
-from .enums import CALLSIGN_TYPES, CONTINENTS, CTCSS, RF_MODES, BLACKLIST_REASONS, LOCATION_SOURCE_CHOICES
-from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, WikidataObjectField, generate_aprs_passcode, point_to_grid, grid_to_point
+from .enums import CALLSIGN_TYPES, CONTINENTS, CTCSS, RF_MODES, BLACKLIST_REASONS,\
+    LOCATION_SOURCE_CHOICES
+from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, WikidataObjectField,\
+    generate_aprs_passcode, point_to_grid, grid_to_point
 
 
 class BaseModel(models.Model):
@@ -208,7 +210,7 @@ class CallSign(LocationBaseModel):
             else:
                 call_sign = call_sign[:-1]
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse('callsign:callsign-html-detail', args=[self.name])
 
     @property

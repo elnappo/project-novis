@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 from django.views import View
 from django.views.generic.detail import DetailView
@@ -87,7 +86,6 @@ class DMRIDFilter(rest_framework.FilterSet):
         fields = {
             'active': ['exact'],
             'callsign__name': ['exact'],
-            #'issued': ['year', 'month', 'week', 'range', 'lt', 'gt'],
         }
 
 

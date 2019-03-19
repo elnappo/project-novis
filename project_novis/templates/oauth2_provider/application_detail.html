@@ -8,10 +8,10 @@
   <h3 class="box-title">{{ application.name }}</h3>
 </div>
 <div class="box-body">
-    <label>{% trans "Client id" %}</label>
-    <input type="text" class="form-control" value="{{ application.client_id }}" disabled="">
-    <label>{% trans "Client secret" %}</label>
-    <input type="text" class="form-control" value="{{ application.client_secret }}" disabled="">
+    <label for="client_id">{% trans "Client id" %}</label>
+    <input type="text" class="form-control" id="client_id" value="{{ application.client_id }}" disabled="">
+    <label for="client_secret">{% trans "Client secret" %}</label>
+    <input type="text" class="form-control" id="client_secret" value="{{ application.client_secret }}" disabled="">
     <dl>
         <dt><p><b>{% trans "Client type" %}</b></p></dt>
         <dd><p>{{ application.client_type }}</p></dd>

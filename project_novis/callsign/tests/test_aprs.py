@@ -1,4 +1,4 @@
-from django.test import TestCase, SimpleTestCase
+from django.test import SimpleTestCase
 
 from ..utils import generate_aprs_passcode
 

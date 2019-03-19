@@ -1,8 +1,8 @@
-from bs4 import BeautifulSoup
-import urllib.request
-import re
 import os
+import re
+import urllib.request
 
+from bs4 import BeautifulSoup
 
 # Download raw data from reverse beacon network and save under rbn/
 html_page = urllib.request.urlopen("http://www.reversebeacon.net/raw_data/")

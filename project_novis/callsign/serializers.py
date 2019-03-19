@@ -59,8 +59,10 @@ class CallSignPrefixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CallSignPrefix
-        fields = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "location", "utc_offset", "type")
-        read_only = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent", "location", "utc_offset", "type")
+        fields = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent",
+                  "location", "utc_offset", "type")
+        read_only = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent",
+                     "location", "utc_offset", "type")
 
 
 class TransmitterSerializer(serializers.ModelSerializer):
@@ -68,10 +70,10 @@ class TransmitterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transmitter
-        fields = ("transmit_frequency", "offset", "receive_frequency", "colorcode", "ctcss", "mode", "pep", "echolink",
-                  "description")
-        read_only = ("transmit_frequency", "offset", "receive_frequency", "colorcode", "ctcss", "mode", "pep", "echolink",
-                     "description")
+        fields = ("transmit_frequency", "offset", "receive_frequency", "colorcode", "ctcss",
+                  "mode", "pep", "echolink", "description")
+        read_only = ("transmit_frequency", "offset", "receive_frequency", "colorcode", "ctcss",
+                     "mode", "pep", "echolink", "description")
 
 
 class RepeaterSerializer(GeoModelSerializer):

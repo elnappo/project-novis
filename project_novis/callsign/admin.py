@@ -31,6 +31,7 @@ class DMRIDInline(admin.TabularInline):
     def has_add_permission(self, request, obj=None) -> bool:
         return False
 
+
 class TransmitterInline(admin.TabularInline):
     model = Transmitter
     show_change_link = True
@@ -58,7 +59,8 @@ class CallsignAdmin(BaseModelAdmin):
             'fields': (('name', 'prefix'), 'country')
         }),
         ('Details', {
-            'fields': ('_official_validated', 'official_validated', 'type', 'owner', 'active', "issued", "dstar", "comment", "eqsl", "lotw_last_activity")
+            'fields': ('_official_validated', 'official_validated', 'type', 'owner', 'active', "issued", "dstar",
+                       "comment", "eqsl", "lotw_last_activity")
         }),
         ('Location', {
             'fields': ('cq_zone', 'itu_zone', 'itu_region', 'grid', 'location')
@@ -124,7 +126,7 @@ class RepeaterAdmin(BaseModelAdmin):
     search_fields = ("callsign",)
 
     raw_id_fields = ("callsign",)
-    inlines = [TransmitterInline,]
+    inlines = [TransmitterInline, ]
 
 
 @admin.register(Transmitter)
@@ -136,7 +138,8 @@ class TransmitterAdmin(BaseModelAdmin):
 
     fieldsets = (
         ('General', {
-            'fields': ('repeater', 'active', 'transmit_frequency', 'offset', 'receive_frequency', 'mode', 'pep', 'description')
+            'fields': ('repeater', 'active', 'transmit_frequency', 'offset', 'receive_frequency',
+                       'mode', 'pep', 'description')
         }),
         ('Analog', {
             'fields': ('ctcss', 'echolink')

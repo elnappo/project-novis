@@ -135,7 +135,7 @@ DATABASES = {
     'default': dj_database_url.config(default=os.environ.get("DATABASE_URL", "postgis://postgres:postgres@127.0.0.1:5432/postgres"))
 }
 
-#DATABASES["default"]["OPTIONS"]["connect_timeout"] = 5
+# DATABASES["default"]["OPTIONS"]["connect_timeout"] = 5
 
 WSGI_APPLICATION = 'project_novis.wsgi.application'
 
@@ -217,7 +217,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 if PRODUCTION and os.environ.get("DJANGO_SENTRY_DSN"):
     sentry_sdk.init(
         dsn=os.environ.get("DJANGO_SENTRY_DSN"),
-        integrations=[DjangoIntegration(),],
+        integrations=[DjangoIntegration(), ],
         release=VERSION,
         environment=os.environ.get("DJANGO_SENTRY_ENVIRONMENT", "unknown")
     )
@@ -254,14 +254,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 DOCS_URL = "https://project-novis.readthedocs.io/en/latest/"

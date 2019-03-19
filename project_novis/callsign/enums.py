@@ -102,7 +102,8 @@ BLACKLIST_REASONS = (
 LICENSE_TYPE = {
     # Add CEPT equivalent?
     # https://en.wikipedia.org/wiki/Amateur_radio_licensing_in_the_United_States
-    "USA": ("Technician Class", "General Class", "Amateur Extra Class", "Novice Class", "Advanced Class", "Technician Plus Class"),
+    "USA": ("Technician Class", "General Class", "Amateur Extra Class", "Novice Class",
+            "Advanced Class", "Technician Plus Class"),
     # https://de.wikipedia.org/wiki/Amateurfunkzeugnis
     "DEU": ("Class A", "Class E"),
     # https://de.wikipedia.org/wiki/Amateurfunkzeugnis
