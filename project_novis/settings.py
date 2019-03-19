@@ -73,7 +73,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.gis',
 
-    'accounts.apps.AccountsConfig',
+    'project_novis.accounts.apps.AccountsConfig',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -87,14 +87,13 @@ INSTALLED_APPS = [
     'crispy_forms',
     'avatar',
 
-    'main.apps.MainConfig',
-    'accounts.apps.AccountsConfig',
-    'callsign.apps.CallsignConfig',
-    'radius.apps.RadiusConfig',
+    'project_novis.callsign.apps.CallsignConfig',
+    'project_novis.main.apps.MainConfig',
+    'project_novis.radius.apps.RadiusConfig',
 ]
 
 MIDDLEWARE = [
-    'main.middleware.HealthCheckMiddleware',
+    'project_novis.main.middleware.HealthCheckMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -113,7 +112,7 @@ if not PRODUCTION:
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
     INTERNAL_IPS = ['127.0.0.1']
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'project_novis.urls'
 
 TEMPLATES = [
     {
@@ -138,7 +137,7 @@ DATABASES = {
 
 #DATABASES["default"]["OPTIONS"]["connect_timeout"] = 5
 
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION = 'project_novis.wsgi.application'
 
 SITE_ID = 1
 

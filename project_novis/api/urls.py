@@ -4,9 +4,9 @@ from drf_yasg.views import get_schema_view
 from rest_framework import routers
 from rest_framework.permissions import AllowAny
 
-from callsign.views import CountryViewSet, DXCCEntryViewSet, CallSignViewSet, UserCallSignViewSet, CallSignCreateAPIView, DMRIDViewSet, CallSignPrefixViewSet, RepeaterViewSet, APRSPasscodeView
-from api.apps import ApiConfig
-from accounts.views import CurrentUserAPIView
+from project_novis.callsign.views import CountryViewSet, DXCCEntryViewSet, CallSignViewSet, UserCallSignViewSet, CallSignCreateAPIView, DMRIDViewSet, CallSignPrefixViewSet, RepeaterViewSet, APRSPasscodeView
+from project_novis.api.apps import ApiConfig
+from project_novis.accounts.views import CurrentUserAPIView
 
 app_name = ApiConfig.name
 schema_view = get_schema_view(

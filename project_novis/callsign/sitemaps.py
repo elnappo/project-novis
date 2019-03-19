@@ -1,6 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 
-from .models import CallSign
+from project_novis.callsign.models import CallSign
 
 
 class CallsignSitemap(Sitemap):

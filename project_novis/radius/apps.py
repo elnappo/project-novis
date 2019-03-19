@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class RadiusConfig(AppConfig):
-    name = 'radius'
+    name = 'project_novis.radius'

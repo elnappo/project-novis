@@ -7,8 +7,8 @@ from django.contrib.sitemaps import views as sitemaps_views
 from django.contrib.flatpages.sitemaps import FlatPageSitemap
 from django.views.decorators.cache import cache_page
 
-from main.sitemaps import StaticViewSitemap
-from callsign.sitemaps import CallsignSitemap
+from project_novis.main.sitemaps import StaticViewSitemap
+from project_novis.callsign.sitemaps import CallsignSitemap
 
 sitemaps = {
     'static': StaticViewSitemap,
@@ -17,15 +17,15 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path('', include('main.urls')),
-    path('accounts/', include('accounts.urls')),
+    path('', include('project_novis.main.urls')),
+    path('accounts/', include('project_novis.accounts.urls')),
     path('.well-known/change-password', RedirectView.as_view(pattern_name='account_change_password', permanent=False)),
     path('sitemap.xml', cache_page(3600)(sitemaps_views.index), {'sitemaps': sitemaps}),
     path('sitemap-<section>.xml', cache_page(3600)(sitemaps_views.sitemap), {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    path('c/', include('callsign.urls')),
-    path("api/v1/", include("api.urls", namespace='v1')),
-    path('', include('radius.urls')),
+    path('c/', include('project_novis.callsign.urls')),
+    path("api/v1/", include("project_novis.api.urls", namespace='v1')),
+    path('', include('project_novis.radius.urls')),
     path('admin/', admin.site.urls),
     path('docs/', RedirectView.as_view(url=settings.DOCS_URL, permanent=False), name='go-to-docs'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
