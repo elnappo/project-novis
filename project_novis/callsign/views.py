@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 from django.views import View
 from django.views.generic.detail import DetailView
@@ -7,15 +8,15 @@ from django.views.generic.edit import CreateView, UpdateView
 from django_filters import rest_framework
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework_gis.filters import DistanceToPointFilter
 from rest_framework import viewsets, generics
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework_gis.filters import DistanceToPointFilter
 
-from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix, Repeater
-from .serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer,\
-    DMRIDSerializer, CallSignPrefixSerializer, RepeaterSerializer, APRSPasscodeSerializer
 from .forms import CallsignForm
+from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix, Repeater
+from .serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer, \
+    DMRIDSerializer, CallSignPrefixSerializer, RepeaterSerializer, APRSPasscodeSerializer
 
 
 class DefaultPagination(LimitOffsetPagination):
@@ -47,9 +48,9 @@ class CallSignUpdate(LoginRequiredMixin, UpdateView):
     form_class = CallsignForm
     template_name_suffix = '_update_form'
 
-    #TODO(elnappo) Replace permission check with django-guardian?
+    # TODO(elnappo) Replace permission check with django-guardian?
     def dispatch(self, request, *args, **kwargs):
-        if self.get_object().owner == request.user:
+        if self.get_object().owner == request.user or not request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
         else:
             return HttpResponseForbidden()
