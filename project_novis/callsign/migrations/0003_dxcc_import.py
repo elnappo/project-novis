@@ -813,8 +813,8 @@ DXCC_ENTIRES = [
      'numeric_3': '480'},
     {'deleted': True,
      'id': 208,
-     # None okay
      'name': 'Ruanda-Urundi',
+     # None okay
      'numeric_3': None},
     {'deleted': False,
      'id': 209,

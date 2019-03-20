@@ -11,7 +11,7 @@ class UserManager(BaseUserManager):
         Create and save a user with the given email, and password.
         """
         if not email:
-            raise ValueError('The given username must be set')
+            raise ValueError('The given email must be set')
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -41,7 +41,8 @@ class User(AbstractUser):
     last_name = None
 
     email = models.EmailField(_('Email address'), unique=True, db_index=True)
-    name = models.CharField(_('Name'), max_length=200, blank=True, help_text="Your name, please don't use callsigns")
+    name = models.CharField(_('Name'), max_length=200, blank=True, help_text="Your real name, used only for user/callsign validation.")
+    # display_name = models.CharField(_('Display name'), max_length=200, blank=True, help_text="Your name, shown on your callsign page.")
 
     # location
     address = models.TextField(max_length=512, blank=True)

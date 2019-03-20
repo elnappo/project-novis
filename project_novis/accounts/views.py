@@ -23,7 +23,7 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
 
 class UserSocialUpdate(LoginRequiredMixin, UpdateView):
     model = get_user_model()
-    fields = ['twitter', 'youtube', 'facebook', 'flicker', 'vimeo', 'sykpe', 'matrix', 'jabber']
+    fields = ['twitter', 'youtube', 'facebook', 'flickr', 'vimeo', 'skype', 'matrix', 'jabber']
     template_name = 'social_change.html'
     success_url = reverse_lazy('profile_social_change')
 
