@@ -283,6 +283,9 @@ class CallSign(LocationBaseModel):
     def hamcall_profile_url(self) -> str:
         return f"https://hamcall.net/call?callsign={ self.name }"
 
+    @property
+    def dxwatch_profile_url(self) -> str:
+        return f"https://dxwatch.com/qrz/{self.name}"
 
 
 
