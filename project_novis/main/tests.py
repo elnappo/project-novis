@@ -18,6 +18,8 @@ class ViewTest(TestCase):
             ('healthz', dict(), 200),
             ('readiness', dict(), 200),
             ('robots', dict(), 200),
+            ("sitemap", dict(), 200),
+            ("docs", dict(), 302),
         )
 
         for view, kwargs, status_code in views:
@@ -32,6 +34,8 @@ class ViewTest(TestCase):
             ('healthz', dict(), 200),
             ('readiness', dict(), 200),
             ('robots', dict(), 200),
+            ("sitemap", dict(), 200),
+            ("docs", dict(), 302),
         )
 
         with self.subTest('User login'):
