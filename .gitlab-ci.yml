@@ -102,7 +102,7 @@ test:
     - pytest
   artifacts:
     reports:
-      junit: /tmp/report.xml
+      junit: report.xml
   only:
     - branches
     - tags
