@@ -169,6 +169,7 @@ class PersonAdmin(BaseModelAdmin):
     list_display = ("name", "identifier", "source")
     list_display_links = ("name", "identifier")
     list_filter = ("source", "country", "telco_agency", "created", "modified")
+    search_fields = ("identifier", "callsigns__name")
 
     raw_id_fields = ("callsigns",)
 

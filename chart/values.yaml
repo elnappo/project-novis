@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: registry.gitlab.com/elnappo/project-novis/master
-  tag: da2aee354271d6c1f253f819585a97b33d271a95
+  tag: latest
   pullPolicy: Always
 
 nameOverride: ""
@@ -15,7 +15,7 @@ releaseOverride: ""
 
 application:
   track: "development"
-  version: "da2aee354271d6c1f253f819585a97b33d271a95"
+  version: "latest"
 
 django:
   production: false
@@ -48,12 +48,14 @@ postgresql:
   enabled: true
   image:
     repository: mdillon/postgis
-    tag: 10
+    tag: 11
   metrics:
     enabled: true
   postgresqlDatabase: postgres
   postgresqlUsername: postgres
   postgresqlPassword: postgres
+  persistence:
+    size: 8Gi
   # Required for mdillon/postgis image, remove after replacement
   postgresqlDataDir: /bitnami/postgresql/data
   securityContext:

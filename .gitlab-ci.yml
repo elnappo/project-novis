@@ -763,6 +763,7 @@ rollout 100%:
         --set postgresql.postgresqlUsername="$POSTGRES_USER" \
         --set postgresql.postgresqlPassword="$POSTGRES_PASSWORD" \
         --set postgresql.postgresqlDatabase="$POSTGRES_DB" \
+        --set postgresql.persistence.size="$POSTGRES_SIZE" \
         --namespace="$KUBE_NAMESPACE" \
         "$name" \
         chart/
