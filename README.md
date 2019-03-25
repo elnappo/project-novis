@@ -2,7 +2,6 @@
 <img src="logo/logotype_blue.svg" width=75%>
 </h1>
 
-# project-novis
 [![pipeline status](https://gitlab.com/elnappo/project-novis/badges/master/pipeline.svg)](https://gitlab.com/elnappo/project-novis/commits/master)
 [![coverage report](https://gitlab.com/elnappo/project-novis/badges/master/coverage.svg)](https://gitlab.com/elnappo/project-novis/commits/master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/76a238deddd1a065b504/maintainability)](https://codeclimate.com/github/elnappo/project-novis/maintainability)
