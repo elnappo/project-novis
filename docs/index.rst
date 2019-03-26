@@ -6,8 +6,8 @@
 project-novis Documentation
 ===========================
 
-We want to establish an open platform for ham radio related web services
-everyone can participate.
+Project novis is an open & free platform for ham radio related web services
+everyone can participate. It's available at `www.project-novis.org <https://www.project-novis.org>`_.
 
 .. warning:: Documentation is in a very early stage.
 
@@ -42,6 +42,13 @@ License
 Project-novis is licensed under the `AGPL-3.0`_  license.
 
 .. _AGPL-3.0: https://www.gnu.org/licenses/agpl-3.0.en.html
+
+Contributors
+------------
+
+- `elnappo <https://github.com/elnappo>`_ - `DO2FMW <https://www.project-novis.org/c/DO2FMW>`_
+- `tobyp <https://github.com/tobyp>`_ - `DB1QP <https://www.project-novis.org/c/DB1QP>`_
+- `mirzazulfan <https://github.com/mirzazulfan>`_
 
 .. toctree::
    :maxdepth: 2
