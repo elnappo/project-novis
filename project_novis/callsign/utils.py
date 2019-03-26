@@ -129,10 +129,10 @@ def point_to_grid(point: Point, high_accuracy: bool = True) -> str:
     Based on https://github.com/dh1tw/pyhamtools/blob/master/pyhamtools/locator.py
     """
     # TODO add parameter for various grid accuracy
-    longitude = point.x + 180
-    latitude = point.y + 90
+    longitude: float = point.x + 180
+    latitude: float = point.y + 90
 
-    locator = chr(ord('A') + int(longitude / 20))
+    locator: str = chr(ord('A') + int(longitude / 20))
     locator += chr(ord('A') + int(latitude / 10))
     locator += chr(ord('0') + int((longitude % 20) / 2))
     locator += chr(ord('0') + int(latitude % 10))
@@ -149,7 +149,7 @@ def grid_to_point(grid: str) -> Point:
     Based on https://github.com/dh1tw/pyhamtools/blob/master/pyhamtools/locator.py
     """
     # TODO allow arbitrary grid accuracy
-    locator = grid.upper()
+    locator: str = grid.upper()
 
     if len(locator) == 5 or len(locator) < 4:
         raise ValueError
@@ -172,8 +172,8 @@ def grid_to_point(grid: str) -> Point:
         if ord(locator[5]) > ord('X') or ord(locator[5]) < ord('A'):
             raise ValueError
 
-    longitude = (ord(locator[0]) - ord('A')) * 20 - 180
-    latitude = (ord(locator[1]) - ord('A')) * 10 - 90
+    longitude: float = (ord(locator[0]) - ord('A')) * 20 - 180
+    latitude: float = (ord(locator[1]) - ord('A')) * 10 - 90
     longitude += (ord(locator[2]) - ord('0')) * 2
     latitude += (ord(locator[3]) - ord('0'))
 
