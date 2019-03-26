@@ -6,6 +6,7 @@
 [![coverage report](https://gitlab.com/elnappo/project-novis/badges/master/coverage.svg)](https://gitlab.com/elnappo/project-novis/commits/master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/76a238deddd1a065b504/maintainability)](https://codeclimate.com/github/elnappo/project-novis/maintainability)
 [![Documentation Status](https://readthedocs.org/projects/project-novis/badge/?version=latest)](https://project-novis.readthedocs.io/en/latest/?badge=latest)
+[![Mozilla HTTP Observatory Grade](https://img.shields.io/mozilla-observatory/grade/www.project-novis.org.svg)](https://observatory.mozilla.org/analyze/www.project-novis.org)
 
 We want to establish a open platform for ham radio related web services everyone can participate.
 
