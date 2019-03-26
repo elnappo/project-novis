@@ -75,6 +75,33 @@ class ViewTest(TestCase):
             response = self.client.get(reverse('callsign:callsign-html-detail', kwargs={"slug": callsign}))
             self.assertEqual(response.status_code, 200)
 
+    def test_callsign_permissions(self):
+        callsigns = ("DF0HSA", "DB1QP")
+        self.create_callsigns(callsigns)
+
+        with self.subTest('GET callsign update as anonymous'):
+            response = self.client.get(reverse('callsign:callsign-html-update', kwargs={"slug": callsigns[0]}))
+            self.assertEqual(response.status_code, 302)
+
+        with self.subTest('User login'):
+            logged_in = self.client.login(username=self.email, password=self.password)
+            self.assertTrue(logged_in)
+
+        with self.subTest('POST callsign claim'):
+            response = self.client.post(reverse('callsign:callsign-html-claim', kwargs={"slug": callsigns[0]}))
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response._headers["location"][1],
+                             reverse('callsign:callsign-html-detail', kwargs={"slug": callsigns[0]}))
+            self.assertEqual(CallSign.objects.get(name=callsigns[0]).owner, self.user)
+
+        with self.subTest('GET callsign update as owner'):
+            response = self.client.get(reverse('callsign:callsign-html-update', kwargs={"slug": callsigns[0]}))
+            self.assertEqual(response.status_code, 200)
+
+        with self.subTest('GET callsign update not claimed callsign'):
+            response = self.client.get(reverse('callsign:callsign-html-update', kwargs={"slug": callsigns[1]}))
+            self.assertEqual(response.status_code, 403)
+
     def test_views_anonymous(self):
         callsigns = ("DF0HSA",)
         views = (
