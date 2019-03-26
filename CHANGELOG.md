@@ -40,3 +40,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Geocode API to translate address to location (point)
 * Piwik
 * pytest
+* Awesome logo (many thanks to @mirzazulfan)

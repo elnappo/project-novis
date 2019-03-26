@@ -7,7 +7,7 @@
         <nav class="navbar navbar-static-top">
         <div class="container-fluid">
             <div class="navbar-header">
-            <a href="{% url 'index' %}" class="navbar-brand">project <b>novis</b></a>
+            <a href="{% url 'index' %}" class="navbar-brand"><img src="{% static "img/logo.svg" %}" alt="project novis logo"></a>
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
                 <i class="fa fa-bars"></i>
             </button>
@@ -104,8 +104,8 @@
                     </ul>
                 </li>
                 {% else %}
-                <li><a href="{% url 'account_login' %}">Sign in</a></li>
-                <li><a href="{% url 'account_signup' %}">Sign up</a></li>
+                <li><a href="{% url 'account_login' %}"><i class="fa fa-sign-in"></i> Sign in</a></li>
+                <li><a href="{% url 'account_signup' %}"><i class="fa fa-user-plus"></i> Sign up</a></li>
                 {% endif %}
             </ul>
             </div>
