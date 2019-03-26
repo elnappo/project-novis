@@ -52,6 +52,8 @@ if PRODUCTION:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     USE_X_FORWARDED_HOST = True
+    CSP_UPGRADE_INSECURE_REQUESTS = True
+    CSP_BLOCK_ALL_MIXED_CONTENT = True
 
 else:
     # SECURITY WARNING: keep the secret key used in production secret!
@@ -100,6 +102,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django_referrer_policy.middleware.ReferrerPolicyMiddleware',
+    'csp.middleware.CSPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -152,6 +155,12 @@ SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+# Content-Security-Policy - https://django-csp.readthedocs.io/en/latest/configuration.html
+CSP_DEFAULT_SRC = ("'self'", )
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "cdnjs.cloudflare.com", "maxcdn.bootstrapcdn.com", "piwik.nerdpol.io")
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "maxcdn.bootstrapcdn.com", "cdnjs.cloudflare.com", "fonts.googleapis.com")
+CSP_FONT_SRC = ("'self'", "fonts.googleapis.com", "fonts.gstatic.com", "maxcdn.bootstrapcdn.com", "cdnjs.cloudflare.com")
 
 # CORS settings
 CORS_ORIGIN_ALLOW_ALL = True
@@ -213,14 +222,19 @@ REST_FRAMEWORK = {
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
+DJANGO_SENTRY_DSN = os.environ.get("DJANGO_SENTRY_DSN", None)
+
 # Sentry settings
-if PRODUCTION and os.environ.get("DJANGO_SENTRY_DSN"):
+if PRODUCTION and DJANGO_SENTRY_DSN:
     sentry_sdk.init(
-        dsn=os.environ.get("DJANGO_SENTRY_DSN"),
+        dsn=DJANGO_SENTRY_DSN,
         integrations=[DjangoIntegration(), ],
         release=VERSION,
         environment=os.environ.get("DJANGO_SENTRY_ENVIRONMENT", "unknown")
     )
+
+    # https://docs.sentry.io/error-reporting/security-policy-reporting/
+    CSP_REPORT_URI = (f"https://sentry.io/api/{ DJANGO_SENTRY_DSN.split('/')[3] }/security/?sentry_key={ DJANGO_SENTRY_DSN.split('/')[2].split('@')[0] }",)
 
 # Email settings
 if PRODUCTION:

@@ -6,6 +6,7 @@ django-avatar
 django-bootstrap3
 django-cors-headers
 django-crispy-forms
+django-csp
 django-debug-toolbar
 django-filter
 django-oauth-toolkit
