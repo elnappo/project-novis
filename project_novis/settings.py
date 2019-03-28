@@ -102,7 +102,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django_referrer_policy.middleware.ReferrerPolicyMiddleware',
-    # 'csp.middleware.CSPMiddleware',
+    'csp.middleware.CSPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -157,6 +157,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 # Content-Security-Policy - https://django-csp.readthedocs.io/en/latest/configuration.html
+CSP_REPORT_ONLY = True
 CSP_DEFAULT_SRC = ("'none'", )
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "cdnjs.cloudflare.com", "maxcdn.bootstrapcdn.com", "piwik.nerdpol.io")
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "maxcdn.bootstrapcdn.com", "cdnjs.cloudflare.com", "fonts.googleapis.com")
