@@ -1,6 +1,8 @@
+from csp.decorators import csp_update
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.detail import SingleObjectMixin
@@ -24,6 +26,7 @@ class DefaultPagination(LimitOffsetPagination):
     max_limit = 100
 
 
+@method_decorator(csp_update(IMG_SRC=("maps.googleapis.com", "maps.gstatic.com"), SCRIPT_SRC=("maps.googleapis.com", "maps.gstatic.com")), name='dispatch')
 class CallSignDetailView(DetailView):
     model = CallSign
     slug_field = "name"
@@ -42,6 +45,7 @@ class CallSignCreate(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+@method_decorator(csp_update(IMG_SRC=("*.tile.openstreetmap.org",)), name='dispatch')
 class CallSignUpdate(LoginRequiredMixin, UpdateView):
     model = CallSign
     slug_field = "name"

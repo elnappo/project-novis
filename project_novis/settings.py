@@ -102,7 +102,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django_referrer_policy.middleware.ReferrerPolicyMiddleware',
-    'csp.middleware.CSPMiddleware',
+    # 'csp.middleware.CSPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -157,10 +157,12 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 # Content-Security-Policy - https://django-csp.readthedocs.io/en/latest/configuration.html
-CSP_DEFAULT_SRC = ("'self'", )
+CSP_DEFAULT_SRC = ("'none'", )
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "cdnjs.cloudflare.com", "maxcdn.bootstrapcdn.com", "piwik.nerdpol.io")
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "maxcdn.bootstrapcdn.com", "cdnjs.cloudflare.com", "fonts.googleapis.com")
 CSP_FONT_SRC = ("'self'", "fonts.googleapis.com", "fonts.gstatic.com", "maxcdn.bootstrapcdn.com", "cdnjs.cloudflare.com")
+CSP_IMG_SRC = ("'self'", "cdnjs.cloudflare.com", "piwik.nerdpol.io", "www.gravatar.com")
+CSP_EXCLUDE_URL_PREFIXES = ("/admin", )
 
 # CORS settings
 CORS_ORIGIN_ALLOW_ALL = True
