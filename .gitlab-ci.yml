@@ -99,6 +99,7 @@ test:
     - ./tools/install_requirements.sh
     - pip3 install --requirement requirements.txt
     - python3 manage.py collectstatic --noinput
+    - python3 manage.py check
     - pytest
   artifacts:
     reports:
@@ -726,7 +727,7 @@ rollout 100%:
         --set postgresql.postgresUser="$POSTGRES_USER" \
         --set postgresql.postgresPassword="$POSTGRES_PASSWORD" \
         --set postgresql.postgresDatabase="$POSTGRES_DB" \
-        --set postgresql.imageTag="$POSTGRES_VERSION" \
+        --set postgresql.image.tag="$POSTGRES_VERSION" \
         --set application.initializeCommand="$DB_INITIALIZE" \
         --namespace="$KUBE_NAMESPACE" \
         "$name" \
@@ -981,7 +982,7 @@ rollout 100%:
       sed -i -e 's@^@'"$CI_ENVIRONMENT_URL"'@' .gitlab-urls.txt
       docker run --shm-size=1g --rm -v "$(pwd)":/sitespeed.io sitespeedio/sitespeed.io:6.3.1 --plugins.add ./gitlab-exporter --outputFolder sitespeed-results .gitlab-urls.txt
     else
-      docker run --shm-size=1g --rm -v "$(pwd)":/sitespeed.io sitespeedio/sitespeed.io:6.3.1 --plugins.add ./gitlab-exporter --outputFolder sitespeed-results "$CI_ENVIRONMENT_URL"
+      docker run --shm-size=1g --rm -v "$(pwd)":/sitespeed.io sitespeedio/sitespeed.io:6.3.1 -d 2 --plugins.add ./gitlab-exporter --outputFolder sitespeed-results "$CI_ENVIRONMENT_URL"
     fi
 
     mv sitespeed-results/data/performance.json performance.json

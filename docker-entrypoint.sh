@@ -37,6 +37,7 @@ case "$1" in
     ;;
     test)
         export COVERAGE_FILE=/tmp/.coverage
+        python manage.py check
         exec pytest -p no:cacheprovider --junitxml=/tmp/report.xml
     ;;
     migrate)
@@ -59,6 +60,7 @@ case "$1" in
     ;;
     gunicorn)
         echo "Starting Django application via Gunicorn"
+        python manage.py check --deploy
         # Disable access log?
         exec gunicorn -b :8000 --worker-class gevent --worker-connections 20 --timeout 10 --graceful-timeout 30 --access-logfile - project_novis.wsgi
     ;;
