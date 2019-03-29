@@ -44,7 +44,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PRODUCTION = bool_env("DJANGO_PRODUCTION", False)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not PRODUCTION
+DEBUG = bool_env("DJANGO_DEBUG", not PRODUCTION)
 
 if PRODUCTION:
     # SECURITY WARNING: keep the secret key used in production secret!
@@ -110,7 +110,7 @@ MIDDLEWARE = [
 ]
 
 # Django Debug Toolbar
-if not PRODUCTION:
+if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
     INTERNAL_IPS = ['127.0.0.1']
