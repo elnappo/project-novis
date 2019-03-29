@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
+from django.core import management
 
 
 class ViewTest(TestCase):
@@ -46,3 +47,8 @@ class ViewTest(TestCase):
             with self.subTest(i=view):
                 response = self.client.get(reverse(view, kwargs=kwargs))
                 self.assertEqual(response.status_code, status_code)
+
+
+class ManageCheckTest(TestCase):
+    def test_check_command(self):
+        management.call_command('check')
