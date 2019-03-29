@@ -3,11 +3,11 @@ kind: ConfigMap
 metadata:
   name: {{ include "project-novis.fullname" . }}
 data:
-  DJANGO_DEBUG: false
+  DJANGO_DEBUG: "false"
   DJANGO_PRODUCTION: {{ .Values.django.production | quote }}
   DJANGO_SENTRY_ENVIRONMENT: {{ .Values.application.track | quote }}
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.ingress.enabled }}
   DJANGO_ALLOWED_HOSTS: {{ .Values.ingress.host | quote }}
-{{ else }}
+{{- else }}
   DJANGO_ALLOWED_HOSTS: "*"
-{{ end }}
+{{- end }}
