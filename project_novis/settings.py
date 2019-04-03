@@ -55,6 +55,7 @@ if PRODUCTION:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     CSP_UPGRADE_INSECURE_REQUESTS = True
     CSP_BLOCK_ALL_MIXED_CONTENT = True
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
 else:
     # SECURITY WARNING: keep the secret key used in production secret!
