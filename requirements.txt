@@ -11,7 +11,7 @@ django-debug-toolbar
 django-filter
 django-oauth-toolkit
 django-referrer-policy
-Django~=2.1
+Django~=2.2
 djangorestframework
 djangorestframework-gis
 drf-yasg
