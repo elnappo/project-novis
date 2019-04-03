@@ -102,6 +102,15 @@ class ViewTest(TestCase):
             response = self.client.get(reverse('callsign:callsign-html-update', kwargs={"slug": callsigns[1]}))
             self.assertEqual(response.status_code, 403)
 
+        with self.subTest('Second user login'):
+            get_user_model().objects.create_user(email="bob@project-novis.org", password="top_secret")
+            logged_in = self.client.login(username="bob@project-novis.org", password="top_secret")
+            self.assertTrue(logged_in)
+
+        with self.subTest('POST callsign claim to already claimed callsign'):
+            response = self.client.post(reverse('callsign:callsign-html-claim', kwargs={"slug": callsigns[0]}))
+            self.assertEqual(response.status_code, 403)
+
     def test_views_anonymous(self):
         callsigns = ("DF0HSA",)
         views = (
