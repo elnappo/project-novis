@@ -34,7 +34,7 @@
                             <a href="{% url "callsign:callsign-html-update" object.name %}"
                                class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Edit</a>
                         </div>
-                    {% else %}
+                    {% elif object.owner == None %}
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-sm btn-default" data-toggle="modal"
                                     data-target="#callSignClaimModal"><i class="fa fa-plus"></i> Claim
@@ -152,7 +152,11 @@
                     </div>
                     <!-- /.box-body -->
                     <div class="box-footer text-center">
+                      {% if object.location_source == "prefix" %}
+                        Location is based on prefix and may be inaccurate.
+                      {% else %}
                         Source: {{ object.location_source }}
+                      {% endif %}
                     </div>
                 </div>
             </div>
