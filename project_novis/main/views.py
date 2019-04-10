@@ -37,6 +37,11 @@ class HomePageView(TemplateView):
 class RobotsView(View):
     @staticmethod
     def get(request: HttpRequest) -> HttpResponse:
-        return HttpResponse(
-            "User-agent: *\nDisallow: /admin/\nSitemap: https://www.project-novis.org/sitemap.xml",
-            content_type="text/plain")
+        if settings.PRODUCTION:
+            return HttpResponse(
+                f"User-agent: *\nDisallow: /accounts/\nDisallow: /admin/\nSitemap: { request.build_absolute_uri('/sitemap.xml') }",
+                content_type="text/plain")
+        else:
+            return HttpResponse(
+                f"User-agent: *\nDisallow: /\nSitemap: {request.build_absolute_uri('/sitemap.xml')}",
+                content_type="text/plain")
