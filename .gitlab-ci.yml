@@ -136,6 +136,7 @@ license_management:
     entrypoint: [""]
   allow_failure: true
   script:
+    - replace_psycopg2
     - license_management
   artifacts:
     paths: [gl-license-management-report.json]
@@ -201,6 +202,7 @@ dependency_scanning:
     - docker:stable-dind
   script:
     - setup_docker
+    - replace_psycopg2
     - dependency_scanning
   artifacts:
     reports:
@@ -1002,6 +1004,10 @@ rollout 100%:
 
     secret_name=$(application_secret_name "$track")
     kubectl delete secret --ignore-not-found -n "$KUBE_NAMESPACE" "$secret_name"
+  }
+
+  function replace_psycopg2() {
+    sed -i -- 's/psycopg2/psycopg2-binary/g' requirements.txt
   }
 
 before_script:
