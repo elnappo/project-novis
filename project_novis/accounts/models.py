@@ -42,7 +42,7 @@ class User(AbstractUser):
 
     email = models.EmailField(_('Email address'), unique=True, db_index=True)
     name = models.CharField(_('Name'), max_length=200, blank=True, help_text="Your real name, used only for user/callsign validation.")
-    # display_name = models.CharField(_('Display name'), max_length=200, blank=True, help_text="Your name, shown on your callsign page.")
+    display_name = models.CharField(_('Display name'), max_length=200, blank=True, help_text="Your name, shown on your callsign page.")
 
     # location
     address = models.TextField(max_length=512, blank=True)
