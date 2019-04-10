@@ -1,9 +1,11 @@
+import sys
+
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 import requests
 
-from ...models import Country, CallSign, DataImport, CallsignBlacklist
+from ...models import Country, Callsign, DataImport, CallsignBlacklist
 from ...utils import extract_callsign
 
 
@@ -11,6 +13,7 @@ class ImportCommand(BaseCommand):
     """
     Abstract class which includes common functionality for imports commands
     """
+    # TODO Use bulk_create and bulk_update
 
     source = ""
     task = ""
@@ -21,8 +24,8 @@ class ImportCommand(BaseCommand):
             raise LookupError("task class variable is empty")
 
         self._start_time = timezone.now()
-        self._import_user_id = 1
-        self._import_user = get_user_model().objects.get(id=self._import_user_id)
+        self._import_user_email = "bot@project-novis.org"
+        self._import_user = get_user_model().objects.get(email=self._import_user_email)
         self._callsign_counter = 0
         self._new_callsign_counter = 0
         self._update_callsign_counter = 0
@@ -30,14 +33,15 @@ class ImportCommand(BaseCommand):
         self._invalid_callsign_counter = 0
         self._blacklist_callsign_counter = 0
         self._error_counter = 0
-        self._existing_callsigns = CallSign.objects.values_list('name', flat=True)
-        self._callsign_blacklist = CallsignBlacklist.objects.values_list('callsign', flat=True)
+        self._existing_callsigns = list(Callsign.objects.order_by("name").values_list('name', flat=True))
+        self._callsign_blacklist = set(CallsignBlacklist.objects.order_by("callsign").values_list('callsign', flat=True))
         self._callsign_data_import_instance = DataImport.objects.create(start=self._start_time,
                                                                         task=self.task,
                                                                         description=self.help)
         self.countries = dict(Country.objects.values_list("name", "id"))
         self.session = requests.Session()
-        self.stdout.write(self.help)
+        self._write(self.help)
+        self._write(f"Size of callsign list is {sys.getsizeof(self._existing_callsigns)} bytes")
 
     def _warning(self, message: str):
         self.stderr.write(self.style.WARNING(message))
@@ -48,7 +52,7 @@ class ImportCommand(BaseCommand):
     def _success(self, message: str):
         self.stdout.write(self.style.SUCCESS(message))
 
-    def _write(self, message:str):
+    def _write(self, message: str):
         self.stdout.write(message)
 
     def handle(self, *args, **options):
@@ -58,7 +62,7 @@ class ImportCommand(BaseCommand):
         """
         raise NotImplementedError('subclasses of ImportCommand must provide a handle() method')
 
-    def _handle_callsign(self, callsign: str, source: str = "", official: bool = False):
+    def _handle_callsign(self, callsign: str, source: str = "", official: bool = False, return_instance: bool = True):
         self._callsign_counter += 1
         raw_callsign = extract_callsign(callsign)
 
@@ -71,10 +75,10 @@ class ImportCommand(BaseCommand):
             raise ValueError(f"Blacklisted callsign {callsign}")
 
         elif raw_callsign not in self._existing_callsigns:
-            call_sign_instance, new_call_sign = CallSign.objects.get_or_create(
+            call_sign_instance, new_call_sign = Callsign.objects.get_or_create(
                 name=raw_callsign,
                 defaults={"name": raw_callsign,
-                          "created_by_id": self._import_user_id,
+                          "created_by_id": self._import_user.id,
                           "source": source if source else self.source,
                           "_official_validated": official})
             if new_call_sign:
@@ -85,8 +89,11 @@ class ImportCommand(BaseCommand):
             return call_sign_instance, new_call_sign
 
         else:
-            call_sign_instance = CallSign.objects.get(name=raw_callsign)
-            return call_sign_instance, False
+            if return_instance:
+                call_sign_instance = Callsign.objects.get(name=raw_callsign)
+                return call_sign_instance, False
+            else:
+                return None, False
 
     def _finish(self, extra_message: str = None):
         self._callsign_data_import_instance.callsigns = self._callsign_counter
