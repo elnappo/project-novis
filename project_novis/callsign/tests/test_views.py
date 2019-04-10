@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from ..models import CallSign
+from ..models import Callsign
 
 
 class ViewTest(TestCase):
@@ -15,7 +15,7 @@ class ViewTest(TestCase):
 
     def create_callsigns(self, callsigns):
         for callsign in callsigns:
-            CallSign.objects.create_callsign(callsign, self.user.id)
+            Callsign.objects.create_callsign(callsign, self.user.id)
 
     def test_callsign_workflow(self):
         callsign = "DF0HSA"
@@ -41,7 +41,7 @@ class ViewTest(TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEqual(response._headers["location"][1],
                              reverse('callsign:callsign-html-detail', kwargs={"slug": callsign}))
-            self.assertTrue(CallSign.objects.filter(name=callsign).exists())
+            self.assertTrue(Callsign.objects.filter(name=callsign).exists())
 
         with self.subTest('GET callsign detail'):
             response = self.client.get(reverse('callsign:callsign-html-detail', kwargs={"slug": callsign}))
@@ -52,7 +52,7 @@ class ViewTest(TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEqual(response._headers["location"][1],
                              reverse('callsign:callsign-html-detail', kwargs={"slug": callsign}))
-            self.assertEqual(CallSign.objects.get(name=callsign).owner, self.user)
+            self.assertEqual(Callsign.objects.get(name=callsign).owner, self.user)
 
         with self.subTest('GET callsign update'):
             response = self.client.get(reverse('callsign:callsign-html-update', kwargs={"slug": callsign}))
@@ -67,9 +67,9 @@ class ViewTest(TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEqual(response._headers["location"][1],
                              reverse('callsign:callsign-html-detail', kwargs={"slug": callsign}))
-            self.assertEqual(CallSign.objects.get(name=callsign).type, "personal")
-            self.assertEqual(CallSign.objects.get(name=callsign).cq_zone, 1)
-            self.assertEqual(CallSign.objects.get(name=callsign).itu_zone, 1)
+            self.assertEqual(Callsign.objects.get(name=callsign).type, "personal")
+            self.assertEqual(Callsign.objects.get(name=callsign).cq_zone, 1)
+            self.assertEqual(Callsign.objects.get(name=callsign).itu_zone, 1)
 
         with self.subTest('GET callsign detail after update'):
             response = self.client.get(reverse('callsign:callsign-html-detail', kwargs={"slug": callsign}))
@@ -92,7 +92,7 @@ class ViewTest(TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEqual(response._headers["location"][1],
                              reverse('callsign:callsign-html-detail', kwargs={"slug": callsigns[0]}))
-            self.assertEqual(CallSign.objects.get(name=callsigns[0]).owner, self.user)
+            self.assertEqual(Callsign.objects.get(name=callsigns[0]).owner, self.user)
 
         with self.subTest('GET callsign update as owner'):
             response = self.client.get(reverse('callsign:callsign-html-update', kwargs={"slug": callsigns[0]}))

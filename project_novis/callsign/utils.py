@@ -13,10 +13,10 @@ CALLSIGN_EXTRACT_REGEX_COMPILE = re.compile(
     r"(?=.*[a-zA-Z])([A-Z0-9]+[/_-])?([a-zA-Z]+[0-9][a-zA-Z]+)([/-_][A-Z0-9]+)?")
 
 
-class CallSignField(models.CharField):
+class CallsignField(models.CharField):
     # TODO(elnappo) enhance regex validation
     default_validators = [RegexValidator(regex=CALLSIGN_REGEX)]
-    description = _("Ham radio call sign field")
+    description = _("Ham radio callsign field")
 
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 16

@@ -16,9 +16,9 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework_gis.filters import DistanceToPointFilter
 
 from .forms import CallsignForm
-from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix, Repeater
+from .models import Country, DXCCEntry, Callsign, DMRID, CallsignPrefix, Repeater
 from .serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer, \
-    DMRIDSerializer, CallSignPrefixSerializer, RepeaterSerializer, APRSPasscodeSerializer
+    DMRIDSerializer, CallsignPrefixSerializer, RepeaterSerializer, APRSPasscodeSerializer
 
 
 class DefaultPagination(LimitOffsetPagination):
@@ -27,13 +27,13 @@ class DefaultPagination(LimitOffsetPagination):
 
 
 @method_decorator(csp_update(IMG_SRC=("maps.googleapis.com", "maps.gstatic.com"), SCRIPT_SRC=("maps.googleapis.com", "maps.gstatic.com")), name='dispatch')
-class CallSignDetailView(DetailView):
-    model = CallSign
+class CallsignDetailView(DetailView):
+    model = Callsign
     slug_field = "name"
 
 
-class CallSignCreate(LoginRequiredMixin, CreateView):
-    model = CallSign
+class CallsignCreate(LoginRequiredMixin, CreateView):
+    model = Callsign
     fields = ['name']
     template_name_suffix = '_create_form'
 
@@ -46,8 +46,8 @@ class CallSignCreate(LoginRequiredMixin, CreateView):
 
 
 @method_decorator(csp_update(IMG_SRC=("*.tile.openstreetmap.org",)), name='dispatch')
-class CallSignUpdate(LoginRequiredMixin, UpdateView):
-    model = CallSign
+class CallsignUpdate(LoginRequiredMixin, UpdateView):
+    model = Callsign
     slug_field = "name"
     form_class = CallsignForm
     template_name_suffix = '_update_form'
@@ -60,8 +60,8 @@ class CallSignUpdate(LoginRequiredMixin, UpdateView):
             return HttpResponseForbidden()
 
 
-class CallSignClaimView(LoginRequiredMixin, SingleObjectMixin, View):
-    model = CallSign
+class CallsignClaimView(LoginRequiredMixin, SingleObjectMixin, View):
+    model = Callsign
     slug_field = "name"
 
     def get(self, request, *args, **kwargs):
@@ -119,9 +119,9 @@ class DXCCEntryViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class CallSignPrefixViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = CallSignPrefix.objects.all()
-    serializer_class = CallSignPrefixSerializer
+class CallsignPrefixViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = CallsignPrefix.objects.all()
+    serializer_class = CallsignPrefixSerializer
     lookup_field = "name"
     pagination_class = DefaultPagination
 
@@ -132,8 +132,8 @@ class CallSignPrefixViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class CallSignViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = CallSign.objects.all()
+class CallsignViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Callsign.objects.all()
     serializer_class = CallsignSerializer
     lookup_field = 'name'
     pagination_class = DefaultPagination
@@ -160,16 +160,16 @@ class RepeaterViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class CallSignCreateAPIView(generics.CreateAPIView):
-    queryset = CallSign.objects.all()
+class CallsignCreateAPIView(generics.CreateAPIView):
+    queryset = Callsign.objects.all()
     serializer_class = CallsignSerializer
 
     permission_classes = (IsAuthenticated,)
 
 
-class UserCallSignViewSet(viewsets.ReadOnlyModelViewSet):
+class UserCallsignViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'name'
-    queryset = CallSign.objects.all()
+    queryset = Callsign.objects.all()
     serializer_class = CallsignSerializer
 
     permission_classes = (IsAuthenticated,)
@@ -181,7 +181,7 @@ class UserCallSignViewSet(viewsets.ReadOnlyModelViewSet):
 
 class APRSPasscodeView(generics.RetrieveAPIView):
     lookup_field = 'name'
-    queryset = CallSign.objects.all()
+    queryset = Callsign.objects.all()
     serializer_class = APRSPasscodeSerializer
 
     permission_classes = (IsAuthenticated,)

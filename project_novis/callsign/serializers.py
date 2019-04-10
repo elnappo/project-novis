@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework_gis.serializers import GeoModelSerializer
 
 
-from .models import Country, DXCCEntry, CallSign, DMRID, CallSignPrefix, Repeater, Transmitter
+from .models import Country, DXCCEntry, Callsign, DMRID, CallsignPrefix, Repeater, Transmitter
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -49,16 +49,16 @@ class CallsignSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        model = CallSign
+        model = Callsign
         fields = ("name", "prefix", "country", "dxcc", "cq_zone", "itu_zone",
                   "itu_region", "location", "type", "dstar", "dmr_ids", "created_by")
 
 
-class CallSignPrefixSerializer(serializers.ModelSerializer):
+class CallsignPrefixSerializer(serializers.ModelSerializer):
     country = serializers.StringRelatedField()
 
     class Meta:
-        model = CallSignPrefix
+        model = CallsignPrefix
         fields = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent",
                   "location", "utc_offset", "type")
         read_only = ("name", "country", "dxcc", "cq_zone", "itu_zone", "itu_region", "continent",
@@ -91,6 +91,6 @@ class APRSPasscodeSerializer(serializers.ModelSerializer):
     aprs_passcode = serializers.IntegerField(read_only=True)
 
     class Meta:
-        model = CallSign
+        model = Callsign
         fields = ("name", "aprs_passcode")
         read_only = ("name", "aprs_passcode")

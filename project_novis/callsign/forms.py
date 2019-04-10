@@ -1,6 +1,6 @@
 from django.contrib.gis import forms
 
-from .models import CallSign
+from .models import Callsign
 
 
 class CallsignForm(forms.ModelForm):
@@ -10,5 +10,5 @@ class CallsignForm(forms.ModelForm):
                                 widget=forms.OSMWidget(attrs={'map_width': 785, 'map_height': 500, 'default_zoom': 12}))
 
     class Meta:
-        model = CallSign
+        model = Callsign
         fields = ["type", "location", 'cq_zone', "itu_zone", "dstar", "issued"]

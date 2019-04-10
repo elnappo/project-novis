@@ -4,7 +4,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import routers
 from rest_framework.permissions import AllowAny
 
-from project_novis.callsign.views import CountryViewSet, DXCCEntryViewSet, CallSignViewSet, UserCallSignViewSet, CallSignCreateAPIView, DMRIDViewSet, CallSignPrefixViewSet, RepeaterViewSet, APRSPasscodeView
+from project_novis.callsign.views import CountryViewSet, DXCCEntryViewSet, CallsignViewSet, UserCallsignViewSet, CallsignCreateAPIView, DMRIDViewSet, CallsignPrefixViewSet, RepeaterViewSet, APRSPasscodeView
 from project_novis.api.apps import ApiConfig
 from project_novis.accounts.views import CurrentUserAPIView
 
@@ -27,14 +27,14 @@ schema_view = get_schema_view(
 router = routers.SimpleRouter()
 router.register(r'country', CountryViewSet)
 router.register(r'dxcc', DXCCEntryViewSet)
-router.register(r'callsign', CallSignViewSet)
+router.register(r'callsign', CallsignViewSet)
 router.register(r'dmr', DMRIDViewSet)
-router.register(r'prefix', CallSignPrefixViewSet)
+router.register(r'prefix', CallsignPrefixViewSet)
 router.register(r'repeater', RepeaterViewSet)
-router.register(r'user/callsign', UserCallSignViewSet)
+router.register(r'user/callsign', UserCallsignViewSet)
 
 urlpatterns = [
-    path('callsign', CallSignCreateAPIView.as_view(), name="callsign-create"),
+    path('callsign', CallsignCreateAPIView.as_view(), name="callsign-create"),
     path('user', CurrentUserAPIView.as_view(), name="userinfo-retrieve"),
     path('user/callsign/<str:name>/aprs_passcode', APRSPasscodeView.as_view(), name="aprs-passcode"),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=None), name='schema-json'),

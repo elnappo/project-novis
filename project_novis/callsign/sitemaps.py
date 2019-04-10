@@ -1,6 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 
-from project_novis.callsign.models import CallSign
+from project_novis.callsign.models import Callsign
 
 
 class CallsignSitemap(Sitemap):
@@ -8,7 +8,7 @@ class CallsignSitemap(Sitemap):
     limit = 10000
 
     def items(self):
-        return CallSign.objects.all()
+        return Callsign.objects.all()
 
     def lastmod(self, obj):
         return obj.modified

@@ -46,7 +46,7 @@ def set_call_sign_metadata(modeladmin, request, queryset):
 set_call_sign_metadata.short_description = "Set default metadata"
 
 
-@admin.register(CallSign)
+@admin.register(Callsign)
 class CallsignAdmin(BaseModelAdmin):
     list_display = ("name", "country", "owner", "type")
     list_display_links = ("name",)
@@ -108,7 +108,7 @@ class DXCCEntryAdmin(BaseModelAdmin):
     ordering = ('id',)
 
 
-@admin.register(CallSignPrefix)
+@admin.register(CallsignPrefix)
 class CallsignPrefixAdmin(BaseModelAdmin):
     list_display = ("name", "dxcc", "country")
     list_display_links = ("name",)

@@ -10,8 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied, ValidationError
 
 from .enums import CALLSIGN_TYPES, CONTINENTS, CTCSS, RF_MODES, BLACKLIST_REASONS,\
-    LOCATION_SOURCE_CHOICES
-from .utils import CallSignField, CQZoneField, ITUZoneField, ITURegionField, WikidataObjectField,\
+    LOCATION_SOURCE_CHOICES, LOCATION_SOURCE_PRIORITY
+from .utils import CallsignField, CQZoneField, ITUZoneField, ITURegionField, WikidataObjectField,\
     generate_aprs_passcode, point_to_grid, grid_to_point
 
 
@@ -134,7 +134,7 @@ class DXCCEntry(BaseModel):
         unique_together = ("name", "deleted")
 
 
-class CallSignPrefix(BaseModel):
+class CallsignPrefix(BaseModel):
     name = models.CharField(max_length=16, unique=True, db_index=True)
     country = models.ForeignKey(Country, on_delete=models.PROTECT, null=True, blank=True)
     dxcc = models.ForeignKey(DXCCEntry, on_delete=models.PROTECT, null=True, blank=True, verbose_name="DXCC")
@@ -150,7 +150,7 @@ class CallSignPrefix(BaseModel):
         return self.name
 
 
-class CallSignManager(models.Manager):
+class CallsignManager(models.Manager):
     def create_callsign(self, callsign: str, created_by_id: int, check_blacklist: bool = True):
         # Check if callsign is blacklisted
         if check_blacklist and CallsignBlacklist.objects.filter(callsign=callsign).exists():
@@ -162,9 +162,9 @@ class CallSignManager(models.Manager):
         return instance
 
 
-class CallSign(LocationBaseModel):
-    name = CallSignField(unique=True, db_index=True)
-    prefix = models.ForeignKey(CallSignPrefix, on_delete=models.PROTECT, null=True, blank=True)
+class Callsign(LocationBaseModel):
+    name = CallsignField(unique=True, db_index=True)
+    prefix = models.ForeignKey(CallsignPrefix, on_delete=models.PROTECT, null=True, blank=True)
     country = models.ForeignKey(Country, on_delete=models.PROTECT, null=True, blank=True)
     cq_zone = CQZoneField("CQ zone", null=True, blank=True)
     itu_zone = ITUZoneField("ITU zone", null=True, blank=True)
@@ -188,7 +188,7 @@ class CallSign(LocationBaseModel):
     created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="callsigns")
     internal_comment = models.TextField(blank=True)
     source = models.CharField(max_length=256, blank=True)
-    objects = CallSignManager()
+    objects = CallsignManager()
 
     # TODO(elnappo) make sure a user can not change his name after validation
 
@@ -198,8 +198,8 @@ class CallSign(LocationBaseModel):
     def set_default_meta_data(self):
         call_sign = self.name
         while call_sign:
-            if CallSignPrefix.objects.filter(name=call_sign).exists():
-                prefix = CallSignPrefix.objects.get(name=call_sign)
+            if CallsignPrefix.objects.filter(name=call_sign).exists():
+                prefix = CallsignPrefix.objects.get(name=call_sign)
                 self.prefix = prefix
                 self.country = prefix.country
                 self.cq_zone = prefix.cq_zone
@@ -212,6 +212,16 @@ class CallSign(LocationBaseModel):
 
     def get_absolute_url(self) -> str:
         return reverse('callsign:callsign-html-detail', args=[self.name])
+
+    def update_location(self, location: Point, source: str) -> bool:
+        # Update location only if new location source has higher priority than current location source.
+        # Does no update if new and current location source are equal.
+        if LOCATION_SOURCE_PRIORITY.index(source) > LOCATION_SOURCE_PRIORITY.index(self.location_source):
+            self.location = location
+            self.location_source = source
+            return True
+        else:
+            return False
 
     @property
     def aprs_passcode(self) -> int:
@@ -291,7 +301,7 @@ class CallSign(LocationBaseModel):
 
 class DMRID(BaseModel):
     name = models.PositiveIntegerField(unique=True, db_index=True)
-    callsign = models.ForeignKey(CallSign, related_name='dmr_ids', on_delete=models.SET_NULL, null=True, blank=True)
+    callsign = models.ForeignKey(Callsign, related_name='dmr_ids', on_delete=models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(default=True)
     issued = models.DateTimeField(null=True, blank=True)
     comment = models.TextField(blank=True)
@@ -311,7 +321,7 @@ class DMRID(BaseModel):
 
 
 class Club(BaseModel):
-    callsign = models.ForeignKey(CallSign, on_delete=models.CASCADE)
+    callsign = models.ForeignKey(Callsign, on_delete=models.CASCADE)
     description = models.TextField(blank=True)
     owner = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     members = models.ManyToManyField(get_user_model(), related_name="members")
@@ -323,7 +333,7 @@ class Club(BaseModel):
 
 
 class ClublogUser(BaseModel):
-    callsign = models.OneToOneField(CallSign, on_delete=models.CASCADE)
+    callsign = models.OneToOneField(Callsign, on_delete=models.CASCADE)
     clublog_first_qso = models.DateTimeField("Clublog first QSO", blank=True, null=True)
     clublog_last_qso = models.DateTimeField("Clublog last QSO", blank=True, null=True)
     clublog_last_upload = models.DateTimeField(blank=True, null=True)
@@ -338,7 +348,7 @@ class ClublogUser(BaseModel):
 
 
 class Repeater(LocationBaseModel):
-    callsign = models.ForeignKey(CallSign, on_delete=models.CASCADE)
+    callsign = models.ForeignKey(Callsign, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
     website = models.URLField(max_length=400, blank=True, null=True)
     altitude = models.FloatField(blank=True, null=True)
@@ -405,7 +415,7 @@ class TelecommunicationAgency(BaseModel):
 class Person(LocationBaseModel):
     identifier = models.CharField(max_length=128, db_index=True)
     source = models.CharField(max_length=128, db_index=True)
-    callsigns = models.ManyToManyField(CallSign, blank=True)
+    callsigns = models.ManyToManyField(Callsign, blank=True)
     name = models.CharField(max_length=128, db_index=True)
     address = models.TextField(blank=True)
     city = models.CharField(max_length=128, blank=True)
@@ -454,7 +464,7 @@ class DataImport(BaseModel):
 
 
 class CallsignBlacklist(BaseModel):
-    callsign = CallSignField(unique=True, db_index=True)
+    callsign = CallsignField(unique=True, db_index=True)
     reason = models.CharField(max_length=128, choices=BLACKLIST_REASONS, blank=True)
     submitter = models.CharField(max_length=128, blank=True)
     submitter_email = models.EmailField(max_length=128, blank=True)
