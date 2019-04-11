@@ -1,7 +1,7 @@
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, TestCase
 
 from ..utils import extract_callsign
-
+from ..models import Callsign
 
 class ExtractCallsignTestCase(SimpleTestCase):
     def setUp(self):
@@ -330,3 +330,20 @@ class ExtractCallsignTestCase(SimpleTestCase):
         for i in self.extract_callsings:
             with self.subTest(i=i):
                 self.assertEqual(extract_callsign(i[0]), i[1])
+
+
+class CallsignTestCase(TestCase):
+    def test_callsign_prefix(self):
+        callsigns = (
+            ("DO2FMW", "DO"),
+            ("DF0HSA", "DF"),
+            ("KK6RWK", "KK6"),
+            ("IW3QID", "IW3"),
+            ("ZW85LABRE", "ZW"),
+            ("UB4FGF", "UB4F")
+        )
+
+        for callsign, prefix in callsigns:
+            with self.subTest(i=callsign):
+                instance = Callsign.objects.create_callsign(callsign, 1)
+                self.assertEqual(prefix, instance.prefix.name)
