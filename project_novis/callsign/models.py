@@ -196,19 +196,15 @@ class Callsign(LocationBaseModel):
         return self.name
 
     def set_default_meta_data(self):
-        call_sign = self.name
-        while call_sign:
-            if CallsignPrefix.objects.filter(name=call_sign).exists():
-                prefix = CallsignPrefix.objects.get(name=call_sign)
-                self.prefix = prefix
-                self.country = prefix.country
-                self.cq_zone = prefix.cq_zone
-                self.itu_zone = prefix.itu_zone
-                self.location = prefix.location
-                self._location_source = "prefix"
-                break
-            else:
-                call_sign = call_sign[:-1]
+        prefix = CallsignPrefix.objects.extra(where=["%s LIKE name||'%%'"], params=[self.name]).order_by("-name").first()
+
+        if prefix:
+            self.prefix = prefix
+            self.country = prefix.country
+            self.cq_zone = prefix.cq_zone
+            self.itu_zone = prefix.itu_zone
+            self.location = prefix.location
+            self._location_source = "prefix"
 
     def get_absolute_url(self) -> str:
         return reverse('callsign:callsign-html-detail', args=[self.name])
@@ -218,7 +214,7 @@ class Callsign(LocationBaseModel):
         # Does no update if new and current location source are equal.
         if LOCATION_SOURCE_PRIORITY.index(source) > LOCATION_SOURCE_PRIORITY.index(self.location_source):
             self.location = location
-            self.location_source = source
+            self._location_source = source
             return True
         else:
             return False
