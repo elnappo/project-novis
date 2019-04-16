@@ -11,6 +11,7 @@ CALLSIGN_REGEX = r"^(?=.*[a-zA-Z])([a-zA-Z0-9]+[0-9][a-zA-Z0-9]+)$"
 CALLSIGN_REGEX_COMPILE = re.compile(CALLSIGN_REGEX)
 CALLSIGN_EXTRACT_REGEX_COMPILE = re.compile(
     r"(?=.*[a-zA-Z])([A-Z0-9]+[/_-])?([a-zA-Z]+[0-9][a-zA-Z]+)([/-_][A-Z0-9]+)?")
+CALLSIGN_MAX_LENGTH = 16
 
 
 class CallsignField(models.CharField):
@@ -95,12 +96,14 @@ def extract_callsign(value: str) -> str:
     value = value.replace(" ", "").upper()
 
     if CALLSIGN_REGEX_COMPILE.search(value):
-        return value
+        if len(value) <= CALLSIGN_MAX_LENGTH:
+            return value
 
     callsign_groups = CALLSIGN_EXTRACT_REGEX_COMPILE.search(value)
 
     if callsign_groups:
-        return callsign_groups.group(2)
+        if len(value) <= CALLSIGN_MAX_LENGTH:
+            return callsign_groups.group(2)
 
     return ""
 
