@@ -495,4 +495,4 @@ class AddressLocationCache(BaseModel):
         unique_together = ("address", "provider")
 
     def __str__(self) -> str:
-        return self.address
+        return f"{self.address}_{self.provider}"
