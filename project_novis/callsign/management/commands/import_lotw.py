@@ -1,54 +1,44 @@
 import csv
-import re
 
-import requests
 from dateutil.parser import parse
-from django.contrib.auth import get_user_model
-from django.core.management.base import BaseCommand
 
-from ...models import CallSign, LOTWUser
-from ...utils import extract_callsign
+from . import ImportCommand
 
 
-class Command(BaseCommand):
+class Command(ImportCommand):
     help = 'Import LOTW user data'
+    source = 'lotw.arrl.org'
+    task = "callsign_import_lotw"
 
     def add_arguments(self, parser):
         parser.add_argument('url', nargs='?', type=str, default="https://lotw.arrl.org/lotw-user-activity.csv")
 
+    def run(self, url):
+        r = self.session.get(url, stream=False)
+
+        if r.status_code != 200:
+            raise Exception(f"Failed to download {url} status code {r.status_code}")
+
+        reader = csv.reader(r.iter_lines(decode_unicode=True), delimiter=',')
+        callsigns = dict()
+
+        for row in reader:
+            raw_callsign = self._extract_callsign(row[0])
+            callsigns[raw_callsign] = {"last_activity": parse(row[1] + "T" + row[2] + "Z")}
+
+        callsign_instances = self._callsign_bulk_create(callsigns.keys())
+        for callsign_instance in callsign_instances:
+            callsign_instance.lotw_last_activity = callsigns[callsign_instance.name]["last_activity"]
+            callsign_instance.save()
+
+        # TODO update existing callsigns
+
     def handle(self, *args, **options):
-        counter = 0
-        new_counter = 0
-        error = 0
+        self._write(f"Download callsign data from { options['url'] }")
 
-        self.stdout.write("Import LOTW user data")
-        r = requests.get(options['url'], stream=False)
-
-        if r.status_code == 200:
-            reader = csv.reader(r.iter_lines(decode_unicode=True), delimiter=',')
-            for row in reader:
-                callsign = extract_callsign(row[0])
-                if not callsign:
-                    self.stdout.write(f"Invalid callsign { row[0] }")
-                    continue
-
-                counter += 1
-
-                call_sign_instance, new_call_sign = CallSign.objects.get_or_create(name=callsign,
-                                                                                   defaults={"name": callsign,
-                                                                                             "created_by": get_user_model().objects.get(id=1)})
-                if new_call_sign:
-                    call_sign_instance.set_default_meta_data()
-                    call_sign_instance.save()
-                    new_counter += 1
-
-                last_activity = parse(row[1] + "T" + row[2] + "Z")
-                lotw_instance, lotw_instance_created = LOTWUser.objects.get_or_create(callsign=call_sign_instance,
-                                                                                      defaults={"callsign": call_sign_instance,
-                                                                                                "lotw_last_activity": last_activity})
-                if not lotw_instance_created and lotw_instance.lotw_last_activity < last_activity:
-                    lotw_instance.lotw_last_activity = last_activity
-                    lotw_instance.save()
-
-            self.stdout.write(self.style.SUCCESS('call sings: %d new call sings: %d errors: %d source: %s' % (
-                counter, new_counter, error, options['url'])))
+        try:
+            self.run(options['url'])
+            self._finish()
+        except Exception as e:
+            self._finish(failed=True, error_message=str(e))
+            raise e

@@ -1,44 +1,30 @@
-import re
-
-import requests
-from django.contrib.auth import get_user_model
-from django.core.management.base import BaseCommand
-
-from ...models import CallSign, EQSLUser
-from ...utils import extract_callsign
+from . import ImportCommand
 
 
-class Command(BaseCommand):
+class Command(ImportCommand):
     help = 'Import EQSL user data'
+    source = "eqsl.cc"
+    task = "callsign_import_eqsl"
 
     def add_arguments(self, parser):
         parser.add_argument('url', nargs='?', type=str, default="http://www.eqsl.cc/QSLCard/DownloadedFiles/AGMemberlist.txt")
 
+    def run(self, url):
+        r = self.session.get(url, stream=False)
+        if r.status_code != 200:
+            raise Exception(f"Failed to download {url} status code {r.status_code}")
+
+        extra_fields = {"eqsl": True}
+        callsign_instances = self._callsign_bulk_create(r.iter_lines(decode_unicode=True), extra_fields=extra_fields)
+
+        # TODO update existing callsigns
+
     def handle(self, *args, **options):
-        counter = 0
-        new_counter = 0
-        error = 0
+        self._write(f"Download callsign data from { options['url'] }")
 
-        self.stdout.write("Import EQSL user data")
-        with requests.get(options['url'], stream=False) as r:
-            if r.status_code == 200:
-                for row in r.iter_lines(decode_unicode=True):
-                    callsign = extract_callsign(row)
-                    if not callsign:
-                        self.stdout.write(f"Invalid callsign { row }")
-                        continue
-
-                    counter += 1
-
-                    call_sign_instance, new_call_sign = CallSign.objects.get_or_create(name=callsign,
-                                                                                       defaults={"name": callsign,
-                                                                                                 "created_by": get_user_model().objects.get(id=1)})
-                    if new_call_sign:
-                        call_sign_instance.set_default_meta_data()
-                        call_sign_instance.save()
-                        new_counter += 1
-
-                    EQSLUser.objects.get_or_create(callsign=call_sign_instance)
-
-        self.stdout.write(self.style.SUCCESS('call sings: %d new call sings: %d errors: %d source: %s' % (
-            counter, new_counter, error, options['url'])))
+        try:
+            self.run(options['url'])
+            self._finish()
+        except Exception as e:
+            self._finish(failed=True, error_message=str(e))
+            raise e
