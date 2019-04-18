@@ -45,6 +45,7 @@ variables:
   # KUBE_INGRESS_BASE_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
   # KUBE_INGRESS_BASE_DOMAIN: domain.example.com
   KUBE_PRODUCTION_HOSTNAME: www.k8s.project-novis.org
+  KUBE_STAGING_HOSTNAME: staging.k8s.project-novis.org
 
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
@@ -53,7 +54,7 @@ variables:
   POSTGRES_VERSION: 11
 
   KUBERNETES_VERSION: 1.13.3
-  HELM_VERSION: 2.12.3
+  HELM_VERSION: 2.13.1
 
   DOCKER_DRIVER: overlay2
 
@@ -331,7 +332,7 @@ staging:
     - deploy
   environment:
     name: staging
-    url: https://$CI_PROJECT_PATH_SLUG-staging.$KUBE_INGRESS_BASE_DOMAIN
+    url: https://$KUBE_STAGING_HOSTNAME
   only:
     refs:
       - master
