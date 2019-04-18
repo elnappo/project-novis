@@ -2,16 +2,21 @@ import csv
 
 import requests
 
-from ...models import DMRID
 from . import ImportCommand
+from ...models import DMRID
+from ...utils import address_to_grid_based_point
 
 
 class Command(ImportCommand):
     help = 'Import digital user data (DMR and D-STAR)'
+    task = "callsign_import_digital"
+
+    def add_arguments(self, parser):
+        parser.add_argument('url', nargs='?', type=str, default="http://www.amateurradio.digital/export_csv_RAW.php?format=default")
 
     def ham_digital(self):
-        dmr_user_list_url = "https://ham-digital.org/status/dmrid.dat"
-        dstar_user_list_url = "https://ham-digital.org/status/dstaruser.db"
+        dmr_user_list_url: str = "https://ham-digital.org/status/dmrid.dat"
+        dstar_user_list_url: str = "https://ham-digital.org/status/dstaruser.db"
         self._write("Import ham-digital.org data")
 
         # Import DMR IDs
@@ -24,8 +29,8 @@ class Command(ImportCommand):
                 try:
                     callsign_instance, _ = self._handle_callsign(row[1], source="ham-digital.org")
                     DMRID.objects.get_or_create(name=row[0], defaults={"name": row[0], "callsign": callsign_instance})
-                except (ValueError, IndexError):
-                    self._warning(f"Invalid data: {row}")
+                except (ValueError, IndexError) as e:
+                    self._warning(f"Invalid data: {row} - {e}")
 
         # Import D-STAR users
         self._write("Import D-STAR user list")
@@ -38,11 +43,10 @@ class Command(ImportCommand):
                     callsign_instance.dstar = True
                     callsign_instance.save()
 
-    def amateurradio_digital(self):
-        url = "http://www.amateurradio.digital/export_csv_RAW.php?format=default&key=ekk0N0JSVE12azYxRVBrc2xHZzRZZz09"
+    def amateurradio_digital(self, options):
         self._write("Import amateurradio.digital data")
 
-        r = requests.get(url, stream=False)
+        r = requests.get(options['url'], stream=False)
 
         if r.status_code == 200:
             reader = csv.reader(r.iter_lines(decode_unicode=True), delimiter=',')
@@ -52,16 +56,19 @@ class Command(ImportCommand):
                     DMRID.objects.update_or_create(name=row[0],
                                                    callsign=callsign_instance,
                                                    defaults={"name": row[0],
-                                                             "callsign": callsign_instance,
-                                                             "owner": row[2],
-                                                             "city": row[3],
-                                                             "state": row[4],
-                                                             "country": row[5],
-                                                             "remarks": ""})
-                except (ValueError, IndexError):
-                    self._warning(f"Invalid data: {row}")
+                                                             "callsign": callsign_instance})
+                    # TODO(elnappo) use Callsign.update_location()
+                    if callsign_instance._location_source == "prefix":
+                        address = f"{row[3]}, {row[4]}, {row[5]}"
+                        location = address_to_grid_based_point(address)
+                        callsign_instance.location = location
+                        callsign_instance._location_source = "unofficial"
+                        callsign_instance.save()
+
+                except (ValueError, IndexError) as e:
+                    self._warning(f"Invalid data: {row} - {e}")
 
     def handle(self, *args, **options):
-        self.ham_digital()
-        self.amateurradio_digital()
+        # self.ham_digital()
+        self.amateurradio_digital(options)
         self._finish()
