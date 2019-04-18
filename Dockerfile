@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends pytho
 COPY . /code/
 WORKDIR /code/
 
-RUN python manage.py collectstatic --noinput
+RUN DJANGO_DEBUG=true python manage.py collectstatic --noinput
 
 USER app
 EXPOSE 8000
