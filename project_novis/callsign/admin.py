@@ -181,11 +181,16 @@ class DataImportAdmin(BaseModelAdmin):
     list_filter = ("task", "start", "stop", "finished", "failed", "created", "modified")
     ordering = ('-start',)
 
-    readonly_fields = ("finished",)
-
 
 @admin.register(CallsignBlacklist)
 class CallsignBlacklistAdmin(BaseModelAdmin):
     list_display = ("callsign", "submitter", "reason", "approved")
     list_display_links = ("callsign",)
     list_filter = ("reason", "approved", "created", "modified")
+
+
+@admin.register(AddressLocationCache)
+class AddressLocationCacheAdmin(admin.ModelAdmin):
+    list_display = ("address", "provider", "location")
+    list_display_links = ("address",)
+    list_filter = ("provider", "created", "modified")

@@ -198,6 +198,7 @@ class Callsign(LocationBaseModel):
     def set_default_meta_data(self):
         prefix = CallsignPrefix.objects.extra(where=["%s LIKE name||'%%'"], params=[self.name]).order_by("-name").first()
 
+        # Add changed fields to ImportCommand._callsign_bulk_create()
         if prefix:
             self.prefix = prefix
             self.country = prefix.country
@@ -450,17 +451,6 @@ class DataImport(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.task}-{self.start}"
-
-    @property
-    def finished(self) -> bool:
-        return bool(self.stop)
-
-    @property
-    def duration(self) -> timedelta:
-        if self.stop:
-            return self.stop - self.start
-        else:
-            return timedelta(0)
 
 
 class CallsignBlacklist(BaseModel):
