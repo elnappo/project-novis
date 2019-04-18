@@ -1,6 +1,7 @@
 import json
 import zipfile
 from io import BytesIO
+from datetime import timezone
 
 import requests
 
@@ -31,16 +32,15 @@ class Command(ImportCommand):
                         self._warning(f"Invalid callsign {key} {value}")
                         continue
 
-                    # TODO add UTC timezone
                     clublog_user_data = {"callsign": call_sign_instance,
-                                         "clublog_first_qso": value.get("firstqso", None),
-                                         "clublog_last_qso": value.get("lastqso", None),
-                                         "clublog_last_upload": value.get("lastupload", None),
+                                         "clublog_first_qso": value["firstqso"].replace(tzinfo=timezone.utc) if "firstqso" in value else None,
+                                         "clublog_last_qso": value["lastqso"].replace(tzinfo=timezone.utc) if "firstqso" in value else None,
+                                         "clublog_last_upload": value["lastupload"].replace(tzinfo=timezone.utc) if "firstqso" in value else None,
                                          "clublog_oqrs": value.get("oqrs", None)}
 
-                    clublog_instance, clublog_instance_created = ClublogUser.objects.get_or_create(callsign=call_sign_instance,
-                                                                                                   defaults=clublog_user_data)
-                    if not clublog_instance_created:
+                    clublog_instance, clublog_created = ClublogUser.objects.get_or_create(callsign=call_sign_instance,
+                                                                                          defaults=clublog_user_data)
+                    if not clublog_created:
                         for attr, a_value in clublog_user_data.items():
                             setattr(clublog_instance, attr, a_value)
                         clublog_instance.save()
