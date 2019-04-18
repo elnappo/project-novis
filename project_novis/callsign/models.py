@@ -436,6 +436,7 @@ class DataImport(BaseModel):
     optional_data = JSONField(blank=True, null=True)
 
     stop = models.DateTimeField(blank=True, null=True)
+    duration = models.DurationField(blank=True, null=True)
     callsigns = models.PositiveIntegerField(default=0)
     new_callsigns = models.PositiveIntegerField(default=0)
     updated_callsigns = models.PositiveIntegerField(default=0)
@@ -443,6 +444,9 @@ class DataImport(BaseModel):
     invalid_callsigns = models.PositiveIntegerField(default=0)
     blacklisted_callsigns = models.PositiveIntegerField(default=0)
     errors = models.PositiveIntegerField(default=0)
+    finished = models.BooleanField(default=False)
+    failed = models.BooleanField(default=False)
+    error_message = models.TextField(blank=True)
 
     def __str__(self) -> str:
         return f"{self.task}-{self.start}"
