@@ -19,6 +19,7 @@ application:
 
 django:
   production: false
+  debug: false
   secretKey: ""
   databaseURL: "postgis://postgres:postgres@test-postgresql:5432/postgres"
   allowMigrations: true

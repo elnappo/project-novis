@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "project-novis.fullname" . }}
 data:
-  DJANGO_DEBUG: "false"
+  DJANGO_DEBUG: {{ .Values.django.debug | quote }}
   DJANGO_PRODUCTION: {{ .Values.django.production | quote }}
   DJANGO_SENTRY_ENVIRONMENT: {{ .Values.application.track | quote }}
 {{- if .Values.ingress.enabled }}

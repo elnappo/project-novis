@@ -44,9 +44,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PRODUCTION = bool_env("DJANGO_PRODUCTION", False)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool_env("DJANGO_DEBUG", not PRODUCTION)
+DEBUG = bool_env("DJANGO_DEBUG", False)
 
-if PRODUCTION:
+if not DEBUG:
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
     SESSION_COOKIE_SECURE = True
@@ -229,7 +229,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 DJANGO_SENTRY_DSN = os.environ.get("DJANGO_SENTRY_DSN", None)
 
 # Sentry settings
-if PRODUCTION and DJANGO_SENTRY_DSN:
+if not DEBUG and DJANGO_SENTRY_DSN:
     sentry_sdk.init(
         dsn=DJANGO_SENTRY_DSN,
         integrations=[DjangoIntegration(), ],
@@ -241,14 +241,14 @@ if PRODUCTION and DJANGO_SENTRY_DSN:
     CSP_REPORT_URI = (f"https://sentry.io/api/{ DJANGO_SENTRY_DSN.split('/')[3] }/security/?sentry_key={ DJANGO_SENTRY_DSN.split('/')[2].split('@')[0] }",)
 
 # Email settings
-if PRODUCTION:
+if not DEBUG and os.environ.get("DJANGO_EMAIL_HOST_PASSWORD", False):
     DEFAULT_FROM_EMAIL = os.environ.get("DJANGO_DEFAULT_FROM_EMAIL", "info@project-novis.org")
     SERVER_EMAIL = os.environ.get("DJANGO_SERVER_EMAIL", "root@project-novis.org")
 
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = os.environ.get("DJANGO_EMAIL_HOST", "mail.gandi.net")
     EMAIL_HOST_USER = os.environ.get("DJANGO_EMAIL_HOST_USER", "info@project-novis.org")
-    EMAIL_HOST_PASSWORD = os.environ.get("DJANGO_EMAIL_HOST_PASSWORD", "")
+    EMAIL_HOST_PASSWORD = os.environ.get("DJANGO_EMAIL_HOST_PASSWORD")
     EMAIL_PORT = os.environ.get("DJANGO_EMAIL_PORT", "587")
     EMAIL_USE_TLS = True
     EMAIL_SUBJECT_PREFIX = os.environ.get("DJANGO_EMAIL_SUBJECT_PREFIX", "")
