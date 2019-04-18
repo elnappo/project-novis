@@ -1,19 +1,20 @@
-import re
 import collections
+import re
 from io import BytesIO
 
-import requests
 import PyPDF2
+import requests
 
 from . import ImportCommand
 
 
 class Command(ImportCommand):
     help = 'Import user data from Federal Network Agencies'
+    task = 'callsign_import_official'
 
     def germany(self):
         # update v parameter?
-        url = "https://www.bundesnetzagentur.de/SharedDocs/Downloads/DE/Sachgebiete/Telekommunikation/Unternehmen_Institutionen/Frequenzen/Amateurfunk/Rufzeichenliste/Rufzeichenliste_AFU.pdf?__blob=publicationFile&v=48"
+        url: str = "https://www.bundesnetzagentur.de/SharedDocs/Downloads/DE/Sachgebiete/Telekommunikation/Unternehmen_Institutionen/Frequenzen/Amateurfunk/Rufzeichenliste/Rufzeichenliste_AFU.pdf?__blob=publicationFile&v=51"
         regex = re.compile(r"D[A-Z][0-9][A-Z0-9]+")
         callsigns = list()
 
@@ -21,13 +22,13 @@ class Command(ImportCommand):
         with requests.get(url, stream=False) as r:
             if r.ok:
                 data = BytesIO(r.content)
-                pdfReader = PyPDF2.PdfFileReader(data)
-                number_of_pages = pdfReader.getNumPages()
+                pdf_reader = PyPDF2.PdfFileReader(data)
+                number_of_pages = pdf_reader.getNumPages()
                 c = collections.Counter(range(number_of_pages))
 
                 for i in c:
                     try:
-                        page = pdfReader.getPage(i)
+                        page = pdf_reader.getPage(i)
                         page_content = page.extractText()
                         a = regex.findall(page_content)
                         callsigns.extend(a)
@@ -38,8 +39,8 @@ class Command(ImportCommand):
 
                 for callsign in unique_callsigns:
                     callsign_instance, _ = self._handle_callsign(callsign, official=True, source="germany_official")
-                    if not callsign_instance.official_validated:
-                        callsign_instance.official_validated = True
+                    if not callsign_instance._official_validated:
+                        callsign_instance._official_validated = True
                         callsign_instance.save()
 
     def finland(self):
@@ -58,15 +59,22 @@ class Command(ImportCommand):
                     if status == "VOIMAS\t":
                         callsigns.append(callsign)
 
-                    unique_callsigns = callsigns
-                    for callsign in unique_callsigns:
+                    for callsign in set(callsigns):
                         callsign_instance, _ = self._handle_callsign(callsign, official=True, source="finland_official")
-                        if not callsign_instance.official_validated:
-                            callsign_instance.official_validated = True
+                        if not callsign_instance._official_validated:
+                            callsign_instance._official_validated = True
                             callsign_instance.save()
+
+    def usa(self):
+        pass
+
+    def austria(self):
+        pass
 
     def handle(self, *args, **options):
         self.germany()
         self.finland()
+        self.austria()
+        self.usa()
 
         self._finish()
