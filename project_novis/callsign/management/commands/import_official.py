@@ -54,8 +54,13 @@ class Command(ImportCommand):
                 for i in r.iter_lines(decode_unicode=True):
                     if not i:
                         continue
-
-                    callsign, status = i.split("\t", 1)
+                    try:
+                        callsign, status = i.split("\t", 1)
+                    except ValueError:
+                        # Handle invalid data in callsign list e.g.:
+                        # OG73WR
+                        #           VARAUS
+                        self._write(f"Invalid data: {i}")
                     if status == "VOIMAS\t":
                         callsigns.append(callsign)
 

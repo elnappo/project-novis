@@ -1,4 +1,5 @@
 import csv
+import sys
 
 from dateutil.parser import parse
 
@@ -39,6 +40,6 @@ class Command(ImportCommand):
         try:
             self.run(options['url'])
             self._finish()
-        except Exception as e:
-            self._finish(failed=True, error_message=str(e))
-            raise e
+        except:
+            self._finish(failed=True, error_message=sys.exc_info())
+            raise
