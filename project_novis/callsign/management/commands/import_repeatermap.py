@@ -37,7 +37,7 @@ class Command(ImportCommand):
                         try:
                             call_sign_instance.location = Point(repeater["lon"], repeater["lat"])
                             call_sign_instance.save()
-                        except Exception:
+                        except:
                             self._warning(f"Invalid location {repeater}")
 
                 # TODO handle updates
@@ -47,7 +47,7 @@ class Command(ImportCommand):
                                                                                          defaults={"callsign": call_sign_instance,
                                                                                                    "website": repeater["url"],
                                                                                                    "location": Point(repeater["lon"], repeater["lat"]),
-                                                                                                   "created_by": get_user_model().objects.get(id=1),
+                                                                                                   "created_by": self._import_user,
                                                                                                    "source": self.source})
                         transmitter_instance, new_transmitter = Transmitter.objects.get_or_create(
                             repeater=repeater_instance, transmit_frequency=repeater["tx"],
@@ -56,7 +56,7 @@ class Command(ImportCommand):
                                       "offset": repeater["rx"] - repeater["tx"],
                                       "mode": repeater["mode"],
                                       "description": repeater["remarks"],
-                                      "created_by": get_user_model().objects.get(id=1),
+                                      "created_by": self._import_user,
                                       "source": self.source})
                     except:
                         self._warning(f"Invalid repeater or transmitter data in {repeater}")
