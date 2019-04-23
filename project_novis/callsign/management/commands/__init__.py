@@ -32,6 +32,7 @@ class ImportCommand(BaseCommand):
         self._new_callsign_counter: int = 0
         self._update_callsign_counter: int = 0
         self._delete_callsign_counter: int = 0
+        self._duplicated_callsign_counter: int = 0
         self._invalid_callsign_counter: int = 0
         self._blacklist_callsign_counter: int = 0
         self._error_counter: int = 0
@@ -88,6 +89,9 @@ class ImportCommand(BaseCommand):
         if extra_fields is None:
             extra_fields = {}
 
+        # Callsigns can appear multiple times in source data e.g. as A0KAU/P and A0KAU/M
+        unique_callsigns = set()
+
         # Callsign must be checked before bulk_create as bulk_create does not validate callsign name field
         for callsign in callsigns:
             self._callsign_counter += 1
@@ -97,8 +101,12 @@ class ImportCommand(BaseCommand):
                 self._warning(f"Invalid callsign {callsign}")
             elif raw_callsign in self._callsign_blacklist:
                 self._blacklist_callsign_counter += 1
-                self._warning(f"Blacklisted callsign {callsign}")
+                self._warning(f"Blacklisted callsign {raw_callsign}")
+            elif raw_callsign in unique_callsigns:
+                self._duplicated_callsign_counter += 1
+                self._warning(f"Duplicated callsign {raw_callsign}")
             elif raw_callsign not in self._existing_callsigns:
+                unique_callsigns.add(raw_callsign)
                 self._new_callsign_counter += 1
                 yield Callsign(name=raw_callsign,
                                created_by_id=self._import_user.id,
@@ -106,6 +114,7 @@ class ImportCommand(BaseCommand):
                                _official_validated=official,
                                **extra_fields)
 
+    # TODO Move to CallsignManager
     def _callsign_bulk_create(self, callsigns: Iterable[str], extra_fields=None, source: str = "", official: bool = False) -> List[Callsign]:
         """Create callsigns and set default meta data
 
@@ -219,23 +228,25 @@ class ImportCommand(BaseCommand):
 
         if not failed:
             self._success(f"duration: {timezone.now() - self._start_time} "
-                          f"callsings: {self._callsign_counter} "
-                          f"new callsings: {self._new_callsign_counter} "
-                          f"update callsings: {self._update_callsign_counter} "
-                          f"delete callsings: {self._delete_callsign_counter} "
+                          f"callsigns: {self._callsign_counter} "
+                          f"new callsigns: {self._new_callsign_counter} "
+                          f"update callsigns: {self._update_callsign_counter} "
+                          f"delete callsigns: {self._delete_callsign_counter} "
+                          f"duplicated callsigns: {self._duplicated_callsign_counter} "
                           f"invalid callsigns: {self._invalid_callsign_counter} "
                           f"blacklisted callsigns: {self._blacklist_callsign_counter} "
-                          f"error callsings: {self._error_counter}")
+                          f"error callsigns: {self._error_counter}")
         else:
             self._error("Command failed")
             self._error(error_message)
             self._error(f"duration: {timezone.now() - self._start_time} "
-                        f"callsings: {self._callsign_counter} "
-                        f"new callsings: {self._new_callsign_counter} "
-                        f"update callsings: {self._update_callsign_counter} "
-                        f"delete callsings: {self._delete_callsign_counter} "
+                        f"callsigns: {self._callsign_counter} "
+                        f"new callsigns: {self._new_callsign_counter} "
+                        f"update callsigns: {self._update_callsign_counter} "
+                        f"delete callsigns: {self._delete_callsign_counter} "
+                        f"duplicated callsigns: {self._duplicated_callsign_counter} "
                         f"invalid callsigns: {self._invalid_callsign_counter} "
                         f"blacklisted callsigns: {self._blacklist_callsign_counter} "
-                        f"error callsings: {self._error_counter}")
+                        f"error callsigns: {self._error_counter}")
         if extra_message:
             self._write(extra_message)
