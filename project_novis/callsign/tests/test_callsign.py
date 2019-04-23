@@ -297,7 +297,7 @@ class ExtractCallsignTestCase(SimpleTestCase):
             "ZWA",
         ]
 
-        self.extract_callsings = [
+        self.extract_callsigns = [
             ("wd1s/vy2", "WD1S"),
             ("zl/pa0mir", "PA0MIR"),
             ("YV5/UA9YPS", "UA9YPS"),
@@ -316,18 +316,18 @@ class ExtractCallsignTestCase(SimpleTestCase):
             ("K3ZFP/3", "K3ZFP"),
         ]
 
-    def test_invalid_callsings(self):
+    def test_invalid_callsigns(self):
         for i in self.invalid_callsigns:
             with self.subTest(i=i):
                 self.assertEqual(extract_callsign(i), "")
 
-    def test_valid_callsings(self):
+    def test_valid_callsigns(self):
         for i in self.valid_callsigns:
             with self.subTest(i=i):
                 self.assertEqual(extract_callsign(i), i.upper())
 
     def test_extract_callsign(self):
-        for i in self.extract_callsings:
+        for i in self.extract_callsigns:
             with self.subTest(i=i):
                 self.assertEqual(extract_callsign(i[0]), i[1])
 

@@ -151,6 +151,7 @@ class CallsignPrefix(BaseModel):
 
 class CallsignManager(models.Manager):
     def create_callsign(self, callsign: str, created_by_id: int, check_blacklist: bool = True):
+        # TODO further validate callsign
         # Check if callsign is blacklisted
         if check_blacklist and CallsignBlacklist.objects.filter(callsign=callsign).exists():
             raise ValidationError("callsign is blacklisted")

@@ -13,7 +13,7 @@ from .models import UserValidation
 
 class UserUpdate(LoginRequiredMixin, UpdateView):
     model = get_user_model()
-    fields = ['name', 'address', 'country', 'bio']
+    fields = ['name', 'display_name', 'address', 'country', 'bio']
     template_name = 'profile_change.html'
     success_url = reverse_lazy('profile_change')
 

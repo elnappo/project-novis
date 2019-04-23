@@ -60,10 +60,10 @@ class CallsignAdmin(BaseModelAdmin):
         }),
         ('Details', {
             'fields': ('_official_validated', 'official_validated', 'type', 'owner', 'active', "issued", "dstar",
-                       "comment", "eqsl", "lotw_last_activity")
+                       "comment", "eqsl", "lotw_last_activity", "website")
         }),
         ('Location', {
-            'fields': ('cq_zone', 'itu_zone', 'itu_region', 'grid', 'location')
+            'fields': ('cq_zone', 'itu_zone', 'itu_region', 'grid', 'location', '_location_source', 'location_source')
         }),
         ('Advanced options', {
             'classes': ('collapse',),
@@ -71,7 +71,7 @@ class CallsignAdmin(BaseModelAdmin):
         }),
     )
     raw_id_fields = ("owner", "prefix", "created_by")
-    readonly_fields = ('created', 'modified', 'grid', 'official_validated')
+    readonly_fields = ('created', 'modified', 'grid', 'official_validated', 'location_source')
     inlines = [DMRIDInline, ClublogUserInline]
 
 
@@ -190,7 +190,7 @@ class CallsignBlacklistAdmin(BaseModelAdmin):
 
 
 @admin.register(AddressLocationCache)
-class AddressLocationCacheAdmin(admin.ModelAdmin):
+class AddressLocationCacheAdmin(BaseModelAdmin):
     list_display = ("address", "provider", "location")
     list_display_links = ("address",)
     list_filter = ("provider", "created", "modified")
