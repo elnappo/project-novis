@@ -55,8 +55,7 @@ if not DEBUG:
     SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    USE_X_FORWARDED_HOST = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
     CSP_UPGRADE_INSECURE_REQUESTS = True
     CSP_BLOCK_ALL_MIXED_CONTENT = True
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
@@ -66,7 +65,8 @@ else:
     SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "INSECURE")
 
 ALLOWED_HOSTS = [os.environ.get("DJANGO_ALLOWED_HOSTS", "*")]
-
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 INSTALLED_APPS = [
@@ -233,6 +233,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 DJANGO_SENTRY_DSN = os.environ.get("DJANGO_SENTRY_DSN", None)
 
 # Sentry settings
+DJANGO_SENTRY_DSN = os.environ.get("DJANGO_SENTRY_DSN", None)
+
 if not DEBUG and DJANGO_SENTRY_DSN:
     sentry_sdk.init(
         dsn=DJANGO_SENTRY_DSN,
