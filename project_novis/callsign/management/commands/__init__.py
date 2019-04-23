@@ -100,7 +100,7 @@ class ImportCommand(BaseCommand):
                 self._warning(f"Blacklisted callsign {callsign}")
             elif raw_callsign not in self._existing_callsigns:
                 self._new_callsign_counter += 1
-                yield Callsign(name=callsign,
+                yield Callsign(name=raw_callsign,
                                created_by_id=self._import_user.id,
                                source=source if source else self.source,
                                _official_validated=official,
@@ -138,7 +138,7 @@ class ImportCommand(BaseCommand):
         self._write("Start bulk update default callsign data")
         default_data_counter = 0
         while True:
-            batch = list(islice(callsign_instances, self._batch_size))
+            batch = callsign_instances[default_data_counter:default_data_counter+self._batch_size]
             if not batch:
                 break
 
@@ -146,8 +146,8 @@ class ImportCommand(BaseCommand):
             for callsign_instance in batch:
                 callsign_instance.set_default_meta_data()
             default_data_counter += len(batch)
+            Callsign.objects.bulk_update(batch, fields, self._batch_size)
             self._write(f"set default data on callsigns: {default_data_counter} ")
-            Callsign.objects.bulk_update(callsign_instances, fields, self._batch_size)
 
         # Update DataImport record
         self._callsign_data_import_instance.callsigns = self._callsign_counter
