@@ -1,3 +1,4 @@
+brotlipy
 coreapi
 coreschema
 dj-database-url
@@ -30,6 +31,7 @@ rope
 sentry-sdk
 setuptools-scm
 swagger-spec-validator
+urllib3<1.25
 wheel
-whitenoise[brotli]
+whitenoise
 yapf
