@@ -11,6 +11,7 @@ CALLSIGN_REGEX = r"^(?=.*[a-zA-Z])([a-zA-Z0-9]+[0-9][a-zA-Z0-9]+)$"
 CALLSIGN_REGEX_COMPILE = re.compile(CALLSIGN_REGEX)
 CALLSIGN_EXTRACT_REGEX_COMPILE = re.compile(
     r"(?=.*[a-zA-Z])([A-Z0-9]+[/_-])?([a-zA-Z]+[0-9][a-zA-Z]+)([/-_][A-Z0-9]+)?")
+ALPHANUM_ONLY = re.compile(r'[\W_]+')
 CALLSIGN_MAX_LENGTH = 16
 
 
@@ -93,19 +94,21 @@ class WikidataObjectField(models.CharField):
 
 
 def extract_callsign(value: str) -> str:
-    value = value.replace(" ", "").upper()
+    value: str = value.replace(" ", "").upper()
+    callsign: str = ""
 
     if CALLSIGN_REGEX_COMPILE.search(value):
         if len(value) <= CALLSIGN_MAX_LENGTH:
-            return value
+            callsign = value
 
     callsign_groups = CALLSIGN_EXTRACT_REGEX_COMPILE.search(value)
 
     if callsign_groups:
         if len(value) <= CALLSIGN_MAX_LENGTH:
-            return callsign_groups.group(2)
+            callsign = callsign_groups.group(2)
 
-    return ""
+    # Remove all non alphanumeric characters
+    return ALPHANUM_ONLY.sub('', callsign).upper()
 
 
 def generate_aprs_passcode(callsign: str) -> int:
