@@ -1,4 +1,5 @@
 import csv
+import sys
 
 import requests
 
@@ -34,7 +35,7 @@ class Command(ImportCommand):
 
         # Import D-STAR users
         self._write("Import D-STAR user list")
-        r = requests.get(dstar_user_list_url, stream=False)
+        r = self.session.get(dstar_user_list_url, stream=False)
 
         if r.status_code == 200:
             for row in r.iter_lines(decode_unicode=True):
@@ -46,7 +47,7 @@ class Command(ImportCommand):
     def amateurradio_digital(self, options):
         self._write("Import amateurradio.digital data")
 
-        r = requests.get(options['url'], stream=False)
+        r = self.session.get(options['url'], stream=False)
 
         if r.status_code == 200:
             reader = csv.reader(r.iter_lines(decode_unicode=True), delimiter=',')
@@ -60,7 +61,7 @@ class Command(ImportCommand):
                     # TODO(elnappo) use Callsign.update_location()
                     if callsign_instance._location_source == "prefix":
                         address = f"{row[3]}, {row[4]}, {row[5]}"
-                        location = address_to_grid_based_point(address)
+                        location = address_to_grid_based_point(address, session=self.session)
                         callsign_instance.location = location
                         callsign_instance._location_source = "unofficial"
                         callsign_instance.save()
@@ -69,6 +70,10 @@ class Command(ImportCommand):
                     self._warning(f"Invalid data: {row} - {e}")
 
     def handle(self, *args, **options):
-        # self.ham_digital()
-        self.amateurradio_digital(options)
-        self._finish()
+        try:
+            self.amateurradio_digital(options)
+            self.ham_digital()
+            self._finish()
+        except:
+            self._finish(failed=True, error_message=sys.exc_info())
+            raise

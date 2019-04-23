@@ -1,5 +1,6 @@
 import collections
 import re
+import sys
 from io import BytesIO
 
 import PyPDF2
@@ -18,7 +19,7 @@ class Command(ImportCommand):
         regex = re.compile(r"D[A-Z][0-9][A-Z0-9]+")
         callsigns = list()
 
-        self._write("Import german callsings")
+        self._write("Import german callsigns")
         with requests.get(url, stream=False) as r:
             if r.ok:
                 data = BytesIO(r.content)
@@ -44,11 +45,12 @@ class Command(ImportCommand):
                         callsign_instance.save()
 
     def finland(self):
-        url = "https://eservices.viestintavirasto.fi/Licensesservices/Forms/AmateurLicenses.aspx"
-        payload = {'__EVENTTARGET': '', 'ButtonDownload': ''}
+        # Based on https://github.com/OH6AD/koolit
+        url: str = "https://eservices.viestintavirasto.fi/Licensesservices/Forms/AmateurLicenses.aspx"
+        payload: dict = {'__EVENTTARGET': '', 'ButtonDownload': ''}
         callsigns = list()
 
-        self._write("Import finnish callsings")
+        self._write("Import finnish callsigns")
         with requests.post(url, data=payload, stream=False) as r:
             if r.ok:
                 for i in r.iter_lines(decode_unicode=True):
@@ -77,9 +79,12 @@ class Command(ImportCommand):
         pass
 
     def handle(self, *args, **options):
-        self.germany()
-        self.finland()
-        self.austria()
-        self.usa()
-
-        self._finish()
+        try:
+            self.germany()
+            self.finland()
+            self.austria()
+            self.usa()
+            self._finish()
+        except:
+            self._finish(failed=True, error_message=sys.exc_info())
+            raise

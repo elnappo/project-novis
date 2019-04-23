@@ -1,5 +1,4 @@
 import requests
-from django.contrib.auth import get_user_model
 from django.contrib.gis.geos import Point
 
 from . import ImportCommand

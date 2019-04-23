@@ -22,7 +22,7 @@ class Command(ImportCommand):
         # TODO update existing callsigns
 
     def handle(self, *args, **options):
-        self._write(f"Download callsign data from { options['url'] }")
+        self._write(f"Downloading callsign data from { options['url'] }")
 
         try:
             self.run(options['url'])
