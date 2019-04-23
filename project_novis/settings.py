@@ -44,7 +44,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PRODUCTION = bool_env("DJANGO_PRODUCTION", False)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool_env("DJANGO_DEBUG", False)
+if PRODUCTION:
+    # Ensure production does not run with DEBUG on
+    DEBUG = False
+else:
+    DEBUG = bool_env("DJANGO_DEBUG", True)
 
 if not DEBUG:
     # SECURITY WARNING: keep the secret key used in production secret!
