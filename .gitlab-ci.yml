@@ -75,6 +75,15 @@ stages:
   - performance
   - cleanup
 
+include:
+  - template: Jobs/Code-Quality.gitlab-ci.yml
+  - template: Jobs/Browser-Performance-Testing.gitlab-ci.yml
+  - template: Security/DAST.gitlab-ci.yml
+  - template: Security/Container-Scanning.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/License-Management.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+
 build:
   stage: build
   image: docker:stable-git
@@ -112,155 +121,10 @@ test:
     variables:
       - $TEST_DISABLED
 
-code_quality:
-  stage: test
-  image: docker:stable
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - setup_docker
-    - code_quality
-  artifacts:
-    paths: [gl-code-quality-report.json]
-  only:
-    - branches
-    - tags
-  except:
-    variables:
-      - $CODE_QUALITY_DISABLED
-
-license_management:
-  stage: test
-  image:
-    name: "registry.gitlab.com/gitlab-org/security-products/license-management:$CI_SERVER_VERSION_MAJOR-$CI_SERVER_VERSION_MINOR-stable"
-    entrypoint: [""]
-  allow_failure: true
-  script:
-    - replace_psycopg2
-    - license_management
-  artifacts:
-    paths: [gl-license-management-report.json]
-  only:
-    refs:
-      - branches
-      - tags
-    variables:
-      - $GITLAB_FEATURES =~ /\blicense_management\b/
-  except:
-    variables:
-      - $LICENSE_MANAGEMENT_DISABLED
-
-performance:
-  stage: performance
-  image: docker:stable
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - setup_docker
-    - performance
-  artifacts:
-    paths:
-    - performance.json
-    - sitespeed-results/
-  only:
-    refs:
-      - branches
-      - tags
-    kubernetes: active
-  except:
-    variables:
-      - $PERFORMANCE_DISABLED
-
-sast:
-  stage: test
-  image: docker:stable
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - setup_docker
-    - sast
-  artifacts:
-    reports:
-      sast: gl-sast-report.json
-  only:
-    refs:
-      - branches
-      - tags
-    variables:
-      - $GITLAB_FEATURES =~ /\bsast\b/
-  except:
-    variables:
-      - $SAST_DISABLED
-
-dependency_scanning:
-  stage: test
-  image: docker:stable
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - setup_docker
-    - replace_psycopg2
-    - dependency_scanning
-  artifacts:
-    reports:
-      dependency_scanning: gl-dependency-scanning-report.json
-  only:
-    refs:
-      - branches
-      - tags
-    variables:
-      - $GITLAB_FEATURES =~ /\bdependency_scanning\b/
-  except:
-    variables:
-      - $DEPENDENCY_SCANNING_DISABLED
-
-container_scanning:
-  stage: test
-  image: docker:stable
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - setup_docker
-    - container_scanning
-  artifacts:
-    paths: [gl-container-scanning-report.json]
-  only:
-    refs:
-      - branches
-      - tags
-    variables:
-      - $GITLAB_FEATURES =~ /\bcontainer_scanning\b/
-  except:
-    variables:
-      - $CONTAINER_SCANNING_DISABLED
-
 dast:
-  stage: dast
-  allow_failure: true
-  image: registry.gitlab.com/gitlab-org/security-products/zaproxy
-  variables:
-    POSTGRES_DB: "false"
-  script:
-    - dast
-  artifacts:
-    paths: [gl-dast-report.json]
-  only:
-    refs:
-      - branches
-      - tags
-    kubernetes: active
-    variables:
-      - $GITLAB_FEATURES =~ /\bdast\b/
   except:
     refs:
       - master
-    variables:
-      - $DAST_DISABLED
 
 review:
   stage: review
@@ -531,69 +395,6 @@ rollout 100%:
     fi
   }
 
-  function container_scanning() {
-    registry_login
-
-    docker run -d --name db arminc/clair-db:latest
-    docker run -p 6060:6060 --link db:postgres -d --name clair --restart on-failure arminc/clair-local-scan:v2.0.1
-    apk add -U wget ca-certificates
-    docker pull ${CI_APPLICATION_REPOSITORY}:${CI_APPLICATION_TAG}
-    wget https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64
-    mv clair-scanner_linux_amd64 clair-scanner
-    chmod +x clair-scanner
-    touch clair-whitelist.yml
-    retries=0
-    echo "Waiting for clair daemon to start"
-    while( ! wget -T 10 -q -O /dev/null http://docker:6060/v1/namespaces ) ; do sleep 1 ; echo -n "." ; if [ $retries -eq 10 ] ; then echo " Timeout, aborting." ; exit 1 ; fi ; retries=$(($retries+1)) ; done
-    ./clair-scanner -c http://docker:6060 --ip $(hostname -i) -r gl-container-scanning-report.json -l clair.log -w clair-whitelist.yml ${CI_APPLICATION_REPOSITORY}:${CI_APPLICATION_TAG} || true
-  }
-
-  function code_quality() {
-    docker run --env SOURCE_CODE="$PWD" \
-               --volume "$PWD":/code \
-               --volume /var/run/docker.sock:/var/run/docker.sock \
-               "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
-  }
-
-  function license_management() {
-    /run.sh analyze .
-  }
-
-  function sast() {
-    case "$CI_SERVER_VERSION" in
-      *-ee)
-
-        # Deprecation notice for CONFIDENCE_LEVEL variable
-        if [ -z "$SAST_CONFIDENCE_LEVEL" -a "$CONFIDENCE_LEVEL" ]; then
-          SAST_CONFIDENCE_LEVEL="$CONFIDENCE_LEVEL"
-          echo "WARNING: CONFIDENCE_LEVEL is deprecated and MUST be replaced with SAST_CONFIDENCE_LEVEL"
-        fi
-
-        docker run --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}" \
-                   --volume "$PWD:/code" \
-                   --volume /var/run/docker.sock:/var/run/docker.sock \
-                   "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
-        ;;
-      *)
-        echo "GitLab EE is required"
-        ;;
-    esac
-  }
-
-  function dependency_scanning() {
-    case "$CI_SERVER_VERSION" in
-      *-ee)
-        docker run --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}" \
-                   --volume "$PWD:/code" \
-                   --volume /var/run/docker.sock:/var/run/docker.sock \
-                   "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
-        ;;
-      *)
-        echo "GitLab EE is required"
-        ;;
-    esac
-  }
-
   function get_replicas() {
     track="${1:-stable}"
     percentage="${2:-100}"
@@ -705,6 +506,12 @@ rollout 100%:
       additional_hosts="{$ADDITIONAL_HOSTS}"
     fi
 
+    if [ "$CI_ENVIRONMENT_SLUG" == "production" ]; then
+      is_production="true"
+    else
+      is_production="false"
+    fi
+
     helm list --all
 
     if [[ -n "$DB_INITIALIZE" && -z "$(helm ls -q "^$name$")" ]]; then
@@ -750,12 +557,14 @@ rollout 100%:
         --wait \
         --set ingress.enabled="$service_enabled" \
         --set ingress.host="$KUBE_PRODUCTION_HOSTNAME" \
+        --set gitlab.app="$CI_PROJECT_PATH_SLUG" \
+        --set gitlab.env="$CI_ENVIRONMENT_SLUG" \
         --set releaseOverride="$CI_ENVIRONMENT_SLUG" \
         --set image.repository="$CI_APPLICATION_REPOSITORY" \
         --set image.tag="$CI_APPLICATION_TAG" \
         --set image.pullPolicy=IfNotPresent \
         --set application.track="$track" \
-        --set django.production="true" \
+        --set django.production="$is_production" \
         --set django.databaseURL="$DATABASE_URL" \
         --set django.secretKey="$DJANGO_SECRET_KEY" \
         --set django.superuser.password="$DJANGO_SUPERUSER_PASSWORD" \
@@ -964,33 +773,6 @@ rollout 100%:
       -o yaml --dry-run | kubectl replace -n "$KUBE_NAMESPACE" --force -f -
   }
 
-  function dast() {
-    export CI_ENVIRONMENT_URL=$(cat environment_url.txt)
-
-    mkdir /zap/wrk/
-    /zap/zap-baseline.py -J gl-dast-report.json -t "$CI_ENVIRONMENT_URL" || true
-    cp /zap/wrk/gl-dast-report.json .
-  }
-
-  function performance() {
-    export CI_ENVIRONMENT_URL=$(cat environment_url.txt)
-
-    mkdir gitlab-exporter
-    wget -O gitlab-exporter/index.js https://gitlab.com/gitlab-org/gl-performance/raw/10-5/index.js
-
-    mkdir sitespeed-results
-
-    if [ -f .gitlab-urls.txt ]
-    then
-      sed -i -e 's@^@'"$CI_ENVIRONMENT_URL"'@' .gitlab-urls.txt
-      docker run --shm-size=1g --rm -v "$(pwd)":/sitespeed.io sitespeedio/sitespeed.io:6.3.1 --plugins.add ./gitlab-exporter --outputFolder sitespeed-results .gitlab-urls.txt
-    else
-      docker run --shm-size=1g --rm -v "$(pwd)":/sitespeed.io sitespeedio/sitespeed.io:6.3.1 -d 2 --plugins.add ./gitlab-exporter --outputFolder sitespeed-results "$CI_ENVIRONMENT_URL"
-    fi
-
-    mv sitespeed-results/data/performance.json performance.json
-  }
-
   function persist_environment_url() {
       echo $CI_ENVIRONMENT_URL > environment_url.txt
   }
@@ -1005,10 +787,6 @@ rollout 100%:
 
     secret_name=$(application_secret_name "$track")
     kubectl delete secret --ignore-not-found -n "$KUBE_NAMESPACE" "$secret_name"
-  }
-
-  function replace_psycopg2() {
-    sed -i -- 's/psycopg2/psycopg2-binary/g' requirements.txt
   }
 
 before_script:
