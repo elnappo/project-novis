@@ -345,7 +345,7 @@ class ClublogUser(BaseModel):
 
 
 class Repeater(LocationBaseModel):
-    callsign = models.ForeignKey(Callsign, on_delete=models.CASCADE)
+    callsign = models.OneToOneField(Callsign, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
     website = models.URLField(max_length=400, blank=True, null=True)
     altitude = models.FloatField(blank=True, null=True)
@@ -364,12 +364,12 @@ class Transmitter(BaseModel):
     transmit_frequency = models.DecimalField(max_digits=18, decimal_places=6)
     offset = models.DecimalField(max_digits=18, decimal_places=6)
     mode = models.CharField(max_length=16, choices=RF_MODES)
-    pep = models.FloatField("PEP", null=True, blank=True, help_text="Peak Envelope Power")
+    pep = models.FloatField("PEP", null=True, blank=True, help_text="Peak Envelope Power in W")
     description = models.TextField(blank=True, null=True)
     hardware = models.CharField(max_length=256, blank=True)
 
     # Analog
-    ctcss = models.FloatField("CTCSS", choices=CTCSS, blank=True, null=True, help_text="Continuous Tone Coded Squelch System")
+    ctcss = models.DecimalField("CTCSS", choices=CTCSS, decimal_places=1, max_digits=5, blank=True, null=True, help_text="Continuous Tone Coded Squelch System")
     echolink = models.IntegerField(blank=True, null=True)
 
     # Digital
@@ -381,7 +381,10 @@ class Transmitter(BaseModel):
 
     @property
     def receive_frequency(self) -> Decimal:
-        return self.transmit_frequency + self.offset
+        if self.transmit_frequency and self.offset:
+            return self.transmit_frequency + self.offset
+        else:
+            return Decimal(0)
 
     @property
     def brandmeister_repeater_url(self) -> str:
