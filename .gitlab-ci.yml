@@ -564,7 +564,7 @@ rollout 100%:
         --set image.tag="$CI_APPLICATION_TAG" \
         --set image.pullPolicy=IfNotPresent \
         --set application.track="$track" \
-        --set django.production="$is_production" \
+        --set django.production="false" \
         --set django.databaseURL="$DATABASE_URL" \
         --set django.secretKey="$DJANGO_SECRET_KEY" \
         --set django.superuser.password="$DJANGO_SUPERUSER_PASSWORD" \
