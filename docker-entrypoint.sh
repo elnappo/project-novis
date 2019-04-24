@@ -36,13 +36,14 @@ case "$1" in
         exec python manage.py shell
     ;;
     test)
+        echo "Starting tests"
         export COVERAGE_FILE=/tmp/.coverage
         python manage.py check
         exec pytest -p no:cacheprovider --junitxml=/tmp/report.xml
     ;;
     migrate)
         echo "Apply database migrations"
-        exec python manage.py migrate --noinput
+        exec python manage.py migrate --noinput -v 3
     ;;
     createsuperuser)
         [[ -z "$DJANGO_SUPERUSER_EMAIL" ]] && echo "ERROR: Need to set DJANGO_SUPERUSER_EMAIL" && exit 1;

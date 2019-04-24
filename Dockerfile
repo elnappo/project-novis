@@ -12,6 +12,7 @@ RUN apt-get update && apt-get dist-upgrade --assume-yes && apt-get install --ass
     python3-minimal \
     python3-venv \
     locales \
+    liblz4-1 \
     # GeoDjango requirements
     binutils \
     libproj-dev \
@@ -21,7 +22,7 @@ RUN apt-get update && apt-get dist-upgrade --assume-yes && apt-get install --ass
 ENV LANG en_US.utf8
 
 COPY requirements.txt /requirements.txt
-RUN apt-get update && apt-get install --assume-yes --no-install-recommends python3-dev libpq-dev gcc \
+RUN apt-get update && apt-get install --assume-yes --no-install-recommends python3-dev libpq-dev gcc liblz4-dev\
  && python3 -m venv /venv \
  && /venv/bin/pip install --upgrade pip \
  && /venv/bin/pip install --upgrade --no-cache-dir --requirement /requirements.txt \

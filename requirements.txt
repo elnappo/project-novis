@@ -19,6 +19,7 @@ drf-yasg
 flex
 geocoder
 gunicorn[gevent]
+lz4
 psycopg2
 pylint
 PyPDF2
