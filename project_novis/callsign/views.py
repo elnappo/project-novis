@@ -28,7 +28,15 @@ class DefaultPagination(LimitOffsetPagination):
 
 @method_decorator(csp_update(IMG_SRC=("maps.googleapis.com", "maps.gstatic.com"), SCRIPT_SRC=("maps.googleapis.com", "maps.gstatic.com")), name='dispatch')
 class CallsignDetailView(DetailView):
-    model = Callsign
+    queryset = Callsign.objects\
+        .select_related("prefix") \
+        .select_related("prefix__dxcc") \
+        .select_related("owner")\
+        .select_related("country") \
+        .select_related("country__telecommunicationagency") \
+        .select_related("clubloguser") \
+        .select_related("repeater")\
+        .prefetch_related("dmr_ids")
     slug_field = "name"
 
 
