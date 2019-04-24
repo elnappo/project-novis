@@ -125,7 +125,7 @@ class RepeaterAdmin(BaseModelAdmin):
     ordering = ('callsign',)
     search_fields = ("callsign",)
 
-    raw_id_fields = ("callsign",)
+    raw_id_fields = ("callsign", "created_by")
     inlines = [TransmitterInline, ]
 
 
