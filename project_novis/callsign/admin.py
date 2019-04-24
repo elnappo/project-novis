@@ -56,7 +56,7 @@ class CallsignAdmin(BaseModelAdmin):
 
     fieldsets = (
         ('Identifier', {
-            'fields': (('name', 'prefix'), 'country')
+            'fields': (('name', 'prefix', 'id'), 'country')
         }),
         ('Details', {
             'fields': ('_official_validated', 'official_validated', 'type', 'owner', 'active', "issued", "dstar",
@@ -71,7 +71,7 @@ class CallsignAdmin(BaseModelAdmin):
         }),
     )
     raw_id_fields = ("owner", "prefix", "created_by")
-    readonly_fields = ('created', 'modified', 'grid', 'official_validated', 'location_source')
+    readonly_fields = ('created', 'modified', 'grid', 'official_validated', 'location_source', 'id')
     inlines = [DMRIDInline, ClublogUserInline]
 
 
@@ -194,3 +194,13 @@ class AddressLocationCacheAdmin(BaseModelAdmin):
     list_display = ("address", "provider", "location")
     list_display_links = ("address",)
     list_filter = ("provider", "created", "modified")
+
+
+# @admin.register(QSO)
+# class QSOAdmin(BaseModelAdmin):
+#     list_display = ("caller", "callee", "timestamp", "frequency", "mode")
+#     list_display_links = ("caller", "callee")
+#     list_filter = ("timestamp", "mode")
+#     search_fields = ("caller__name", "callee__name")
+#
+#     raw_id_fields = ("caller", "callee")

@@ -1,0 +1,120 @@
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">object.repeater Information</h3>
+        {% if user == object.owner %}
+            <div class="box-tools pull-right">
+            <a href="{% url "callsign:repeater-html-update" object.name %}"
+                 class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Edit</a>
+            </div>
+        {% endif %}
+    </div>
+    <div class="box-body no-padding">
+        <table class="table table-hover">
+            <tbody>
+            <tr>
+                <td>Active</td>
+                <td>{{ object.repeater.active|yesno }}</td>
+            </tr>
+            {% if object.repeater.website %}
+            <tr>
+                <td>Website</td>
+                <td><a href="{{ object.repeater.website }}" target="_blank" rel="noopener">{{ object.repeater.website }}</a></td>
+            </tr>
+            {% endif %}
+            {% if object.repeater.altitude %}
+            <tr>
+                <td>Altitude</td>
+                <td>{{ object.repeater.altitude|floatformat:"0" }}m</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>Transmitter</td>
+                <td>
+
+                <div class="box-group" id="accordion">
+                  {% for transmitter in object.repeater.transmitters.all %}
+                <div class="panel box {% if transmitter.active %}box-primary{% else %}box-danger{% endif %}">
+                  <div class="box-header with-border">
+                    <h4 class="box-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}" class="collapsed" aria-expanded="false">
+                        {{ transmitter.get_mode_display }}  <i class="fa fa-arrow-down"></i>{{ transmitter.transmit_frequency }} MHz / <i class="fa fa-arrow-up"></i>{{ transmitter.receive_frequency }} MHz
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
+                    <div class="box-body">
+                      <table class="table table-hover">
+                    <tbody>
+                      <tr>
+                          <td>Active</td>
+                          <td>{{ transmitter.active|yesno }}</td>
+                      </tr>
+                      <tr>
+                          <td>Mode</td>
+                          <td>{{ transmitter.get_mode_display }}</td>
+                      </tr>
+                      <tr>
+                          <td>Transmit Frequency</td>
+                          <td>{{ transmitter.transmit_frequency }} MHz</td>
+                      </tr>
+                        <tr>
+                          <td>Receive Frequency</td>
+                          <td>{{ transmitter.receive_frequency }} MHz</td>
+                      </tr>
+                      <tr>
+                          <td>Offset</td>
+                          <td>{{ transmitter.offset }} MHz</td>
+                      </tr>
+                      {% if transmitter.pep %}
+                      <tr>
+                          <td>PEP</td>
+                          <td>{{ transmitter.pep|default_if_none:"Unknown" }} W</td>
+                      </tr>
+                      {% endif %}
+                      {% if transmitter.ctcss %}
+                      <tr>
+                          <td>CTCSS</td>
+                          <td>{{ transmitter.get_ctcss_display }}</td>
+                      </tr>
+                      {% endif %}
+                      {% if transmitter.echolink %}
+                      <tr>
+                          <td>EchoLink ID</td>
+                          <td>{{ transmitter.echolink }}</td>
+                      </tr>
+                      {% endif %}
+                      {% if transmitter.dmr_id %}
+                      <tr>
+                          <td>DMR ID</td>
+                          <td><a href="{{ transmitter.brandmeister_object.repeater_url }}" target="_blank" rel="noopener">{{ transmitter.dmr_id }}</a></td>
+                      </tr>
+                      {% endif %}
+                      {% if transmitter.colorcode %}
+                      <tr>
+                          <td>DMR Colorcode</td>
+                          <td>{{ transmitter.colorcode }}</td>
+                      </tr>
+                      {% endif %}
+                    </tbody>
+                  </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                {% empty %}
+                    No registered Transmitters
+                  {% endfor %}
+
+                </td>
+            </tr>
+            {% if object.repeater.description %}
+            <tr>
+                <td>Description</td>
+                <td>{{ object.repeater.description }}</td>
+            </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
+</div>

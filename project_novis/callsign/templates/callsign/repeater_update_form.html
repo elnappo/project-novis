@@ -1,23 +1,20 @@
 {% extends 'index.html' %}
 {% load static i18n account crispy_forms_tags %}
 
-{% block title %}Edit {{ object.name }}{% endblock %}
-{% block extra_head %}
-    {{ form.media }}
-{% endblock %}
+{% block title %}Edit {{ object.name }} Repeater{% endblock %}
 
 {% block content_header %}
 <h1>
-      {{ object.name }}
-      {% if object.official_validated == "true" %}
-      <i class="fa fa-check-circle" title="Callsign official issued"></i>
-      {% elif object.official_validated == "false" %}
-      <i class="fa fa-times-circle" title="Callsign not official issued"></i>
-      {% endif %}
+    {{ object.callsign.name }}
+    {% if object.callsign.official_validated == "true" %}
+    <i class="fa fa-check-circle" title="Callsign official issued"></i>
+    {% elif object.callsign.official_validated == "false" %}
+    <i class="fa fa-times-circle" title="Callsign not official issued"></i>
+    {% endif %}
 </h1>
 <ol class="breadcrumb">
     <li><a href="#"><i class="fa fa-dashboard"></i> Callsign</a></li>
-    <li><a href="{% url "callsign:callsign-html-detail" object.name %}"><i class="fa fa-dashboard"></i> {{ object.name }}</a></li>
+    <li><a href="{% url "callsign:callsign-html-detail" object.callsign.name %}"><i class="fa fa-dashboard"></i> {{ object.callsign.name }}</a></li>
     <li class="active">Edit</li>
 </ol>
 {% endblock %}
@@ -27,7 +24,7 @@
     <div class="col-md-8">
         <div class="box box-info">
             <div class="box-header with-border">
-              <h3 class="box-title">Edit {{ object.name }}</h3>
+              <h3 class="box-title">Edit {{ object.callsign.name }} Repeater</h3>
             </div>
             <div class="box-body">
                 <form class="form" method="post" action="">
@@ -46,17 +43,9 @@
               <h3 class="box-title">Help</h3>
             </div>
             <div class="box-body">
-                <strong><i class="fa fa-location-arrow margin-r-5"></i> Find your CQ/ITU zone</strong>
+                <strong>Transmitter</strong>
                 <p class="text-muted">
-                    Use <a href="https://zone-check.eu/" target="_blank" rel="noopener">this</a> site to find your
-                    CQ/ITU zone. Hover over your location, your CQ/ITU zone is displayed at the top left corner.
-                    We are working on automatically setting CQ/ITU zone based on your location - stay tuned.
-                </p>
-                <hr>
-                <strong>D-STAR</strong>
-                <p class="text-muted">
-                    <a href="https://en.wikipedia.org/wiki/D-STAR" target="_blank" rel="noopener">D-STAR (Digital Smart Technologies
-                    for Amateur Radio)</a> is a digital voice and data protocol specification for amateur radio.
+                    Currently it is not possible to add transmitters to your repeater. We are working on it.
                 </p>
                 <hr>
                 <strong>DMR IDs</strong>
