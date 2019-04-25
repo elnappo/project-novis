@@ -2,6 +2,7 @@ import json
 import zipfile
 from io import BytesIO
 from datetime import timezone
+from dateutil.parser import parse
 
 import requests
 
@@ -33,9 +34,9 @@ class Command(ImportCommand):
                         continue
 
                     clublog_user_data = {"callsign": call_sign_instance,
-                                         "clublog_first_qso": value["firstqso"].replace(tzinfo=timezone.utc) if "firstqso" in value else None,
-                                         "clublog_last_qso": value["lastqso"].replace(tzinfo=timezone.utc) if "firstqso" in value else None,
-                                         "clublog_last_upload": value["lastupload"].replace(tzinfo=timezone.utc) if "firstqso" in value else None,
+                                         "clublog_first_qso": parse(value["firstqso"]).replace(tzinfo=timezone.utc) if value.pop("firstqso", None) in value else None,
+                                         "clublog_last_qso": parse(value["lastqso"]).replace(tzinfo=timezone.utc) if value.pop("lastqso", None) in value else None,
+                                         "clublog_last_upload": parse(value["lastupload"]).replace(tzinfo=timezone.utc) if value.pop("lastupload", None) in value else None,
                                          "clublog_oqrs": value.get("oqrs", None)}
 
                     clublog_instance, clublog_created = ClublogUser.objects.get_or_create(callsign=call_sign_instance,

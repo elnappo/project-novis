@@ -24,8 +24,12 @@ class Command(ImportCommand):
         callsigns = dict()
 
         for row in reader:
-            raw_callsign = self._extract_callsign(row[0])
-            callsigns[raw_callsign] = {"last_activity": parse(row[1] + "T" + row[2] + "Z")}
+            if row[0]:
+                raw_callsign = self._extract_callsign(row[0])
+                if row[1] and row[2]:
+                    callsigns[raw_callsign] = {"last_activity": parse(row[1] + "T" + row[2] + "Z")}
+                else:
+                    callsigns[raw_callsign] = {"last_activity": None}
 
         callsign_instances = self._callsign_bulk_create(callsigns.keys())
         for callsign_instance in callsign_instances:
