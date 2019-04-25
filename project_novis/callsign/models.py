@@ -318,12 +318,16 @@ class DMRID(BaseModel):
 
 
 class Club(BaseModel):
-    callsign = models.ForeignKey(Callsign, on_delete=models.CASCADE)
+    callsign = models.OneToOneField(Callsign, on_delete=models.CASCADE)
     description = models.TextField(blank=True)
+    # Callsign already has an owner, remove?
     owner = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
-    members = models.ManyToManyField(get_user_model(), related_name="members")
+    members = models.ManyToManyField(get_user_model(), related_name="members", blank=True)
     website = models.URLField(blank=True)
     created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="clubs")
+
+    def get_absolute_url(self) -> str:
+        return reverse('callsign:callsign-html-detail', args=[self.callsign.name])
 
     def __str__(self) -> str:
         return self.callsign.name
@@ -357,6 +361,9 @@ class Repeater(LocationBaseModel):
     def __str__(self) -> str:
         return self.callsign.name
 
+    def get_absolute_url(self) -> str:
+        return reverse('callsign:callsign-html-detail', args=[self.callsign.name])
+
 
 class Transmitter(BaseModel):
     repeater = models.ForeignKey(Repeater, on_delete=models.CASCADE, related_name='transmitters')
@@ -381,7 +388,7 @@ class Transmitter(BaseModel):
 
     @property
     def receive_frequency(self) -> Decimal:
-        if self.transmit_frequency and self.offset:
+        if self.transmit_frequency and self.offset is not None:
             return self.transmit_frequency + self.offset
         else:
             return Decimal(0)
@@ -443,6 +450,7 @@ class DataImport(BaseModel):
     duration = models.DurationField(blank=True, null=True)
     callsigns = models.PositiveIntegerField(default=0)
     new_callsigns = models.PositiveIntegerField(default=0)
+    duplicated_callsigns = models.PositiveIntegerField(default=0)
     updated_callsigns = models.PositiveIntegerField(default=0)
     deleted_callsigns = models.PositiveIntegerField(default=0)
     invalid_callsigns = models.PositiveIntegerField(default=0)

@@ -1,0 +1,55 @@
+{% extends 'index.html' %}
+{% load static i18n account crispy_forms_tags %}
+
+{% block title %}Edit {{ object.name }} Club{% endblock %}
+
+{% block content_header %}
+<h1>
+    {{ object.callsign.name }}
+    {% if object.callsign.official_validated == "true" %}
+    <i class="fa fa-check-circle" title="Callsign official issued"></i>
+    {% elif object.callsign.official_validated == "false" %}
+    <i class="fa fa-times-circle" title="Callsign not official issued"></i>
+    {% endif %}
+</h1>
+<ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Callsign</a></li>
+    <li><a href="{% url "callsign:callsign-html-detail" object.callsign.name %}"><i class="fa fa-dashboard"></i> {{ object.callsign.name }}</a></li>
+    <li class="active">Edit</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">Edit {{ object.callsign.name }} Club</h3>
+            </div>
+            <div class="box-body">
+                <form class="form" method="post" action="">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button class="btn btn-primary" type="submit" name="action">{% trans "Update" %}</button>
+                <a href="{{ view.get_success_url }}" class="btn btn-default">Cancel</a>
+                </form>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">Help</h3>
+            </div>
+            <div class="box-body">
+                <strong>Members</strong>
+                <p class="text-muted">
+                    Currently it is not possible to add memebers to your club. We are working on it.
+                </p>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+{% endblock %}

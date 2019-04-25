@@ -1,6 +1,6 @@
 from django.contrib.gis import forms
 
-from .models import Callsign, Repeater
+from .models import Callsign, Repeater, Club
 
 
 class CallsignForm(forms.ModelForm):
@@ -19,3 +19,10 @@ class RepeaterForm(forms.ModelForm):
     class Meta:
         model = Repeater
         fields = ["active", "website", 'altitude', "description"]
+
+
+class ClubForm(forms.ModelForm):
+
+    class Meta:
+        model = Club
+        fields = ["website", "description"]

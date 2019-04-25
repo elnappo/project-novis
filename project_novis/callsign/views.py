@@ -16,8 +16,8 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework_gis.filters import DistanceToPointFilter
 from django.urls import reverse
 
-from .forms import CallsignForm, RepeaterForm
-from .models import Country, DXCCEntry, Callsign, DMRID, CallsignPrefix, Repeater
+from .forms import CallsignForm, RepeaterForm, ClubForm
+from .models import Country, DXCCEntry, Callsign, DMRID, CallsignPrefix, Repeater, Club
 from .serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer, \
     DMRIDSerializer, CallsignPrefixSerializer, RepeaterSerializer, APRSPasscodeSerializer
 
@@ -37,6 +37,7 @@ class CallsignDetailView(DetailView):
         .select_related("country__telecommunicationagency") \
         .select_related("clubloguser") \
         .select_related("repeater")\
+        .select_related("club") \
         .prefetch_related("dmr_ids")
     slug_field = "name"
 
@@ -73,6 +74,23 @@ class RepeaterUpdate(LoginRequiredMixin, UpdateView):
     model = Repeater
     slug_field = "callsign__name"
     form_class = RepeaterForm
+    template_name_suffix = '_update_form'
+
+    def get_success_url(self):
+        return reverse('callsign:callsign-html-detail', args=[self.object.callsign.name])
+
+    # TODO(elnappo) Replace permission check with django-guardian?
+    def dispatch(self, request, *args, **kwargs):
+        if self.get_object().callsign.owner == request.user or not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            return HttpResponseForbidden()
+
+
+class ClubUpdate(LoginRequiredMixin, UpdateView):
+    model = Club
+    slug_field = "callsign__name"
+    form_class = ClubForm
     template_name_suffix = '_update_form'
 
     def get_success_url(self):

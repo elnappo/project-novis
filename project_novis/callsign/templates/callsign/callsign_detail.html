@@ -133,6 +133,9 @@
           {% if object.repeater %}
             {% include "callsign/repeater_box.html" %}
           {% endif %}
+          {% if object.club %}
+            {% include "callsign/club_box.html" %}
+          {% endif %}
         </div>
         {% if object.location %}
             <div class="col-md-4">

@@ -214,6 +214,7 @@ class ImportCommand(BaseCommand):
     def _finish(self, extra_message: str = "", failed: bool = False, error_message: str = ""):
         self._callsign_data_import_instance.callsigns = self._callsign_counter
         self._callsign_data_import_instance.new_callsigns = self._new_callsign_counter
+        self._callsign_data_import_instance.duplicated_callsigns = self._duplicated_callsign_counter
         self._callsign_data_import_instance.updated_callsigns = self._update_callsign_counter
         self._callsign_data_import_instance.deleted_callsigns = self._delete_callsign_counter
         self._callsign_data_import_instance.invalid_callsigns = self._invalid_callsign_counter
