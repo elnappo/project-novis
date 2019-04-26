@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 
 from .models import *
 
@@ -46,11 +47,27 @@ def set_call_sign_metadata(modeladmin, request, queryset):
 set_call_sign_metadata.short_description = "Set default metadata"
 
 
+class PrefixListFilter(admin.SimpleListFilter):
+    title = _("has prefix")
+    parameter_name = "has_prefix"
+
+    def lookups(self, request, model_admin):
+        return (("yes", _("Yes")),
+                ("no",  _("No")),)
+
+    def queryset(self, request, queryset):
+        if self.value() == "yes":
+            return queryset.filter(prefix__isnull=False)
+
+        if self.value() == "no":
+            return queryset.filter(prefix__isnull=True)
+
+
 @admin.register(Callsign)
 class CallsignAdmin(BaseModelAdmin):
     list_display = ("name", "country", "owner", "type")
     list_display_links = ("name",)
-    list_filter = ("type", "_official_validated", "country", "issued", "created", "modified")
+    list_filter = ("type", "_official_validated", PrefixListFilter, "country", "issued", "created", "modified")
     search_fields = ("name",)
     actions = [set_call_sign_metadata]
 
@@ -135,6 +152,7 @@ class TransmitterAdmin(BaseModelAdmin):
     list_display_links = ("repeater",)
     list_filter = ("mode",)
     ordering = ('repeater',)
+    search_fields = ("callsign",)
 
     fieldsets = (
         ('General', {
@@ -176,9 +194,9 @@ class PersonAdmin(BaseModelAdmin):
 
 @admin.register(DataImport)
 class DataImportAdmin(BaseModelAdmin):
-    list_display = ("task", "start", "stop", "finished", "failed", "new_callsigns")
+    list_display = ("task", "start", "duration", "finished", "failed", "callsigns", "new_callsigns")
     list_display_links = ("task",)
-    list_filter = ("task", "start", "stop", "finished", "failed", "created", "modified")
+    list_filter = ("task", "start", "finished", "failed", "created", "modified")
     ordering = ('-start',)
 
 
@@ -187,6 +205,7 @@ class CallsignBlacklistAdmin(BaseModelAdmin):
     list_display = ("callsign", "submitter", "reason", "approved")
     list_display_links = ("callsign",)
     list_filter = ("reason", "approved", "created", "modified")
+    search_fields = ("callsign",)
 
 
 @admin.register(AddressLocationCache)
@@ -194,6 +213,7 @@ class AddressLocationCacheAdmin(BaseModelAdmin):
     list_display = ("address", "provider", "location")
     list_display_links = ("address",)
     list_filter = ("provider", "created", "modified")
+    search_fields = ("address",)
 
 
 # @admin.register(QSO)
