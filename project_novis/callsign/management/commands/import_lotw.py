@@ -26,6 +26,8 @@ class Command(ImportCommand):
         for row in reader:
             if row[0]:
                 raw_callsign = self._extract_callsign(row[0])
+                if not raw_callsign:
+                    continue
                 if row[1] and row[2]:
                     callsigns[raw_callsign] = {"last_activity": parse(row[1] + "T" + row[2] + "Z")}
                 else:
