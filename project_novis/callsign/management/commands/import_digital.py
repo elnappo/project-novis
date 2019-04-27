@@ -33,19 +33,20 @@ class Command(ImportCommand):
                 except (ValueError, IndexError) as e:
                     self._warning(f"Invalid data: {row} - {e}")
 
+        # D-STAR users seams to be inaccurate, needs further investigations
         # Import D-STAR users
-        self._write("Import D-STAR user list")
-        r = self.session.get(dstar_user_list_url, stream=False)
-
-        if r.status_code == 200:
-            for row in r.iter_lines(decode_unicode=True):
-                try:
-                    callsign_instance, _ = self._handle_callsign(row, source="ham-digital.org")
-                    if not callsign_instance.dstar:
-                        callsign_instance.dstar = True
-                        callsign_instance.save()
-                except (ValueError, IndexError) as e:
-                    self._warning(f"Invalid data: {row} - {e}")
+        # self._write("Import D-STAR user list")
+        # r = self.session.get(dstar_user_list_url, stream=False)
+        #
+        # if r.status_code == 200:
+        #     for row in r.iter_lines(decode_unicode=True):
+        #         try:
+        #             callsign_instance, _ = self._handle_callsign(row, source="ham-digital.org")
+        #             if not callsign_instance.dstar:
+        #                 callsign_instance.dstar = True
+        #                 callsign_instance.save()
+        #         except (ValueError, IndexError) as e:
+        #             self._warning(f"Invalid data: {row} - {e}")
 
     def amateurradio_digital(self, options):
         self._write("Import amateurradio.digital data")
