@@ -58,8 +58,8 @@ class Command(ImportCommand):
             for row in reader:
                 try:
                     callsign_instance, _ = self._handle_callsign(row[1], source="amateurradio.digital")
+                    # Can change callsign of a DMR ID. Only allow this from "official" sources?
                     DMRID.objects.update_or_create(name=row[0],
-                                                   callsign=callsign_instance,
                                                    defaults={"name": row[0],
                                                              "callsign": callsign_instance})
                     # TODO(elnappo) use Callsign.update_location()
