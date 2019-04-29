@@ -17,4 +17,6 @@ apt-get update && apt-get dist-upgrade --assume-yes && apt-get install --assume-
     gdal-bin \
     python3-dev \
     libpq-dev \
-    gcc
+    gcc \
+    liblz4-dev \
+    build-essential
