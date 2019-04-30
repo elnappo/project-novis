@@ -125,6 +125,12 @@
                             <td>D-STAR</td>
                             <td>{{ object.dstar|yesno }}</td>
                         </tr>
+                        {% if object.issued %}
+                        <tr>
+                            <td>Issued</td>
+                            <td>{{ object.issued }}</td>
+                        </tr>
+                        {% endif %}
                         </tbody>
                     </table>
                 </div>
