@@ -8,7 +8,7 @@ class CallsignSitemap(Sitemap):
     limit = 10000
 
     def items(self):
-        return Callsign.objects.all()
+        return Callsign.objects.all().order_by('id')
 
     def lastmod(self, obj):
         return obj.modified
