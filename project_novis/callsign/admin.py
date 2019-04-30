@@ -47,6 +47,22 @@ def set_call_sign_metadata(modeladmin, request, queryset):
 set_call_sign_metadata.short_description = "Set default metadata"
 
 
+class OwnerListFilter(admin.SimpleListFilter):
+    title = _("has owner")
+    parameter_name = "has_owner"
+
+    def lookups(self, request, model_admin):
+        return (("yes", _("Yes")),
+                ("no",  _("No")),)
+
+    def queryset(self, request, queryset):
+        if self.value() == "yes":
+            return queryset.filter(owner__isnull=False)
+
+        if self.value() == "no":
+            return queryset.filter(owner__isnull=True)
+
+
 class PrefixListFilter(admin.SimpleListFilter):
     title = _("has prefix")
     parameter_name = "has_prefix"
@@ -67,7 +83,8 @@ class PrefixListFilter(admin.SimpleListFilter):
 class CallsignAdmin(BaseModelAdmin):
     list_display = ("name", "country", "owner", "type")
     list_display_links = ("name",)
-    list_filter = ("type", "_official_validated", PrefixListFilter, "country", "issued", "created", "modified")
+    list_filter = (OwnerListFilter, PrefixListFilter, "type", "_official_validated", "country", "issued",
+                   "created", "modified")
     search_fields = ("name",)
     actions = [set_call_sign_metadata]
 

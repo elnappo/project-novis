@@ -78,7 +78,7 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('email', 'password1', 'password2')}
          ),
     )
-    ordering = ('email',)
+    ordering = ('-date_joined',)
 
 
 @admin.register(UserValidation)
