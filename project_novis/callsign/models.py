@@ -11,7 +11,7 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from .enums import CALLSIGN_TYPES, CONTINENTS, CTCSS, RF_MODES, BLACKLIST_REASONS,\
     LOCATION_SOURCE_CHOICES, LOCATION_SOURCE_PRIORITY
 from .utils import CallsignField, CQZoneField, ITUZoneField, ITURegionField, WikidataObjectField,\
-    generate_aprs_passcode, point_to_grid, grid_to_point
+    generate_aprs_passcode, point_to_grid, grid_to_point, get_sentinel_user
 
 
 class BaseModel(models.Model):
@@ -185,7 +185,7 @@ class Callsign(LocationBaseModel):
     lotw_last_activity = models.DateTimeField("LOTW last activity", null=True, blank=True)
     eqsl = models.BooleanField(default=False)
 
-    created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="callsigns")
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.SET(get_sentinel_user), related_name="callsigns")
     internal_comment = models.TextField(blank=True)
     source = models.CharField(max_length=256, blank=True)
     objects = CallsignManager()
@@ -295,7 +295,6 @@ class Callsign(LocationBaseModel):
         return f"https://dxwatch.com/qrz/{self.name}"
 
 
-
 class DMRID(BaseModel):
     name = models.PositiveIntegerField(unique=True, db_index=True)
     callsign = models.ForeignKey(Callsign, related_name='dmr_ids', on_delete=models.SET_NULL, null=True, blank=True)
@@ -320,11 +319,9 @@ class DMRID(BaseModel):
 class Club(BaseModel):
     callsign = models.OneToOneField(Callsign, on_delete=models.CASCADE)
     description = models.TextField(blank=True)
-    # Callsign already has an owner, remove?
-    owner = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     members = models.ManyToManyField(get_user_model(), related_name="members", blank=True)
     website = models.URLField(blank=True)
-    created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="clubs")
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.SET(get_sentinel_user), related_name="clubs")
 
     def get_absolute_url(self) -> str:
         return reverse('callsign:callsign-html-detail', args=[self.callsign.name])
@@ -355,7 +352,7 @@ class Repeater(LocationBaseModel):
     altitude = models.FloatField(blank=True, null=True)
     description = models.TextField(blank=True)
 
-    created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="repeaters")
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.SET(get_sentinel_user), related_name="repeaters")
     source = models.CharField(max_length=256, blank=True)
 
     def __str__(self) -> str:
@@ -383,7 +380,7 @@ class Transmitter(BaseModel):
     dmr_id = models.ForeignKey(DMRID, on_delete=models.PROTECT, related_name="transmitters", verbose_name="DMR ID", blank=True, null=True)
     colorcode = models.SmallIntegerField(blank=True, null=True)
 
-    created_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name="transmitters")
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.SET(get_sentinel_user), related_name="transmitters")
     source = models.CharField(max_length=256, blank=True)
 
     @property

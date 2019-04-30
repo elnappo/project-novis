@@ -121,10 +121,10 @@ class DMRIDAdmin(BaseModelAdmin):
 
 @admin.register(Club)
 class ClubAdmin(BaseModelAdmin):
-    list_display = ("callsign", "owner")
+    list_display = ("callsign", "website")
     list_display_links = ("callsign",)
 
-    raw_id_fields = ("callsign", "owner", "members")
+    raw_id_fields = ("callsign", "members")
 
 
 @admin.register(Country)

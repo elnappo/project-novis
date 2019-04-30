@@ -6,6 +6,7 @@ from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 
 CALLSIGN_REGEX = r"^(?=.*[a-zA-Z])([a-zA-Z0-9]+[0-9][a-zA-Z0-9]+)$"
 CALLSIGN_REGEX_COMPILE = re.compile(CALLSIGN_REGEX)
@@ -234,3 +235,7 @@ def address_to_grid_based_point(address: str,
                                           session=session,
                                           use_cache=use_cache), high_accuracy=high_accuracy)
     return grid_to_point(grid)
+
+
+def get_sentinel_user():
+    return get_user_model().objects.get_or_create(email='deleted@project-novis.org')[0]
