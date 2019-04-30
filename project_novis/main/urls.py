@@ -13,6 +13,6 @@ urlpatterns = [
     # Flatpages
     path('about/', views.flatpage, {'url': '/about/'}, name='about'),
     path('privacy/', views.flatpage, {'url': '/privacy/'}, name='privacy'),
+    path('terms/', views.flatpage, {'url': '/terms/'}, name='terms'),
     path('contrib/', views.flatpage, {'url': '/contrib/'}, name='contrib'),
-    path('help/', views.flatpage, {'url': '/help/'}, name='help'),
 ]

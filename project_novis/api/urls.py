@@ -13,7 +13,7 @@ schema_view = get_schema_view(
     openapi.Info(
         title="project novis API",
         default_version='v1',
-        description="Ham radio API",
+        description="Ham radio API provided by project novis. API is in beta stage and not stable.",
         terms_of_service="https://www.project-novis.org/terms/",
         contact=openapi.Contact(email="help@project-novis.org", url="https://www.project-novis.org"),
         license=openapi.License(name="MIT License", url="https://choosealicense.com/licenses/mit/"),
