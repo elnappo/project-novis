@@ -63,7 +63,7 @@ case "$1" in
         echo "Starting Django application via Gunicorn"
         python manage.py check --deploy
         # Disable access log?
-        exec gunicorn -b :8000 --worker-class gevent --worker-connections 20 --timeout 10 --graceful-timeout 30 --access-logfile - project_novis.wsgi
+        exec gunicorn -b :8000 --workers=2 --threads=2 --timeout 20 --graceful-timeout 30 --keep-alive 4 --access-logfile - project_novis.wsgi
     ;;
     help)
         show_help
