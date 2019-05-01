@@ -45,10 +45,14 @@ spec:
               containerPort: 8001
               protocol: TCP
           livenessProbe:
+            periodSeconds: 20
+            timeoutSeconds: 5
             httpGet:
               path: /healthz
               port: 8000
           readinessProbe:
+            periodSeconds: 20
+            timeoutSeconds: 8
             httpGet:
               path: /readiness
               port: 8000
