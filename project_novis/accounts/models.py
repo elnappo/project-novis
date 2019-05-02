@@ -43,13 +43,13 @@ class User(AbstractUser):
     email = models.EmailField(_('Email address'), unique=True, db_index=True)
     name = models.CharField(_('Name'), max_length=200, blank=True, help_text="Your real name, used only for user/callsign validation.")
     display_name = models.CharField(_('Display name'), max_length=200, blank=True, help_text="Your name, shown on your callsign page.")
+    bio = models.TextField(blank=True)
 
     # location
     address = models.TextField(max_length=512, blank=True)
     country = models.ForeignKey("callsign.Country", on_delete=models.SET_NULL, blank=True, null=True)
     # TODO(elnappo) Set when address/country changed
     location = models.PointField(null=True, blank=True)
-    bio = models.TextField(blank=True)
 
     # social
     twitter = models.CharField(max_length=64, blank=True, help_text="Twitter username without @")

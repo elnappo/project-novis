@@ -57,14 +57,14 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('email', 'name', 'is_staff', 'validated')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
-    search_fields = ('name', 'email')
+    list_display = ('email', 'name', 'is_staff', 'validated', 'date_joined')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'created', 'modified')
+    search_fields = ('email', 'name')
 
     readonly_fields = ('created', 'modified', 'validated')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal info'), {'fields': ('name', 'validated', 'bio')}),
+        (_('Personal info'), {'fields': ('name', 'display_name', 'validated', 'bio')}),
         (_('Address'), {'fields': ('address', 'country', 'location')}),
         (_('Social'), {'fields': ('twitter', 'youtube', 'facebook', 'flickr', 'vimeo', 'skype', 'matrix', 'jabber')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
@@ -85,7 +85,7 @@ class UserAdmin(BaseUserAdmin):
 class UserValidationAdmin(admin.ModelAdmin):
     list_display = ("user", "approved")
     list_display_links = ("user",)
-    list_filter = ("approved", "approved_at", "approved_by")
+    list_filter = ("approved", "approved_at", "approved_by", 'created', 'modified')
 
     fieldsets = (
         (_('Submitted data'), {'fields': ('user', 'validation_comment', 'validation_file')}),
@@ -94,4 +94,5 @@ class UserValidationAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = ('created', 'modified')
-    raw_id_fields = ("user", "approved_by")
+    autocomplete_fields = ("user", "approved_by")
+    ordering = ('-created',)

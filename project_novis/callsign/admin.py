@@ -104,7 +104,7 @@ class CallsignAdmin(BaseModelAdmin):
             'fields': ('internal_comment', 'source', 'created', 'modified', "created_by")
         }),
     )
-    raw_id_fields = ("owner", "prefix", "created_by")
+    autocomplete_fields = ("owner", "prefix", "created_by")
     readonly_fields = ('created', 'modified', 'grid', 'official_validated', 'location_source', 'id')
     inlines = [DMRIDInline, ClublogUserInline]
 
@@ -115,7 +115,7 @@ class DMRIDAdmin(BaseModelAdmin):
     list_display_links = ("name",)
     list_filter = ("active", "issued", "created", "modified")
     search_fields = ("name", "callsign__name")
-    raw_id_fields = ("callsign",)
+    autocomplete_fields = ("callsign",)
     readonly_fields = ('brandmeister_profile_url', 'created', 'modified')
 
 
@@ -124,7 +124,7 @@ class ClubAdmin(BaseModelAdmin):
     list_display = ("callsign", "website")
     list_display_links = ("callsign",)
 
-    raw_id_fields = ("callsign", "members")
+    autocomplete_fields = ("callsign", "members", "created_by")
 
 
 @admin.register(Country)
@@ -159,7 +159,7 @@ class RepeaterAdmin(BaseModelAdmin):
     ordering = ('callsign',)
     search_fields = ("callsign",)
 
-    raw_id_fields = ("callsign", "created_by")
+    autocomplete_fields = ("callsign", "created_by")
     inlines = [TransmitterInline, ]
 
 
@@ -189,7 +189,7 @@ class TransmitterAdmin(BaseModelAdmin):
     )
 
     readonly_fields = ('receive_frequency', 'brandmeister_repeater_url', 'created', 'modified')
-    raw_id_fields = ("repeater",)
+    autocomplete_fields = ("repeater",)
 
 
 @admin.register(TelecommunicationAgency)
@@ -206,7 +206,7 @@ class PersonAdmin(BaseModelAdmin):
     list_filter = ("source", "country", "telco_agency", "created", "modified")
     search_fields = ("identifier", "callsigns__name")
 
-    raw_id_fields = ("callsigns",)
+    autocomplete_fields = ("callsigns",)
 
 
 @admin.register(DataImport)
@@ -240,4 +240,4 @@ class AddressLocationCacheAdmin(BaseModelAdmin):
 #     list_filter = ("timestamp", "mode")
 #     search_fields = ("caller__name", "callee__name")
 #
-#     raw_id_fields = ("caller", "callee")
+#     autocomplete_fields = ("caller", "callee")
