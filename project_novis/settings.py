@@ -70,7 +70,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.sites',
     'django.contrib.contenttypes',
@@ -80,6 +79,9 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'django.contrib.sitemaps',
     'django.contrib.gis',
+    'dal',
+    'dal_select2',
+    'django.contrib.admin',
 
     'project_novis.accounts.apps.AccountsConfig',
     'allauth',
