@@ -31,6 +31,14 @@
                     <h3 class="box-title">Callsign Information</h3>
                     {% if user == object.owner %}
                         <div class="box-tools pull-right">
+                        {% if not object.repeater and object.type == "repeater" %}
+                            <a href="{% url "callsign:repeater-html-update" object.name %}"
+                               class="btn btn-sm btn-default"><i class="fa fa-plus-square"></i> Add Repeater Information</a>
+                        {% endif %}
+                        {% if not object.club and object.type == "club" %}
+                            <a href="{% url "callsign:club-html-update" object.name %}"
+                               class="btn btn-sm btn-default"><i class="fa fa-plus-square"></i> Add Club Information</a>
+                        {% endif %}
                             <a href="{% url "callsign:callsign-html-update" object.name %}"
                                class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Edit</a>
                         </div>

@@ -96,6 +96,20 @@ class RepeaterUpdate(LoginRequiredMixin, UpdateView):
 
     # TODO(elnappo) Replace permission check with django-guardian?
     def dispatch(self, request, *args, **kwargs):
+        # Create an Repeater instance if does not exist
+        try:
+            self.get_object()
+        except Http404:
+            slug = self.kwargs.get(self.slug_url_kwarg)
+            try:
+                callsign_instance = Callsign.objects.get(name=slug)
+                if callsign_instance.owner != request.user:
+                    return HttpResponseForbidden()
+                self.model.objects.create(callsign=callsign_instance, created_by_id=request.user.id)
+            except Callsign.DoesNotExist:
+                raise Http404(_("No callsign found matching the query") %
+                              {'verbose_name': Callsign._meta.verbose_name})
+
         if self.get_object().callsign.owner == request.user or not request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
         else:
@@ -113,6 +127,20 @@ class ClubUpdate(LoginRequiredMixin, UpdateView):
 
     # TODO(elnappo) Replace permission check with django-guardian?
     def dispatch(self, request, *args, **kwargs):
+        # Create an Club instance if does not exist
+        try:
+            self.get_object()
+        except Http404:
+            slug = self.kwargs.get(self.slug_url_kwarg)
+            try:
+                callsign_instance = Callsign.objects.get(name=slug)
+                if callsign_instance.owner != request.user:
+                    return HttpResponseForbidden()
+                self.model.objects.create(callsign=callsign_instance, created_by_id=request.user.id)
+            except Callsign.DoesNotExist:
+                raise Http404(_("No callsign found matching the query") %
+                              {'verbose_name': Callsign._meta.verbose_name})
+
         if self.get_object().callsign.owner == request.user or not request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
         else:
