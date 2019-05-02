@@ -3,6 +3,7 @@ coreapi
 coreschema
 dj-database-url
 django-allauth
+django-autocomplete-light
 django-avatar
 django-bootstrap3
 django-cors-headers
