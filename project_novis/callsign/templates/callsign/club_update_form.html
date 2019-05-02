@@ -43,13 +43,18 @@
               <h3 class="box-title">Help</h3>
             </div>
             <div class="box-body">
-                <strong>Members</strong>
+                <strong>Managed by</strong>
                 <p class="text-muted">
-                    Currently it is not possible to add memebers to your club. We are working on it.
+                    Your primary callsign is shown as "managed by", set your primary callsign <a href="{% url "profile_change" %}">here</a>.
                 </p>
             </div>
             <!-- /.box-body -->
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_foot %}
+  <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+  {{ form.media }}
 {% endblock %}
