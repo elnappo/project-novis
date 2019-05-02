@@ -318,9 +318,9 @@ class DMRID(BaseModel):
 
 class Club(BaseModel):
     callsign = models.OneToOneField(Callsign, on_delete=models.CASCADE)
-    description = models.TextField(blank=True)
-    members = models.ManyToManyField(get_user_model(), related_name="members", blank=True)
     website = models.URLField(blank=True)
+    description = models.TextField(blank=True)
+    members = models.ManyToManyField(Callsign, related_name="members", blank=True)
     created_by = models.ForeignKey(get_user_model(), on_delete=models.SET(get_sentinel_user), related_name="clubs")
 
     def get_absolute_url(self) -> str:
