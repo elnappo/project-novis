@@ -1,3 +1,4 @@
+from dal import autocomplete
 from django.contrib.gis import forms
 
 from .models import Callsign, Repeater, Club
@@ -25,4 +26,7 @@ class ClubForm(forms.ModelForm):
 
     class Meta:
         model = Club
-        fields = ["website", "description"]
+        fields = ["website", "description", "members"]
+        widgets = {
+            'members': autocomplete.ModelSelect2Multiple(url='callsign:callsign-autocomplete')
+        }

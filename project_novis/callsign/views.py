@@ -1,8 +1,11 @@
 from csp.decorators import csp_update
+from dal import autocomplete
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.detail import SingleObjectMixin
@@ -14,12 +17,24 @@ from rest_framework import viewsets, generics
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework_gis.filters import DistanceToPointFilter
-from django.urls import reverse
 
 from .forms import CallsignForm, RepeaterForm, ClubForm
 from .models import Country, DXCCEntry, Callsign, DMRID, CallsignPrefix, Repeater, Club
 from .serializers import CountrySerializer, DXCCEntrySerializer, CallsignSerializer, \
     DMRIDSerializer, CallsignPrefixSerializer, RepeaterSerializer, APRSPasscodeSerializer
+
+
+class CallsignAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Callsign.objects.none()
+
+        qs = Callsign.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
 
 
 class DefaultPagination(LimitOffsetPagination):
