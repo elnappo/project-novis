@@ -14,7 +14,6 @@ everyone can participate. It's available at `www.project-novis.org <https://www.
 Features
 --------
 
-- OAuth Provider
 - Amateur Radio Database
    - Callsign
    - Callsign prefix
@@ -22,6 +21,7 @@ Features
    - Repeater
 - Callsign/User validation
 - API
+- OAuth Provider
 - Hamnet Authentication via RADIUS server
 
 Contribute
@@ -50,17 +50,12 @@ Contributors
 - `tobyp <https://github.com/tobyp>`_ - `DB1QP <https://www.project-novis.org/c/DB1QP>`_
 - `mirzazulfan <https://github.com/mirzazulfan>`_
 
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    index
+   changelog
    api
    oauth
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
