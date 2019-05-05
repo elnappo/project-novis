@@ -20,6 +20,7 @@ class ViewTest(TestCase):
             ('profile_change', dict(), 302),
             ('profile_social_change', dict(), 302),
             ('profile_validation', dict(), 302),
+            ('profile_token', dict(), 302),
         )
 
         for view, kwargs, status_code in views:
@@ -36,6 +37,7 @@ class ViewTest(TestCase):
             ('profile_change', dict(), 200),
             ('profile_social_change', dict(), 200),
             ('profile_validation', dict(), 200),
+            ('profile_token', dict(), 200),
         )
 
         with self.subTest('User login'):
