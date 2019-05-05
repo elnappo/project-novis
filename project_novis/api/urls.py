@@ -2,11 +2,13 @@ from django.urls import path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import routers
+from rest_framework.authtoken import views
 from rest_framework.permissions import AllowAny
 
-from project_novis.callsign.views import CountryViewSet, DXCCEntryViewSet, CallsignViewSet, UserCallsignViewSet, CallsignCreateAPIView, DMRIDViewSet, CallsignPrefixViewSet, RepeaterViewSet, APRSPasscodeView
-from project_novis.api.apps import ApiConfig
 from project_novis.accounts.views import CurrentUserAPIView
+from project_novis.api.apps import ApiConfig
+from project_novis.callsign.views import CountryViewSet, DXCCEntryViewSet, CallsignViewSet, UserCallsignViewSet, \
+    CallsignCreateAPIView, DMRIDViewSet, CallsignPrefixViewSet, RepeaterViewSet, APRSPasscodeView
 
 app_name = ApiConfig.name
 schema_view = get_schema_view(
@@ -40,6 +42,7 @@ urlpatterns = [
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=None), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=None), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=None), name='schema-redoc'),
+    path('api-token-auth/', views.obtain_auth_token)
 ]
 
 urlpatterns += router.urls

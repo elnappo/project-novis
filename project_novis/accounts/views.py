@@ -1,4 +1,5 @@
 from django.views.generic.edit import UpdateView
+from django.views.generic.detail import DetailView
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,6 +7,7 @@ from django.views.generic import CreateView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import permissions
+from rest_framework.authtoken.models import Token
 
 from .serializers import UserSerializer
 from .models import UserValidation
@@ -76,3 +78,11 @@ class UserValidationView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         self.object = form.save()
         return super().form_valid(form)
+
+
+class APIKeyView(LoginRequiredMixin, DetailView):
+    model = Token
+    template_name = 'profile_api.html'
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get_or_create(user=self.request.user, defaults={"user": self.request.user})[0]

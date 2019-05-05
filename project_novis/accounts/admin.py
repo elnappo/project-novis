@@ -4,8 +4,12 @@ from django.contrib.auth import password_validation
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.utils.translation import gettext_lazy as _
+from rest_framework.authtoken.admin import TokenAdmin
 
 from .models import User, UserValidation
+
+
+TokenAdmin.autocomplete_fields = ('user',)
 
 
 class UserCreationForm(forms.ModelForm):

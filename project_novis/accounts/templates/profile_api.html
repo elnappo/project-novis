@@ -1,0 +1,22 @@
+{% extends 'settings_base.html' %}
+{% load static i18n account crispy_forms_tags %}
+
+{% block title %}{% trans "API" %}{% endblock %}
+
+{% block settings_content %}
+<div class="box-header with-border">
+  <h3 class="box-title">{% trans "API" %}</h3>
+</div>
+<div class="box-body">
+  <p>API documentation is available <a href="{% url 'project_novis.api:schema-swagger-ui' %}">here</a>.</p>
+  <label for="api_token">API key</label>
+  <input type="text" class="form-control" id="api_token" value="{{ object.key }}" disabled="">
+    </br>
+  <div class="alert alert-warning alert-dismissible">
+    <h4><i class="icon fa fa-warning"></i> Warning</h4>
+    Keep your API key private as it allows access to your account!
+  </div>
+
+</div>
+<!-- /.box-body -->
+{% endblock %}
