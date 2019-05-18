@@ -118,6 +118,9 @@ class ViewTest(TestCase):
             ('callsign:callsign-html-detail', dict(slug="DF0HSA"), 200),
             ('callsign:callsign-html-update', dict(slug="DF0HSA"), 302),
             ('callsign:callsign-html-claim', dict(slug="DF0HSA"), 302),
+            ('callsign:club-html-update', dict(slug="DF0HSA"), 302),
+            ('callsign:repeater-html-update', dict(slug="DF0HSA"), 302),
+            ('callsign:callsign-autocomplete', dict(), 200),
         )
 
         self.create_callsigns(callsigns)
