@@ -42,7 +42,7 @@ class DefaultPagination(LimitOffsetPagination):
     max_limit = 100
 
 
-@method_decorator(csp_update(IMG_SRC=("maps.googleapis.com", "maps.gstatic.com"), SCRIPT_SRC=("maps.googleapis.com", "maps.gstatic.com")), name='dispatch')
+@method_decorator(csp_update(IMG_SRC=("maps.googleapis.com", "maps.gstatic.com", "lh3.ggpht.com", "cbks0.googleapis.com", "khms0.googleapis.com", "khms1.googleapis.com"), SCRIPT_SRC=("maps.googleapis.com", "maps.gstatic.com")), name='dispatch')
 class CallsignDetailView(DetailView):
     queryset = Callsign.objects\
         .select_related("prefix") \
@@ -116,6 +116,7 @@ class RepeaterUpdate(LoginRequiredMixin, UpdateView):
             return HttpResponseForbidden()
 
 
+@method_decorator(csp_update(CONNECT_SRC=("'self'",)), name='dispatch')
 class ClubUpdate(LoginRequiredMixin, UpdateView):
     model = Club
     slug_field = "callsign__name"
