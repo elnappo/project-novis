@@ -103,8 +103,10 @@ class RepeaterUpdate(LoginRequiredMixin, UpdateView):
             slug = self.kwargs.get(self.slug_url_kwarg)
             try:
                 callsign_instance = Callsign.objects.get(name=slug)
-                if callsign_instance.owner != request.user:
+                if request.user.is_authenticated and callsign_instance.owner != request.user:
                     return HttpResponseForbidden()
+                elif not request.user.is_authenticated:
+                    return super().dispatch(request, *args, **kwargs)
                 self.model.objects.create(callsign=callsign_instance, created_by_id=request.user.id)
             except Callsign.DoesNotExist:
                 raise Http404(_("No callsign found matching the query") %
@@ -135,8 +137,10 @@ class ClubUpdate(LoginRequiredMixin, UpdateView):
             slug = self.kwargs.get(self.slug_url_kwarg)
             try:
                 callsign_instance = Callsign.objects.get(name=slug)
-                if callsign_instance.owner != request.user:
+                if request.user.is_authenticated and callsign_instance.owner != request.user:
                     return HttpResponseForbidden()
+                elif not request.user.is_authenticated:
+                    return super().dispatch(request, *args, **kwargs)
                 self.model.objects.create(callsign=callsign_instance, created_by_id=request.user.id)
             except Callsign.DoesNotExist:
                 raise Http404(_("No callsign found matching the query") %
