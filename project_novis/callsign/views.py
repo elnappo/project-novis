@@ -42,7 +42,18 @@ class DefaultPagination(LimitOffsetPagination):
     max_limit = 100
 
 
-@method_decorator(csp_update(IMG_SRC=("maps.googleapis.com", "maps.gstatic.com", "lh3.ggpht.com", "cbks0.googleapis.com", "khms0.googleapis.com", "khms1.googleapis.com"), SCRIPT_SRC=("maps.googleapis.com", "maps.gstatic.com")), name='dispatch')
+@method_decorator(csp_update(IMG_SRC=(
+    "maps.googleapis.com",  # Google Maps
+    "maps.gstatic.com",  # Google Maps
+    "cbks0.googleapis.com",
+    "khms0.googleapis.com",
+    "khms1.googleapis.com",
+    "lh3.ggpht.com",
+    "geo0.ggpht.com",  # Google Street View
+    "geo1.ggpht.com",  # Google Street View
+    "geo2.ggpht.com",  # Google Street View
+    "geo3.ggpht.com",  # Google Street View
+    ), SCRIPT_SRC=("maps.googleapis.com", "maps.gstatic.com")), name='dispatch')
 class CallsignDetailView(DetailView):
     queryset = Callsign.objects\
         .select_related("prefix") \

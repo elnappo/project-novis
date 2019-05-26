@@ -168,7 +168,7 @@ CSP_DEFAULT_SRC = ("'none'", )
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "cdnjs.cloudflare.com", "maxcdn.bootstrapcdn.com", "piwik.nerdpol.io", "stackpath.bootstrapcdn.com")
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "maxcdn.bootstrapcdn.com", "cdnjs.cloudflare.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com")
 CSP_FONT_SRC = ("'self'", "fonts.googleapis.com", "fonts.gstatic.com", "maxcdn.bootstrapcdn.com", "cdnjs.cloudflare.com", "stackpath.bootstrapcdn.com")
-CSP_IMG_SRC = ("'self'", "data:", "cdnjs.cloudflare.com", "piwik.nerdpol.io", "www.gravatar.com")
+CSP_IMG_SRC = ("'self'", "data:", "cdnjs.cloudflare.com", "piwik.nerdpol.io", "www.gravatar.com", "www.gstatic.com")
 CSP_EXCLUDE_URL_PREFIXES = ("/admin/", "/api/v1/swagger/")
 
 # CORS settings
