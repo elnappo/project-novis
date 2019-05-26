@@ -45,7 +45,6 @@ class Command(ImportCommand):
                         repeater_instance, new_repeater = Repeater.objects.get_or_create(callsign=call_sign_instance,
                                                                                          defaults={"callsign": call_sign_instance,
                                                                                                    "website": repeater["url"],
-                                                                                                   "location": Point(repeater["lon"], repeater["lat"]),
                                                                                                    "created_by": self._import_user,
                                                                                                    "source": self.source})
                         transmitter_instance, new_transmitter = Transmitter.objects.get_or_create(

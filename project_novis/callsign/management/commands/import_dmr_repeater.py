@@ -48,7 +48,6 @@ class Command(ImportCommand):
                         callsign=call_sign_instance,
                         defaults={"callsign": call_sign_instance,
                                   "website": repeater.get("website", None),
-                                  "location": call_sign_instance.location,
                                   "altitude": repeater.get("agl", None),
                                   "created_by_id": self._import_user.id,
                                   "source": self.source})
