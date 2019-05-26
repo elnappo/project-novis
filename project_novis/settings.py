@@ -59,13 +59,11 @@ if not DEBUG:
     CSP_UPGRADE_INSECURE_REQUESTS = True
     CSP_BLOCK_ALL_MIXED_CONTENT = True
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
-
 else:
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "INSECURE")
 
-ALLOWED_HOSTS = [os.environ.get("DJANGO_ALLOWED_HOSTS", "*")]
-USE_X_FORWARDED_HOST = True
+ALLOWED_HOSTS = [os.environ.get("DJANGO_ALLOWED_HOSTS", "*"), ]
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
