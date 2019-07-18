@@ -48,6 +48,7 @@ ingress:
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
   host: "project-novis.local"
   tls: true
+  reportURI: ""
 
 postgresql:
   enabled: true

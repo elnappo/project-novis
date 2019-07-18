@@ -13,9 +13,17 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     track: {{ .Values.application.track }}
     app: {{ template "project-novis.appname" . }}
-
-  {{- with .Values.ingress.annotations }}
   annotations:
+    prometheus.io/probe: "true"
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Feature-Policy: geolocation 'none'; midi 'none'; notifications 'none'; push 'none'; sync-xhr 'none'; microphone 'none'; camera 'none'; magnetometer 'none'; gyroscope 'none'; speaker 'none'; vibrate 'none'; fullscreen 'none'; payment 'none'; xr 'none'; usb 'none'; autoplay 'none'; legacy-image-formats 'none'; wake-lock 'none'";
+    {{- if and .Values.ingress.tls .Values.ingress.reportURI }}
+      more_set_headers 'Expect-CT: max-age=86400, enforce, report-uri="{{ .Values.ingress.reportURI }}"';
+    {{- else if .Values.ingress.tls }}
+      more_set_headers 'Expect-CT: max-age=86400, enforce';
+    {{- end }}
+  {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
