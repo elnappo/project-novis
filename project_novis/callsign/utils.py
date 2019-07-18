@@ -87,7 +87,7 @@ class WikidataObjectField(models.CharField):
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 16
         super().__init__(*args, **kwargs)
-    
+
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
         del kwargs['max_length']
@@ -123,8 +123,8 @@ def generate_aprs_passcode(callsign: str) -> int:
     length = len(callsign)
 
     while i < length:
-        hash_value ^= ord(callsign[i:i+1]) << 8
-        hash_value ^= ord(callsign[i+1:i+1+1])
+        hash_value ^= ord(callsign[i:i + 1]) << 8
+        hash_value ^= ord(callsign[i + 1:i + 1 + 1])
         i += 2
 
     return hash_value & 0x7fff
@@ -221,6 +221,7 @@ def address_to_point(address: str, provider: str = "arcgis", session=None, use_c
             g = _geocoder(address, session=session)
         else:
             g = _geocoder(address)
+        # TODO handle no results returned
         return Point(g.lng, g.lat)
 
 

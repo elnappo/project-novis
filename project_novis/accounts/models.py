@@ -75,10 +75,11 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         """Set location field based on user provided address."""
-        address = self.address
-        if self.country:
-            address += ", " + self.country.name
-        self.location = address_to_grid_based_point(address)
+        if self.address:
+            address = self.address
+            if self.country:
+                address += ", " + self.country.name
+            self.location = address_to_grid_based_point(address)
         super().save(*args, **kwargs)
 
     @property
