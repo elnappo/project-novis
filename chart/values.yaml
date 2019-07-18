@@ -13,6 +13,10 @@ nameOverride: ""
 fullnameOverride: ""
 releaseOverride: ""
 
+gitlab:
+  app:
+  env:
+
 application:
   track: "development"
   version: "latest"

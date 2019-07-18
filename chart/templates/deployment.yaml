@@ -26,6 +26,8 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8001"
+        {{ if .Values.gitlab.app }}app.gitlab.com/app: {{ .Values.gitlab.app | quote }}{{ end }}
+        {{ if .Values.gitlab.env }}app.gitlab.com/env: {{ .Values.gitlab.env | quote }}{{ end }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
