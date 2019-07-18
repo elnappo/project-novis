@@ -5,6 +5,9 @@ from django.core.exceptions import PermissionDenied
 from django.utils.translation import gettext_lazy as _
 
 
+from callsign.utils import address_to_grid_based_point
+
+
 class UserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         """
@@ -69,6 +72,14 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
     objects = UserManager()
+
+    def save(self, *args, **kwargs):
+        """Set location field based on user provided address."""
+        address = self.address
+        if self.country:
+            address += ", " + self.country.name
+        self.location = address_to_grid_based_point(address)
+        super().save(*args, **kwargs)
 
     @property
     def validated(self) -> bool:
