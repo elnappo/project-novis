@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.utils.translation import gettext_lazy as _
 
 
-from callsign.utils import address_to_grid_based_point
+from project_novis.callsign.utils import address_to_grid_based_point
 
 
 class UserManager(BaseUserManager):
