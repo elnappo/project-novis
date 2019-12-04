@@ -557,7 +557,7 @@ rollout 100%:
         --wait \
         --set ingress.enabled="$service_enabled" \
         --set ingress.host="$KUBE_PRODUCTION_HOSTNAME" \
-        --set ingress.reportURI="EXPECT_CT_REPORT_URI" \
+        --set ingress.reportURI="$EXPECT_CT_REPORT_URI" \
         --set gitlab.app="$CI_PROJECT_PATH_SLUG" \
         --set gitlab.env="$CI_ENVIRONMENT_SLUG" \
         --set releaseOverride="$CI_ENVIRONMENT_SLUG" \
