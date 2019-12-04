@@ -41,3 +41,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Piwik
 * pytest
 * Awesome logo (many thanks to @mirzazulfan)
+* Add `autocomplete=”new-password”` attribute to signup form
