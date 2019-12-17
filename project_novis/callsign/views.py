@@ -80,6 +80,13 @@ class CallsignCreate(LoginRequiredMixin, CreateView):
         obj.set_default_meta_data()
         return super().form_valid(form)
 
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        existing_callsign = Callsign.objects.filter(name=form.data.get('name')).first()
+        if existing_callsign:
+            return redirect(existing_callsign)
+        return super().post(request, *args, **kwargs)
+
 
 @method_decorator(csp_update(IMG_SRC=("*.tile.openstreetmap.org",)), name='dispatch')
 class CallsignUpdate(LoginRequiredMixin, UpdateView):
